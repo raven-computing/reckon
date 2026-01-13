@@ -1,0 +1,26 @@
+WarningsAsErrors: '*'
+UseColor: true
+Checks: '
+*,
+-misc-unused-parameters,
+-llvmlibc-restrict-system-libc-headers,
+-misc-include-cleaner,
+-altera-unroll-loops,
+-altera-id-dependent-backward-branch,
+-llvm-include-order,
+-android-*,
+-cppcoreguidelines-avoid-non-const-global-variables,
+-cppcoreguidelines-macro-to-enum,
+-cppcoreguidelines-avoid-magic-numbers,
+-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+-bugprone-easily-swappable-parameters,
+-concurrency-mt-unsafe,
+-hicpp-signed-bitwise,
+-altera-struct-pack-align,
+'
+CheckOptions:
+  readability-function-cognitive-complexity.IgnoreMacros: true
+  readability-function-cognitive-complexity.Threshold: 30
+  readability-identifier-length.IgnoredVariableNames: 'ok'
+  readability-magic-numbers.IgnorePowersOf2IntegerValues: true
+  hicpp-signed-bitwise.IgnorePositiveIntegerLiterals: true

@@ -1,0 +1,6 @@
+As opposed to the more traditional physical lines of code metric, logical lines
+of code focuses on how many meaningful lines exist. For example, a single
+statement would count as one logical line of code, regardless of how many
+physical lines the statemenet spans across. This makes the LLC metric more
+unaffected by arbitrary style-related decisions that can be different
+between software projects.

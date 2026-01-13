@@ -1,0 +1,105 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "Build (Release)",
+      "command": "./build.sh",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc",
+        "$msCompile"
+      ],
+      "group": {
+        "isDefault": false,
+        "kind": "build"
+      },
+      "detail": "Build Reckon release binaries"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Build (Debug)",
+      "command": "./build.sh",
+      "args": [
+        "--debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc",
+        "$msCompile"
+      ],
+      "group": {
+        "isDefault": false,
+        "kind": "build"
+      },
+      "detail": "Build Reckon binaries with debug information"
+    },
+    {
+      "type": "shell",
+      "label": "Test",
+      "command": "./test.sh",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "isDefault": true,
+        "kind": "test"
+      },
+      "detail": "Test Reckon targets"
+    },
+    {
+      "type": "shell",
+      "label": "Clean",
+      "command": "./build.sh",
+      "args": [
+        "--clean"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build"
+      },
+      "icon": {
+        "id": "clear-all"
+      },
+      "detail": "Clean the build tree",
+      "problemMatcher": []
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: Configure",
+      "command": "configure",
+      "targets": [
+        "ALL_BUILD"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": [],
+      "detail": "CMake Configure"
+    },
+    {
+      "type": "cmake",
+      "label": "CMake: Build",
+      "command": "build",
+      "targets": [
+        "ALL_BUILD"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "detail": "CMake Buld",
+      "dependsOn":["CMake: Configure"],
+    }
+  ]
+}

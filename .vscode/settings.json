@@ -1,0 +1,21 @@
+{
+  "cmake.configureArgs": [
+    "-DRECKON_BUILD_TESTS=ON",
+    "-DRECKON_IGNORE_WARNINGS=OFF",
+    "-DRECKON_BUILD_SHARED_LIBS=OFF",
+    "-DRECKON_BUILD_ONLY_LIBS=OFF",
+    "-DRECKON_USE_SANITIZERS=OFF",
+    "-DRECKON_BUILD_TEST_COVERAGE=OFF",
+    "-DRECKON_SOURCE_ANALYSIS=OFF"
+  ],
+  "cmake.revealLog": "error",
+  "cmake.ctest.debugLaunchTarget": "Debug Reckon Tests",
+  "cmake.preRunCoverageTarget": "clean_coverage_data",
+  "cmake.postRunCoverageTarget": "collect_coverage_data",
+  "cmake.coverageInfoFiles": [
+    "${workspaceFolder}/build/cov/merged.info"
+  ],
+  "files.associations": {
+    "*.h": "c"
+  }
+}

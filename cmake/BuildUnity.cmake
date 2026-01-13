@@ -1,0 +1,1 @@
+disable_compiler_warnings(unity)

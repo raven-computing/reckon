@@ -1,0 +1,5 @@
+* text=auto
+src/lib/tests/res/**/* text eol=lf linguist-generated
+src/scount/tests/functionality/res/**/* linguist-generated
+src/scount/tests/functionality/res/mixed/* text eol=lf
+src/scount/tests/functionality/res/mixedWithSyntaxError/* text eol=lf

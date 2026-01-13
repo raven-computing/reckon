@@ -1,0 +1,2 @@
+This is a second sample with plain unformatted text.
+Here is another line.

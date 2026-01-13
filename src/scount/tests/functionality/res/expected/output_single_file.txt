@@ -1,0 +1,8 @@
+File: Sample.java
+
+  Logical Lines of Code (LLC):        104
+  Physical Lines        (PHL):        188
+  Words                 (WRD):        494
+  Characters            (CHR):       4709
+  Source Size in Bytes  (SZE):       4709
+

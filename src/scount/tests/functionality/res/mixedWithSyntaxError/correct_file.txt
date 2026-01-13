@@ -1,0 +1,1 @@
+This is a plain text sample for the test resource directory that contains a source file with a syntax error.

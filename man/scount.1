@@ -1,0 +1,97 @@
+.TH SCOUNT 1 "January 2026" "Alphanet/STCL" "User Commands"
+.SH NAME
+scount \- A tool to count logical lines of code and other metrics
+.SH SYNOPSIS
+.B scount
+[\fB\-\-verbose\fR]
+[\fB\-\-annotate\-counts\fR]
+.I <PATH>
+.SH DESCRIPTION
+scount counts source code lines in a single file
+or all files in a directory as specified by
+.IR PATH .
+.PP
+When the
+.B \-\-annotate\-counts
+option is used, scount marks counted logical lines and writes the
+annotated source to standard output. This option can only be used when
+.I PATH
+refers to a single input file.
+.PP
+The output uses the following abbreviations for the computed metrics:
+.TS
+box left tab(|);
+Cb Cb
+L L.
+Abbr.|Description
+LLC|Logical lines of code
+PHL|Hard physical lines
+WRD|Number of words
+CHR|Number of characters
+SZE|File size in bytes
+.TE
+.SH ARGUMENTS
+.TP
+.I <PATH>
+The path to the input file or directory to process.
+.br
+This is a mandatory argument.
+.SH OPTIONS
+.TP
+.B \-\-annotate\-counts
+Mark counted logical lines and output the result.
+.br
+This option can only be used on a single file input.
+.TP
+.B \-\-verbose
+Enable verbose output.
+.TP
+.B \-#, \-\-version
+Show program version information.
+.TP
+.B \-?, \-\-help
+Show a help message.
+.SH EXIT STATUS
+.TP
+.B 0
+The operation has completed successfully.
+.TP
+.B 1
+An invalid argument was provided.
+.TP
+.B 2
+A file given as an input was invalid.
+.TP
+.B 3
+Nothing was processed for the given input.
+.TP
+.B 4
+An I/O error has occurred for the input or output stream.
+.TP
+.B 126
+An unspecified error has occurred.
+.SH EXAMPLES
+.TP
+Count lines in a directory tree:
+.RS
+.nf
+scount /path/to/project
+.fi
+.RE
+.TP
+Annotate logical lines and write to separate source file:
+.RS
+.nf
+scount \-\-annotate\-counts mysrc.c > mymysrc_annotated.c
+.fi
+.RE
+.SH REPORTING BUGS
+Report any bugs to <https://github.com/raven-computing/reckon/issues>
+.SH AUTHOR
+Written by Phil Gaiser
+.SH COPYRIGHT
+Copyright (C) 2026 Raven Computing
+.br
+This software is licensed under the Apache License, Version 2.0
+.SH SEE ALSO
+Full documentation <https://docs.raven-computing.com/reckon/latest>

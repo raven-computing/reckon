@@ -1,0 +1,68 @@
+/* Customisations */
+
+/* Override variables */
+html {
+  --primary-color: #106dd0;
+  --primary-dark-color: #335c80;
+  --primary-light-color: #70b1e9;
+  --side-nav-arrow-hover-opacity: 1.0;
+}
+
+html.dark-mode {
+  --primary-color: #106dd0;
+  --primary-dark-color: #335c80;
+  --primary-light-color: #70b1e9;
+}
+
+/* Override base Doxygen method parameter colours */
+.paramname em {
+  color: var(--primary-dark-color);
+}
+.dark-mode .paramname {
+  color: var(--primary-light-color);
+}
+.dark-mode .paramname em {
+  color: var(--primary-light-color);
+}
+
+/* Add some space between the project name and version */
+#projectnumber {
+  margin-left: 3px;
+}
+
+/* Disable the ugly border when clicking on a nav-tree link */
+#nav-tree a:focus {
+  outline-style: none;
+}
+
+/* Enlarge nav arrow */
+.arrow {
+  color: var(--primary-color);
+  font-size: 80%;
+  font-family: var(--font-family);
+  text-align: left;
+  margin-right: 0px;
+}
+
+/* Hide arrow underlines when hovering */
+a:hover > span.arrow {
+  background: var(--side-nav-background);
+  opacity: 100%;
+}
+
+/* Hide nav-sync icon */
+#nav-sync {
+  visibility: hidden;
+}
+
+/* Copyright footer */
+#nav-path address {
+  border-top: 1px solid var(--separator-color);
+  border-bottom: 1px solid var(--separator-color);
+  background-color: var(--page-background-color);
+  color: var(--page-secondary-foreground-color);
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  font-size: small;
+  text-align: center;
+}

@@ -1,0 +1,3 @@
+﻿This is some test text data with a BOM
+Another line héré, with multi-byte chars 😀 and 🙂 !
+End of text.

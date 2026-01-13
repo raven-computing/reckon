@@ -1,0 +1,80 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug scount",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [
+        "${workspaceFolder}/src/lib/tests/res/c/sample.c"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "RECKON_DEBUG",
+          "value": "0"
+        }
+      ],
+      "linux": {
+        "program": "${workspaceFolder}/build/bin/scount",
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          },
+          {
+            "description": "Set Disassembly Flavor to Intel",
+            "text": "-gdb-set disassembly-flavor intel",
+            "ignoreFailures": true
+          }
+        ],
+      },
+      "windows": {
+        "type": "cppvsdbg",
+        "program": "${workspaceFolder}/build/bin/Debug/scount.exe",
+        "console": "integratedTerminal"
+      }
+    },
+    {
+      "name": "Debug Reckon Tests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "RECKON_DEBUG",
+          "value": "0"
+        }
+      ],
+      "linux": {
+        "program": "${workspaceFolder}/build/bin/${fileBasenameNoExtension}",
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          },
+          {
+            "description": "Set Disassembly Flavor to Intel",
+            "text": "-gdb-set disassembly-flavor intel",
+            "ignoreFailures": true
+          }
+        ],
+      },
+      "windows": {
+        "type": "cppvsdbg",
+        "program": "${workspaceFolder}/build/bin/Debug/${fileBasenameNoExtension}",
+        "console": "integratedTerminal"
+      }
+    },
+  ]
+}
