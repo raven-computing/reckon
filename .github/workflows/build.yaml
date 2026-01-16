@@ -1,0 +1,109 @@
+name: 'Build'
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*'
+
+  workflow_call:
+
+jobs:
+  build:
+    name: '${{ matrix.os_label }}, ${{ matrix.c_compiler_label }}, ${{ matrix.build_type }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux (GCC)
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Release
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Debug
+
+          # Linux (Clang)
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: clang
+            c_compiler_label: Clang
+            build_type: Release
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: clang
+            c_compiler_label: Clang
+            build_type: Debug
+
+          # Windows (MSVC)
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: msvc
+            c_compiler_label: MSVC
+            build_type: Release
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: msvc
+            c_compiler_label: MSVC
+            build_type: Debug
+
+    env:
+      CC: ${{ matrix.c_compiler }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: 'CMake: Configure'
+        run: |
+          DEBUG_ARG="";
+          if [[ "${{ matrix.build_type }}" == "Debug" ]]; then DEBUG_ARG="--debug"; fi
+          bash build.sh --config $DEBUG_ARG
+
+      - name: 'CMake: Build'
+        run: |
+          ANALYZE_ARG="";
+          if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then ANALYZE_ARG="--analyze"; fi
+          bash build.sh --skip-config $ANALYZE_ARG
+
+      - name: 'Upload Build Artifacts'
+        uses: actions/upload-artifact@v6
+        with:
+          name: reckon-build-${{ matrix.os_label }}-${{ matrix.c_compiler_label }}-${{ matrix.build_type }}
+          path: build/
+          if-no-files-found: error
+          retention-days: 1
+
+  build-docs:
+    name: 'Docs'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Install Doxygen'
+        run: |
+          wget -q -O /tmp/doxygen.tar.gz https://github.com/doxygen/doxygen/releases/download/Release_1_14_0/doxygen-1.14.0.linux.bin.tar.gz &&
+          tar -C /tmp -xzf /tmp/doxygen.tar.gz &&
+          sudo make -C /tmp/doxygen-* install &&
+          rm -r /tmp/doxygen-* &&
+          rm /tmp/doxygen.tar.gz
+
+      - name: 'Build Documentation'
+        run: bash build.sh --docs
+
+      - name: 'Upload Build Artifacts'
+        uses: actions/upload-artifact@v6
+        with:
+          name: reckon-build-docs
+          path: build/docs/html/
+          if-no-files-found: error
+          retention-days: 1

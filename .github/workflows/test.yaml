@@ -1,0 +1,138 @@
+name: 'Test'
+on:
+  workflow_run:
+    workflows: ['Build']
+    types:
+      - completed
+
+jobs:
+  test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: '${{ matrix.os_label }}, ${{ matrix.c_compiler_label }}, ${{ matrix.build_type }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux (GCC)
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Release
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Debug
+
+          # Linux (Clang)
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: clang
+            c_compiler_label: Clang
+            build_type: Release
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: clang
+            c_compiler_label: Clang
+            build_type: Debug
+
+          # Windows (MSVC)
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: msvc
+            c_compiler_label: MSVC
+            build_type: Release
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: msvc
+            c_compiler_label: MSVC
+            build_type: Debug
+
+    env:
+      CC: ${{ matrix.c_compiler }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: 'Download Build Artifacts'
+        uses: actions/download-artifact@v7
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          name: reckon-build-${{ matrix.os_label }}-${{ matrix.c_compiler_label }}-${{ matrix.build_type }}
+          path: .
+
+      - name: 'Execute Integration Tests'
+        run: bash test.sh --integration
+
+      - name: 'Execute Unit Tests'
+        run: bash test.sh --unit
+
+      - name: 'Execute Functionality Tests'
+        run: bash test.sh --functionality
+
+  test-checks:
+    name: 'Checks'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Execute Consistency Checks'
+        run: bash test.sh --check
+
+  test-lint-debug:
+    name: 'Lint (Debug)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Download Build Artifacts'
+        uses: actions/download-artifact@v7
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          name: reckon-build-ubuntu-latest-clang-Debug
+          path: .
+
+      - name: 'Perform Static Code Analysis (Clang-Tidy)'
+        run: bash test.sh --lint
+
+  test-lint-release:
+    name: 'Lint (Release)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Download Build Artifacts'
+        uses: actions/download-artifact@v7
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          name: reckon-build-ubuntu-latest-clang-Release
+          path: .
+
+      - name: 'Perform Static Code Analysis (Clang-Tidy)'
+        run: bash test.sh --lint
+
+  test-sanitizers:
+    name: 'Test With Sanitizers'
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Build With Sanitizers Enabled'
+        run: bash build.sh --sanitizers
+
+      - name: 'Execute Test Suite'
+        run: bash test.sh
