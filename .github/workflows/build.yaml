@@ -1,12 +1,7 @@
 name: 'Build'
 on:
-  push:
-    branches:
-      - '**'
-    tags-ignore:
-      - 'v*'
-
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -52,27 +47,61 @@ jobs:
             c_compiler_label: MSVC
             build_type: Debug
 
+          # Windows (GCC/MSYS2)
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Release
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Debug
+
     env:
       CC: ${{ matrix.c_compiler }}
 
     defaults:
       run:
-        shell: bash
+        shell: ${{ (matrix.os == 'windows-latest' && matrix.c_compiler == 'gcc') && 'msys2 {0}' || 'bash' }}
 
     steps:
       - uses: actions/checkout@v6
 
-      - name: 'CMake: Configure'
+      - name: 'Setup MSYS2'
+        if: runner.os == 'Windows' && matrix.c_compiler == 'gcc'
+        uses: msys2/setup-msys2@v2
+        with:
+          release: false
+          update: false
+          msystem: ucrt64
+          install: >
+            base-devel
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-cmake
+
+      - name: Cache Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v5
+        with:
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          restore-keys: |
+            cmake-deps-src-
+          enableCrossOsArchive: true
+          path: ${{ (runner.os == 'Windows' && matrix.c_compiler == 'gcc') && 'C:\msys64\home\runneradmin\.cache\cmake_deps_src' || '~/.cache/cmake_deps_src' }}
+
+      - name: Set Arguments
         run: |
-          DEBUG_ARG="";
-          if [[ "${{ matrix.build_type }}" == "Debug" ]]; then DEBUG_ARG="--debug"; fi
-          bash build.sh --config $DEBUG_ARG
+          if [[ "${{ matrix.build_type }}" == "Debug" ]]; then echo "DEBUG_ARG=--debug" >> $GITHUB_ENV; fi
+          if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then echo "ANALYZE_ARG=--analyze" >> $GITHUB_ENV; fi
+          if [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.c_compiler }}" == "gcc" ]]; then echo "CMAKE_GENERATOR=MinGW Makefiles" >> $GITHUB_ENV; fi
+
+      - name: 'CMake: Configure'
+        run: bash build.sh --config $DEBUG_ARG
 
       - name: 'CMake: Build'
-        run: |
-          ANALYZE_ARG="";
-          if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then ANALYZE_ARG="--analyze"; fi
-          bash build.sh --skip-config $ANALYZE_ARG
+        run: bash build.sh --skip-config $DEBUG_ARG $ANALYZE_ARG
 
       - name: 'Upload Build Artifacts'
         uses: actions/upload-artifact@v6

@@ -1,13 +1,10 @@
 name: 'Test'
 on:
-  workflow_run:
-    workflows: ['Build']
-    types:
-      - completed
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   test:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: '${{ matrix.os_label }}, ${{ matrix.c_compiler_label }}, ${{ matrix.build_type }}'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -50,6 +47,18 @@ jobs:
             c_compiler_label: MSVC
             build_type: Debug
 
+          # Windows (GCC/MSYS2)
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Release
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: gcc
+            c_compiler_label: GCC
+            build_type: Debug
+
     env:
       CC: ${{ matrix.c_compiler }}
 
@@ -59,15 +68,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: 'Download Build Artifacts'
         uses: actions/download-artifact@v7
         with:
-          run-id: ${{ github.event.workflow_run.id }}
           name: reckon-build-${{ matrix.os_label }}-${{ matrix.c_compiler_label }}-${{ matrix.build_type }}
-          path: .
+          path: build
+
+      - name: 'Make Binaries Executable'
+        if: runner.os == 'Linux'
+        run: chmod +x ./build/bin/*
 
       - name: 'Execute Integration Tests'
         run: bash test.sh --integration
@@ -88,42 +98,46 @@ jobs:
       - name: 'Execute Consistency Checks'
         run: bash test.sh --check
 
-  test-lint-debug:
-    name: 'Lint (Debug)'
+  test-lint:
+    name: 'Lint'
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v6
 
-      - name: 'Download Build Artifacts'
+      - name: Cache Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v5
+        with:
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          restore-keys: |
+            cmake-deps-src-
+          enableCrossOsArchive: true
+          path: ~/.cache/cmake_deps_src
+
+      - name: 'Download Build Artifacts (Debug)'
         uses: actions/download-artifact@v7
         with:
-          run-id: ${{ github.event.workflow_run.id }}
-          name: reckon-build-ubuntu-latest-clang-Debug
-          path: .
+          name: reckon-build-Linux-Clang-Debug
+          path: build
 
       - name: 'Perform Static Code Analysis (Clang-Tidy)'
-        run: bash test.sh --lint
+        run: bash test.sh --lint;
 
-  test-lint-release:
-    name: 'Lint (Release)'
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v6
+      - name: 'Clear Build Tree'
+        run: rm -rf build
 
-      - name: 'Download Build Artifacts'
+      - name: 'Download Build Artifacts (Release)'
         uses: actions/download-artifact@v7
         with:
-          run-id: ${{ github.event.workflow_run.id }}
-          name: reckon-build-ubuntu-latest-clang-Release
-          path: .
+          name: reckon-build-Linux-Clang-Release
+          path: build
 
       - name: 'Perform Static Code Analysis (Clang-Tidy)'
         run: bash test.sh --lint
 
   test-sanitizers:
-    name: 'Test With Sanitizers'
+    name: 'Sanitizers'
     runs-on: ubuntu-latest
     env:
       CC: gcc
@@ -131,8 +145,54 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v6
 
+      - name: Cache Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v5
+        with:
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          restore-keys: |
+            cmake-deps-src-
+          enableCrossOsArchive: true
+          path: ~/.cache/cmake_deps_src
+
       - name: 'Build With Sanitizers Enabled'
         run: bash build.sh --sanitizers
 
       - name: 'Execute Test Suite'
         run: bash test.sh
+
+  test-coverage:
+    name: 'Coverage'
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Install lcov'
+        run: sudo apt-get update && sudo apt-get -y install lcov
+
+      - name: Cache Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v5
+        with:
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          restore-keys: |
+            cmake-deps-src-
+          enableCrossOsArchive: true
+          path: ~/.cache/cmake_deps_src
+
+      - name: 'Build With Coverage Enabled'
+        run: bash build.sh --debug --coverage
+
+      - name: 'Execute Test Suite'
+        run: bash test.sh --coverage
+
+      - name: 'Upload Coverage Report'
+        uses: actions/upload-artifact@v6
+        with:
+          name: reckon-test-coverage
+          path: build/coverage_report/
+          if-no-files-found: error
+          retention-days: 1

@@ -1,0 +1,17 @@
+name: 'CI'
+on:
+  push:
+    branches: ['**']
+    tags-ignore: ['v*']
+
+jobs:
+  build:
+    name: 'Build'
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+
+  test:
+    name: 'Test'
+    needs: build
+    uses: ./.github/workflows/test.yaml
+    secrets: inherit
