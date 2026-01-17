@@ -54,6 +54,9 @@ function(setup_scount_packaging install_component)
     set(CPACK_PACKAGE_NAME "scount")
     set(CPACK_PACKAGE_DIRECTORY "${PROJECT_BINARY_DIR}/dist")
     set(PACKAGE_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+    if(PACKAGE_ARCH STREQUAL "AMD64" OR PACKAGE_ARCH STREQUAL "amd64")
+        set(PACKAGE_ARCH "x86_64")
+    endif()
     set(
         CPACK_PACKAGE_FILE_NAME
         "${CPACK_PACKAGE_NAME}-${CMAKE_PROJECT_VERSION}-${PACKAGE_ARCH}"
