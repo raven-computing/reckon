@@ -141,20 +141,6 @@ if [[ $ARG_COVERAGE == true ]]; then
   fi
 fi
 
-# Check if the build dir is empty
-if [ -z "$(ls -A build)" ]; then
-  # Build the tests first
-  build_args=();
-  if [[ $ARG_COVERAGE == true ]]; then
-    build_args+=("--debug");
-    build_args+=("--coverage");
-  fi
-  echo "Building project before test run execution";
-  if ! bash build.sh "${build_args[@]}"; then
-    exit $?;
-  fi
-fi
-
 if [[ $ARG_CHECK == true ]]; then
   echo "Performing source code checks";
   check_failed=false;
@@ -185,6 +171,20 @@ if [[ $ARG_CHECK == true ]]; then
   echo "Consistency of test code: OK";
   if [[ $ARG_ALL == false ]]; then
     exit 0;
+  fi
+fi
+
+# Check if the build dir is empty
+if [ -z "$(ls -A build)" ]; then
+  # Build the tests first
+  build_args=();
+  if [[ $ARG_COVERAGE == true ]]; then
+    build_args+=("--debug");
+    build_args+=("--coverage");
+  fi
+  echo "Building project before test run execution";
+  if ! bash build.sh "${build_args[@]}"; then
+    exit $?;
   fi
 fi
 
