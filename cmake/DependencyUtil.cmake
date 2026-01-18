@@ -287,6 +287,8 @@ function(dependency)
         endif()
     endif()
 
+    set(DEP_ARGS_DEPENDENCY_VERBOSE ON)
+
     if(DEP_ARGS_DEPENDENCY_VERBOSE)
         set(FETCHCONTENT_QUIET OFF)
     endif()
@@ -371,7 +373,7 @@ function(dependency)
         AND DEFINED ENV{HOME})
 
         set(DEP_CACHE_PREFIX "$ENV{HOME}")
-        if(MSYS)
+        if(MSYS AND DEFINED $ENV{USERNAME})
             set(DEP_CACHE_PREFIX "/c/Users/$ENV{USERNAME}")
         endif()
         set(DEP_CACHE_SRC_BASE "${DEP_CACHE_PREFIX}/.cache/cmake_deps_src")
@@ -381,6 +383,12 @@ function(dependency)
         set(OPT_DEP_CACHE_SRC_PATH SOURCE_DIR)
         set(DEP_CACHE_SRC_PATH "${DEP_CACHE_SRC_BASE}/${DEP_CACHE_SRC_UNIT}")
         file(TO_CMAKE_PATH "${DEP_CACHE_SRC_PATH}" DEP_CACHE_SRC_PATH)
+        if(DEP_ARGS_DEPENDENCY_VERBOSE)
+            message(
+                STATUS
+                "Using dependency source cache at '${DEP_CACHE_SRC_PATH}'"
+            )
+        endif()
 
         # Check if dependency sources are in the cache
         if(EXISTS "${DEP_CACHE_SRC_PATH}")
