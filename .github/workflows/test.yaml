@@ -4,9 +4,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  test-checks:
+    name: 'Checks'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Execute Consistency Checks'
+        run: bash test.sh --check
+
   test:
     name: '${{ matrix.os_label }}, ${{ matrix.c_compiler_label }}, ${{ matrix.build_type }}'
     runs-on: ${{ matrix.os }}
+    needs: test-checks
     strategy:
       fail-fast: false
       matrix:
@@ -88,19 +99,10 @@ jobs:
       - name: 'Execute Functionality Tests'
         run: bash test.sh --functionality
 
-  test-checks:
-    name: 'Checks'
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v6
-
-      - name: 'Execute Consistency Checks'
-        run: bash test.sh --check
-
   test-lint:
     name: 'Lint'
     runs-on: ubuntu-latest
+    needs: test-checks
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v6
@@ -109,11 +111,11 @@ jobs:
         id: cache-cmake-deps
         uses: actions/cache@v5
         with:
-          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake.sha256') }}
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: ~/.cache/cmake_deps_src
+          path: .cache/cmake_deps_src
 
       - name: 'Download Build Artifacts (Debug)'
         uses: actions/download-artifact@v7
@@ -139,6 +141,7 @@ jobs:
   test-sanitizers:
     name: 'Sanitizers'
     runs-on: ubuntu-latest
+    needs: test
     env:
       CC: gcc
     steps:
@@ -149,11 +152,11 @@ jobs:
         id: cache-cmake-deps
         uses: actions/cache@v5
         with:
-          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake.sha256') }}
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: ~/.cache/cmake_deps_src
+          path: .cache/cmake_deps_src
 
       - name: 'Build With Sanitizers Enabled'
         run: bash build.sh --sanitizers
@@ -164,6 +167,7 @@ jobs:
   test-coverage:
     name: 'Coverage'
     runs-on: ubuntu-latest
+    needs: test
     env:
       CC: gcc
     steps:
@@ -177,11 +181,11 @@ jobs:
         id: cache-cmake-deps
         uses: actions/cache@v5
         with:
-          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake') }}
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake.sha256') }}
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: ~/.cache/cmake_deps_src
+          path: .cache/cmake_deps_src
 
       - name: 'Build With Coverage Enabled'
         run: bash build.sh --debug --coverage
