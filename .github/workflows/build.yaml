@@ -81,6 +81,9 @@ jobs:
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-cmake
 
+      - name: 'Create Cache Dir'
+        run: mkdir -p cmake_deps_src
+
       - name: Cache Dependencies
         id: cache-cmake-deps
         uses: actions/cache@v5
