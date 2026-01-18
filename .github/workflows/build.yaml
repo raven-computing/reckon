@@ -89,7 +89,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: ${{ runner.os == 'Windows' && format('{0}\\.cache\\cmake_deps_src', env.USERPROFILE) || '~/.cache/cmake_deps_src' }}
+          path: ${{ runner.os == 'Windows' && 'C:\\Users\\runneradmin\\.cache\\cmake_deps_src' || '~/.cache/cmake_deps_src' }}
 
       - name: Set Arguments
         run: |
