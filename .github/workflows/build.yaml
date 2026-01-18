@@ -82,7 +82,7 @@ jobs:
             mingw-w64-ucrt-x86_64-cmake
 
       - name: 'Create Cache Dir'
-        run: mkdir -p cmake_deps_src
+        run: mkdir -p .cache/cmake_deps_src
 
       - name: Cache Dependencies
         id: cache-cmake-deps
@@ -92,7 +92,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: cmake_deps_src
+          path: .cache/cmake_deps_src
 
       - name: Set Arguments
         run: |
@@ -101,7 +101,7 @@ jobs:
           if [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.c_compiler }}" == "gcc" ]]; then echo "CMAKE_GENERATOR=MinGW Makefiles" >> $GITHUB_ENV; fi
 
       - name: Check Path
-        run: echo "$HOME" && ls -lha ${{ github.workspace }}
+        run: echo "$HOME" && ls -lha || true
 
       - name: 'CMake: Configure'
         run: bash build.sh --config $DEBUG_ARG
