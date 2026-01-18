@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Raven Computing
+# Copyright (C) 2026 Raven Computing
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,7 +87,10 @@ include(FetchContent)
 # the HOME environment variable is set. Sources are cached under
 # the '${HOME}/.cache/cmake_deps_src' directory, although this should be
 # considered an implementation detail and may change in the future without
-# further notice. The caching of the sources for a specific dependency can be
+# further notice. Further, if a cache directory inside the project source tree
+# already exists, under '${CMAKE_CURRENT_SOURCE_DIR}/.cache/cmake_deps_src',
+# the project-specific cache will be used instead of the one in the user's home
+# directory. The caching of the sources for a specific dependency can be
 # disabled by using the DEPENDENCY_NO_CACHE option argument. To generally
 # disable the caching of all dependency sources, set the environment variable
 # A_CMAKE_DEPENDENCY_NO_CACHE to the value '1'.
@@ -370,7 +373,12 @@ function(dependency)
         AND DEP_ARGS_DEPENDENCY_VERSION
         AND DEFINED ENV{HOME})
 
-        set(DEP_CACHE_SRC_BASE "$ENV{HOME}/.cache/cmake_deps_src")
+        set(DEP_CACHE_PREFIX "$ENV{HOME}")
+        if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.cache/cmake_deps_src")
+            set(DEP_CACHE_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
+        endif()
+
+        set(DEP_CACHE_SRC_BASE "${DEP_CACHE_PREFIX}/.cache/cmake_deps_src")
         set(DEP_CACHE_SRC_UNIT
             "${DEP_ARGS_DEPENDENCY_NAME}/${DEP_ARGS_DEPENDENCY_VERSION}")
 
