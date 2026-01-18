@@ -373,9 +373,13 @@ function(dependency)
         AND DEFINED ENV{HOME})
 
         set(DEP_CACHE_PREFIX "$ENV{HOME}")
-        if(DEFINED ENV{MSYSTEM} AND DEFINED ENV{USERNAME})
-            set(DEP_CACHE_PREFIX "/c/Users/$ENV{USERNAME}")
+        if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.cache/cmake_deps_src")
+            set(DEP_CACHE_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
         endif()
+
+        # if(DEFINED ENV{MSYSTEM} AND DEFINED ENV{USERNAME})
+        #     set(DEP_CACHE_PREFIX "/c/Users/$ENV{USERNAME}")
+        # endif()
         set(DEP_CACHE_SRC_BASE "${DEP_CACHE_PREFIX}/.cache/cmake_deps_src")
         set(DEP_CACHE_SRC_UNIT
             "${DEP_ARGS_DEPENDENCY_NAME}/${DEP_ARGS_DEPENDENCY_VERSION}")
