@@ -373,7 +373,6 @@ function(dependency)
         AND DEFINED ENV{HOME})
 
         set(DEP_CACHE_PREFIX "$ENV{HOME}")
-        message(STATUS "----> $ENV{USERNAME}")
         # if(MSYS AND DEFINED $ENV{USERNAME})
         #     set(DEP_CACHE_PREFIX "/c/Users/$ENV{USERNAME}")
         # endif()
