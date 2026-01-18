@@ -6,6 +6,9 @@ build/
 .settings/
 .project
 
+# Cache directories
+.cache/
+
 # CMake files
 .cmakeprefixpath
 
