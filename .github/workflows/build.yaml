@@ -98,7 +98,7 @@ jobs:
           if [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.c_compiler }}" == "gcc" ]]; then echo "CMAKE_GENERATOR=MinGW Makefiles" >> $GITHUB_ENV; fi
 
       - name: Check Path
-        run: echo "$HOME" && ls -lha ~/.cache/cmake_deps_src && echo "-->" && ls -lha /c/Users/$USERNAME
+        run: echo "$HOME" && ls -lha '/c/Users/runneradmin/~/.cache/cmake_deps_src' && echo "-->" && ls -lha /c/Users/$USERNAME
 
       - name: 'CMake: Configure'
         run: bash build.sh --config $DEBUG_ARG
