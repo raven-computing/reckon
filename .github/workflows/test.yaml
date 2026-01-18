@@ -115,7 +115,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: .cache/cmake_deps_src
+          path: cmake_deps_src
 
       - name: 'Download Build Artifacts (Debug)'
         uses: actions/download-artifact@v7
@@ -156,7 +156,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: .cache/cmake_deps_src
+          path: cmake_deps_src
 
       - name: 'Build With Sanitizers Enabled'
         run: bash build.sh --sanitizers
@@ -185,7 +185,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: .cache/cmake_deps_src
+          path: cmake_deps_src
 
       - name: 'Build With Coverage Enabled'
         run: bash build.sh --debug --coverage

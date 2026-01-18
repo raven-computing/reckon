@@ -89,7 +89,7 @@ jobs:
           restore-keys: |
             cmake-deps-src-
           enableCrossOsArchive: true
-          path: .cache/cmake_deps_src
+          path: cmake_deps_src
 
       - name: Set Arguments
         run: |
