@@ -200,6 +200,24 @@ else
   echo "Could not compress man page";
 fi
 
+DEPENDENCIES_HASH="";
+DEPENDENCIES_LOCK="";
+if [ -f "Dependencies.cmake" ]; then
+  if [ -f "Dependencies.cmake.sha256" ]; then
+    DEPENDENCIES_LOCK="$(cat Dependencies.cmake.sha256)";
+  else
+    echo "No dependencies lock file found. Initializing lock file";
+  fi
+  DEPENDENCIES_HASH="$(cat Dependencies.cmake |tr -d '\r' |tr -d '\n' |sha256sum)";
+  DEPENDENCIES_HASH="${DEPENDENCIES_HASH:0:64}";
+  if [[ "$DEPENDENCIES_HASH" != "$DEPENDENCIES_LOCK" ]]; then
+    if [ -n "$DEPENDENCIES_LOCK" ]; then
+      echo "Declared dependencies have changed. Writing lock file";
+    fi
+    echo -n "$DEPENDENCIES_HASH" > "Dependencies.cmake.sha256";
+  fi
+fi
+
 cd "build";
 
 BUILD_CONFIGURATION="Release";
