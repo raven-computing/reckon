@@ -159,7 +159,7 @@ jobs:
           path: .cache/cmake_deps_src
 
       - name: 'Build With Sanitizers Enabled'
-        run: bash build.sh --sanitizers
+        run: bash build.sh --debug --sanitizers
 
       - name: 'Execute Test Suite'
         run: bash test.sh
