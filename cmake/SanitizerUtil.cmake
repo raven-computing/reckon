@@ -42,10 +42,11 @@ function(add_sanitizers target_name)
         "-fno-omit-frame-pointer"
     )
     set(
-        SAN_LINK_FLAGS
+        SAN_LINK_FLAGS_LINUX
         "-fsanitize=address" "-fsanitize=leak" "-fsanitize=undefined"
     )
-    set(SAN_COMPILE_FLAGS_WINDOWS "/fsanitize=address" "/Oy-")
+    set(SAN_COMPILE_FLAGS_WINDOWS "/fsanitize=address" "/Oy-" "/Zi")
+    set(SAN_LINK_FLAGS_WINDOWS "/INCREMENTAL:NO")
 
     target_compile_options(
         ${target_name}
@@ -56,7 +57,8 @@ function(add_sanitizers target_name)
     target_link_options(
         ${target_name}
         PUBLIC
-        $<$<NOT:$<PLATFORM_ID:Windows>>:${SAN_LINK_FLAGS}>
+        $<$<PLATFORM_ID:Linux>:${SAN_LINK_FLAGS_LINUX}>
+        $<$<PLATFORM_ID:Windows>:${SAN_LINK_FLAGS_WINDOWS}>
     )
 
 endfunction()
