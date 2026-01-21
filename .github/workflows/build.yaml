@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: 'Setup MSYS2'
+      - name: 'Set up MSYS2'
         if: runner.os == 'Windows' && matrix.c_compiler == 'gcc'
         uses: msys2/setup-msys2@v2
         with:
