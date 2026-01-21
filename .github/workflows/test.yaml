@@ -139,11 +139,30 @@ jobs:
         run: bash test.sh --lint
 
   test-sanitizers:
-    name: 'Sanitizers'
-    runs-on: ubuntu-latest
+    name: 'Sanitizers, ${{ matrix.os_label }}'
+    runs-on: ${{ matrix.os }}
     needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux (GCC)
+          - os: ubuntu-latest
+            os_label: Linux
+            c_compiler: gcc
+
+          # Windows (MSVC)
+          - os: windows-latest
+            os_label: Windows
+            c_compiler: msvc
+
     env:
-      CC: gcc
+      CC: ${{ matrix.c_compiler }}
+
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v6
