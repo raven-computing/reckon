@@ -159,10 +159,6 @@ jobs:
     env:
       CC: ${{ matrix.c_compiler }}
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v6
@@ -177,10 +173,18 @@ jobs:
           enableCrossOsArchive: true
           path: .cache/cmake_deps_src
 
+      - name: 'Set up Developer Command Prompt'
+        if: runner.os == 'Windows'
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+
       - name: 'Build With Sanitizers Enabled'
+        shell: bash
         run: bash build.sh --debug --sanitizers
 
       - name: 'Execute Test Suite'
+        shell: bash
         run: bash test.sh
 
   test-coverage:
