@@ -118,6 +118,10 @@ function update_version() {
   if [ -n "$version_change_index" ]; then
     local version_new_value=$(( ${version_array[$version_change_index]} + 1 ));
     version_array[version_change_index]="$version_new_value";
+    while (( version_change_index < 2 )); do
+      ((++version_change_index));
+      version_array[version_change_index]="0";
+    done
   fi
   local new_version="${version_array[0]}.${version_array[1]}.${version_array[2]}";
   local new_version_base="$new_version";
@@ -233,7 +237,7 @@ function bump_version() {
   write_version;
   echo "The new version is ${NEW_VERSION}";
   echo "Committing version change";
-  git add . && git commit -m "Bump version";
+  git add . && git commit -m "Bump version" --no-signoff;
   if (( $? != 0 )); then
     echo "Error: Failed to commit changes";
     exit 1;
