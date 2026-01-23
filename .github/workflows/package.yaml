@@ -1,0 +1,79 @@
+name: 'Package'
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    name: 'Build Docs'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Install Doxygen'
+        run: |
+          wget -q -O /tmp/doxygen.tar.gz https://github.com/doxygen/doxygen/releases/download/Release_1_14_0/doxygen-1.14.0.linux.bin.tar.gz &&
+          tar -C /tmp -xzf /tmp/doxygen.tar.gz &&
+          sudo make -C /tmp/doxygen-* install &&
+          rm -r /tmp/doxygen-* &&
+          rm /tmp/doxygen.tar.gz
+
+      - name: 'Build Documentation'
+        run: bash build.sh --docs
+
+      - name: 'Upload Build Artifacts'
+        uses: actions/upload-artifact@v6
+        with:
+          name: reckon-build-docs
+          path: build/docs/html/
+          if-no-files-found: error
+          retention-days: 1
+
+  package:
+    name: '${{ matrix.os_label }}'
+    needs: build-docs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux (GCC)
+          - os: ubuntu-22.04
+            os_label: Linux
+            c_compiler: gcc
+
+          # Windows (MSVC)
+          - os: windows-2022
+            os_label: Windows
+            c_compiler: msvc
+
+    env:
+      CC: ${{ matrix.c_compiler }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Build Release Binaries'
+        run: bash build.sh
+
+      - name: 'Execute Test Suite'
+        run: bash test.sh
+
+      - name: 'Create Package'
+        run: bash build.sh --package
+
+      - name: 'Upload Package'
+        uses: actions/upload-artifact@v6
+        with:
+          name: reckon-package-${{ matrix.os_label }}
+          path: |
+            build/dist/*.deb
+            build/dist/*.exe
+          if-no-files-found: error
+          retention-days: 1

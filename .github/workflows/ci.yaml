@@ -2,6 +2,7 @@ name: 'CI'
 on:
   push:
     branches: ['**']
+    branches-ignore: ['staging']
     tags-ignore: ['v*']
 
 jobs:

@@ -1,0 +1,10 @@
+name: 'Staging'
+on:
+  push:
+    branches: ['staging']
+    tags-ignore: ['v*']
+
+jobs:
+  package:
+    name: 'Package'
+    uses: ./.github/workflows/package.yaml
