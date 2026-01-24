@@ -8,6 +8,11 @@ Handles release versions of the Reckon project.
 
 ${USAGE}
 
+Run this script from a development version of the master branch to create a release candidate.
+The release candidate is committed and pushed to the staging branch. You can then check the
+built packages and finally confirm the release by running this script again from the staging
+branch, which will merge it into master and create the public release.
+
 Options:
 
   [--bump-version] <IDENT> Bump the project version, where IDENT is either 'M' for major,
@@ -86,12 +91,34 @@ fi
 
 readonly FILE_VERSION="VERSION";
 readonly STAGING_BRANCH="staging";
+readonly FILE_CHANGELOG="CHANGELOG.md";
+readonly FILE_RELEASE_NOTES=".github/release-notes.md";
 
 VERSION="?.?.?";
 VERSION_BASE="$VERSION";
 IS_DEV_VERSION=false;
 NEW_VERSION="";
 NEW_VERSION_BASE="";
+
+function prompt_confirmation() {
+  local answer="";
+  read -p "[INPUT] " answer;
+  if [ -z "$answer" ]; then
+    return 1;
+  fi
+  case "$answer" in
+    1|YES|yes|Yes|Y|y|true|True)
+    return 0;
+    ;;
+    0|NO|no|No|N|n|false|False)
+    return 1;
+    ;;
+    *)
+    echo "Invalid input";
+    return 1;
+    ;;
+  esac
+}
 
 function read_version() {
   if [ -r "$FILE_VERSION" ]; then
@@ -100,7 +127,7 @@ function read_version() {
   fi
   local version_re="^[0-9]+\.[0-9]+\.[0-9]+(-dev)?$";
   if ! [[ $VERSION =~ $version_re ]]; then
-    echo "Warning: Version specified in file '${FILE_VERSION}' has an invalid format. Aborting.";
+    echo "Warning: Version specified in file '${FILE_VERSION}' has an invalid format. Abort.";
     exit 1;
   fi
   IS_DEV_VERSION=false;
@@ -139,6 +166,38 @@ function write_version() {
 }
 
 function commit_release_candidate() {
+  read_version;
+  IS_DEV_VERSION=false;
+  update_version;
+  if [ -r "$FILE_CHANGELOG" ]; then
+    local changelog_top=$(head -n 1 "$FILE_CHANGELOG");
+    if [[ "$changelog_top" != "#### ${NEW_VERSION}" ]]; then
+      echo "Warning: No log entry found for the new version at the top of the changelog.";
+      echo "Missing entry for version $NEW_VERSION";
+      echo "Please check file '${FILE_CHANGELOG}'";
+      exit 1;
+    fi
+  fi
+  if [ -r "$FILE_RELEASE_NOTES" ]; then
+    local release_notes_top=$(head -n 1 "$FILE_RELEASE_NOTES");
+    if [[ "$release_notes_top" != "#### Release notes:" ]]; then
+      echo "Malformed release notes file.";
+      echo "Please check file '${FILE_RELEASE_NOTES}'";
+      exit 1;
+    fi
+    local release_notes_bottom=$(tail -n 1 "$FILE_RELEASE_NOTES");
+    if [[ "$release_notes_bottom" != *"/blob/v${NEW_VERSION}/CHANGELOG.md)." ]]; then
+      echo "Release notes file is referring to wrong version.";
+      echo "Please check file '${FILE_RELEASE_NOTES}'";
+      exit 1;
+    fi
+  fi
+  echo "You are about to create a release candidate for version ${NEW_VERSION}";
+  echo "Do you want to continue? (y/N)";
+  if ! prompt_confirmation; then
+    echo "Abort";
+    exit 2;
+  fi
   echo "Creating a release candidate";
   if git show-ref --verify --quiet "refs/heads/${STAGING_BRANCH}" \
     || git ls-remote --exit-code --heads origin "$STAGING_BRANCH" &> /dev/null; then
@@ -153,25 +212,26 @@ function commit_release_candidate() {
     echo "Error: Failed to create '${STAGING_BRANCH}' branch";
     exit 1;
   fi
-  read_version;
-  IS_DEV_VERSION=false;
-  update_version;
   echo "Setting version of release candidate to ${NEW_VERSION}";
   write_version;
   echo "Committing version change";
-  if ! git commit -a -m "Release v${NEW_VERSION}-rc"; then
+  if ! git commit -a -m "Release v${NEW_VERSION}" --no-signoff; then
     echo "Error: Failed to commit changes";
     exit 1;
   fi
   echo "Pushing staging branch";
-  if ! git push --set-upstream origin "${STAGING_BRANCH}"; then
-    echo "Error: Failed to commit changes";
+  if ! git push --set-upstream origin "${STAGING_BRANCH}" 1> /dev/null; then
+    echo "Error: Failed to push changes";
     exit 1;
   fi
+  local workflow_label="Staging Workflow";
+  local workflow_url="https://github.com/raven-computing/reckon/actions/workflows/staging.yaml";
+  local workflow_link="\e]8;;${workflow_url}\e\\\\${workflow_label}\e]8;;\e\\\\";
   echo "";
   echo "The release candidate for v${NEW_VERSION} has been prepared.";
   echo "The current branch is '${STAGING_BRANCH}'.";
-  echo "You can now perform manual checks and inspect automated builds and tests on GitHub.";
+  echo "You can now perform manual checks and inspect automated packaging on GitHub.";
+  echo -e "Check the ${workflow_link}";
   echo "";
   echo "To CANCEL the release, delete the staging branch.";
   echo "To CONFIRM the release, run the release.sh again while on the staging branch.";
@@ -179,12 +239,18 @@ function commit_release_candidate() {
 }
 
 function commit_release() {
+  read_version;
+  echo "You are about to release version ${VERSION} of Reckon";
+  echo "Do you confirm that this version should be released? (y/N)";
+  if ! prompt_confirmation; then
+    echo "Abort";
+    exit 2;
+  fi
   echo "Committing release version";
   if ! git ls-remote --exit-code --heads origin "$STAGING_BRANCH" &> /dev/null; then
     echo "Error: No remote branch found for '${STAGING_BRANCH}'";
     exit 1;
   fi
-  read_version;
   echo "Switching to master branch";
   if ! git checkout master; then
     echo "Error: Failed to switch to master branch";
@@ -211,21 +277,28 @@ function commit_release() {
     echo "Error: Failed to tag release-version";
     exit 1;
   fi
+  echo "Running post-release actions";
+  bump_version "p";
+  echo "Post-release actions completed";
   echo "Pushing release";
   git push && git push origin "$release_tag";
   if (( $? != 0 )); then
     echo "Failed to push release";
     exit 1;
   fi
+  echo "";
+  echo "Reckon v${VERSION} has been released";
+  echo "";
 }
 
 function bump_version() {
+  local ident="$1";
   local version_ident_index="";
-  if [[ "$arg_opt_arg" == "M" ]]; then
+  if [[ "$ident" == "M" ]]; then
     version_ident_index=0;
-  elif [[ "$arg_opt_arg" == "m" ]]; then
+  elif [[ "$ident" == "m" ]]; then
     version_ident_index=1;
-  elif [[ "$arg_opt_arg" == "p" ]]; then
+  elif [[ "$ident" == "p" ]]; then
     version_ident_index=2;
   else
     echo "Error: Argument for option '--bump-version' must be one of ('M', 'm', 'p')";
@@ -247,7 +320,7 @@ function bump_version() {
 CURRENT_BRANCH="$(git branch --show-current)";
 
 if [[ $ARG_BUMP_VERSION == true ]]; then
-  bump_version;
+  bump_version "$arg_opt_arg";
   exit 0;
 fi
 
@@ -256,7 +329,7 @@ if [[ "$CURRENT_BRANCH" == "master" ]]; then
 elif [[ "$CURRENT_BRANCH" == "staging" ]]; then
   commit_release;
 else
-  echo "Warning: Can only operate from within the 'master' or 'staging' branch. Aborting.";
+  echo "Warning: Can only operate from within the 'master' or '${STAGING_BRANCH}' branch. Abort.";
   exit 1;
 fi
 
