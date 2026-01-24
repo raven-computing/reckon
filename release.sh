@@ -220,7 +220,7 @@ function commit_release_candidate() {
     exit 1;
   fi
   echo "Pushing staging branch";
-  if ! git push --set-upstream origin "${STAGING_BRANCH}" 1> /dev/null; then
+  if ! git push --set-upstream origin "${STAGING_BRANCH}" &> /dev/null; then
     echo "Error: Failed to push changes";
     exit 1;
   fi
@@ -231,7 +231,7 @@ function commit_release_candidate() {
   echo "The release candidate for v${NEW_VERSION} has been prepared.";
   echo "The current branch is '${STAGING_BRANCH}'.";
   echo "You can now perform manual checks and inspect automated packaging on GitHub.";
-  echo -e "Check the ${workflow_link}";
+  echo -e "Check the ${workflow_link}.";
   echo "";
   echo "To CANCEL the release, delete the staging branch.";
   echo "To CONFIRM the release, run the release.sh again while on the staging branch.";
@@ -284,6 +284,19 @@ function commit_release() {
   git push && git push origin "$release_tag";
   if (( $? != 0 )); then
     echo "Failed to push release";
+    exit 1;
+  fi
+  echo "Deleting staging branch"
+  if ! git push origin --delete "$STAGING_BRANCH"; then
+    echo "Failed to delete remote staging branch";
+    exit 1;
+  fi
+  if ! git branch -D "$STAGING_BRANCH"; then
+    echo "Failed to delete local staging branch";
+    exit 1;
+  fi
+  if ! git fetch --prune; then
+    echo "Failed to sync";
     exit 1;
   fi
   echo "";
