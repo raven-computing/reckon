@@ -8,3 +8,32 @@ jobs:
   package:
     name: 'Package'
     uses: ./.github/workflows/package.yaml
+
+  create-release:
+    name: 'Create Release'
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: 'Create Distribution Directory'
+        run: mkdir -p build/dist
+
+      - name: 'Download Package (Linux)'
+        uses: actions/download-artifact@v7
+        with:
+          name: reckon-package-Linux
+          path: build/dist
+
+      - name: 'Download Package (Windows)'
+        uses: actions/download-artifact@v7
+        with:
+          name: reckon-package-Windows
+          path: build/dist
+
+      - name: 'Create Release'
+        run: gh release create $RELEASE_VERSION --title $RELEASE_VERSION --notes-file ".github/release-notes.md" ./build/dist/*
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RELEASE_VERSION: ${{github.ref_name}}
