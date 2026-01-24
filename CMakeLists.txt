@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 
 project(
     reckon
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "A Tool to Count Logical Lines of Code"
     HOMEPAGE_URL "https://github.com/raven-computing/reckon"
     LANGUAGES "C"
