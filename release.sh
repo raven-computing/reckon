@@ -278,6 +278,7 @@ function commit_release() {
     exit 1;
   fi
   echo "Running post-release actions";
+  echo -n "-dev" >> "$FILE_VERSION";
   bump_version "p";
   echo "Post-release actions completed";
   echo "Pushing release";
