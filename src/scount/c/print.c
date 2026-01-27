@@ -447,6 +447,9 @@ static void prSummaryRows(
             case RCN_TEXT_UNFORMATTED:
                 label = "Plain Text";
                 break;
+            case RCN_TEXT_MARKDOWN:
+                label = "MarkDown";
+                break;
             case RCN_LANG_C:
                 label = "C";
                 break;

@@ -79,6 +79,9 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_JAVA;
+    } else if (strcmp(extension, "md") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_MARKDOWN;
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_UNFORMATTED;

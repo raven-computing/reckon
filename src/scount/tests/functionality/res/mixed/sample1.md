@@ -1,0 +1,1 @@
+This is a first sample with MarkDown-formatted text.
