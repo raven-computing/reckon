@@ -1,1 +1,1 @@
-This is a second sample with MarkDown-formatted text.
+This is a second sample with Markdown-formatted text.
