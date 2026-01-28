@@ -50,6 +50,7 @@ typedef struct AppArgs {
     char* errorMessage;  // Error message in case of invalid input
     int indexUnknown;    // Index into `argv` when unknown arg found, or zero
     bool annotateCounts; // Option: `--annotate-counts`
+    bool stopOnError;    // Option: `--stop-on-error`
     bool verbose;        // Option: `--verbose`
     bool version;        // Option: `-#|--version`
     bool versionShort;   // Option: `-#`

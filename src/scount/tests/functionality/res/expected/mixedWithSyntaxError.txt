@@ -2,8 +2,8 @@ Directory: mixedWithSyntaxError
 Scanned files: 3
 
   o---------- File ----------o--- LLC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
-  | CorrectFile.java         |     5     |    12     |    33     |    273    |    273    |
-  | correct_file.txt         |     0     |     1     |    20     |    109    |    109    |
+  | 01_CorrectFile.java      |     5     |    12     |    33     |    273    |    273    |
+  | 03_correct_file.txt      |     0     |     1     |    20     |    109    |    109    |
   o--------------------------o-----------o-----------o-----------o-----------o-----------o
 
 Summary:

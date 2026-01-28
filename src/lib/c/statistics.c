@@ -272,6 +272,10 @@ static inline bool count(
     if (!options.keepFileContent) {
         freeSourceFileContent(file);
     }
+    if (!ok && options.stopOnError) {
+        stats->state = result->state;
+        stats->state.ok = false;
+    }
 
     RCN_LOG_DBG("Done processing file:")
     RCN_LOG_DBG(file->path)
