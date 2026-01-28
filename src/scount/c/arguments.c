@@ -28,6 +28,8 @@ AppArgs parseArgs(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--annotate-counts") == 0) {
             args.annotateCounts = true;
+        } else if (strcmp(argv[i], "--stop-on-error") == 0) {
+            args.stopOnError = true;
         } else if (strcmp(argv[i], "--verbose") == 0) {
             args.verbose = true;
         } else if (strcmp(argv[i], "--help") == 0
@@ -58,7 +60,7 @@ AppArgs parseArgs(int argc, char** argv) {
 }
 
 void showUsage(void) {
-    logI("Usage: scount [--verbose] [--annotate-counts] <PATH>");
+    logI("Usage: scount [--verbose] [--annotate-counts] [--stop-on-error] <PATH>");
 }
 
 void showVersion(AppArgs args) {
@@ -94,6 +96,8 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--annotate-counts] Mark counted logical lines and output the result.");
     logI("                      This option can only be used on a single file input.");
+    logI(" ");
+    logI("  [--stop-on-error]   Stop processing on first error.");
     logI(" ");
     logI("  [--verbose]         Enable verbose output.");
     logI(" ");

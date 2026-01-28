@@ -97,7 +97,10 @@ ExitStatus outputStatistics(AppArgs args) {
         reportInputVerbose(path, stats);
     }
 
-    RcnStatOptions options = {0};
+    RcnStatOptions options = {
+        .stopOnError = args.stopOnError
+    };
+
     rcnCount(stats, options);
 
     const RcnErrorCode errorCode = stats->state.errorCode;
