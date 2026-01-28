@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 3
+#define RECKON_NUM_SUPPORTED_FORMATS 4
 
 /**
  * Macro to create a format option bitmask.
@@ -141,14 +141,19 @@ typedef enum RcnTextFormat {
     RCN_TEXT_UNFORMATTED = 0,
 
     /**
+     * Text formatted in Markdown, as found in files with a '.md' extension.
+     */
+    RCN_TEXT_MARKDOWN = 1,
+
+    /**
      * Source files for the C programming language.
      */
-    RCN_LANG_C = 1,
+    RCN_LANG_C = 2,
 
     /**
      * Source files for the Java programming language.
      */
-    RCN_LANG_JAVA = 2
+    RCN_LANG_JAVA = 3
 
 } RcnTextFormat;
 
