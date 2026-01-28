@@ -318,8 +318,12 @@ if (( ctest_status == 0 )); then
       exit 1;
     fi
     report_label="build/${BUILD_DIR_COV_REPORT}/index.html";
-    report_url="file://${COV_INCL_PATH}/${report_label}";
-    report_link="\e]8;;${report_url}\e\\\\${report_label}\e]8;;\e\\\\";
+    if tty --silent; then
+      report_url="file://${COV_INCL_PATH}/${report_label}";
+      report_link="\e]8;;${report_url}\e\\\\${report_label}\e]8;;\e\\\\";
+    else
+      report_link="$report_label";
+    fi
     echo -e "Wrote HTML report to $report_link";
   fi
 fi
