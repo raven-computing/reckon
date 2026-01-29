@@ -219,6 +219,31 @@ void testCountWithMultipleFilesWhenOneFileHasError(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testCountResultGroupLogicalLineCheckField(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/mixed";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {0};
+    rcnCount(stats, options);
+    TEST_ASSERT_EQUAL_INT(4, stats->count.size);
+    RcnSourceFile* fileJava = &stats->count.files[0];
+    RcnCountResultGroup* resultJava = &stats->count.results[0];
+    TEST_ASSERT_EQUAL_STRING("Source.java", fileJava->name);
+    TEST_ASSERT_TRUE(resultJava->hasLogicalLines);
+    RcnSourceFile* fileC = &stats->count.files[1];
+    RcnCountResultGroup* resultC = &stats->count.results[1];
+    TEST_ASSERT_EQUAL_STRING("source.c", fileC->name);
+    TEST_ASSERT_TRUE(resultC->hasLogicalLines);
+    RcnSourceFile* fileTxt = &stats->count.files[2];
+    RcnCountResultGroup* resultTxt = &stats->count.results[2];
+    TEST_ASSERT_EQUAL_STRING("text.txt", fileTxt->name);
+    TEST_ASSERT_FALSE(resultTxt->hasLogicalLines);
+    RcnSourceFile* fileMd = &stats->count.files[3];
+    RcnCountResultGroup* resultMd = &stats->count.results[3];
+    TEST_ASSERT_EQUAL_STRING("text2.md", fileMd->name);
+    TEST_ASSERT_FALSE(resultMd->hasLogicalLines);
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -229,5 +254,6 @@ int main(void) {
     RUN_TEST(testCountWithFileWhenContentIsNullAndStatusIsFileError);
     RUN_TEST(testCountWhenFileHasUnsupportedFormat);
     RUN_TEST(testCountWithMultipleFilesWhenOneFileHasError);
+    RUN_TEST(testCountResultGroupLogicalLineCheckField);
     return UNITY_END();
 }

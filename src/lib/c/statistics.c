@@ -250,10 +250,11 @@ static inline bool count(
     RCN_LOG_DBG(file->path)
 
     bool ok = false;
+    result->hasLogicalLines = detected.isProgrammingLanguage;
     RcnTextFormat sourceFormat = detected.format;
     ok = ensureFileContent(stats, options, file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
-        if (detected.isProgrammingLanguage) {
+        if (result->hasLogicalLines) {
             ok = countLogicalLines(stats, file, sourceFormat, result);
         }
     }

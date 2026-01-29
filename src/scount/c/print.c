@@ -44,6 +44,7 @@ static const char TABLE_BORDER_VERTICAL_NORMAL = '|';
 static const char TABLE_BORDER_VERTICAL_EMPHASIS = '|';
 static const char TABLE_BORDER_CORNER = 'o';
 static const char* TABLE_PADDING_LEFT = "  ";
+static const char* LABEL_NOT_APPLICABLE = "n/a";
 static const char errorMessage[] = "Error";
 
 #ifdef _WIN32
@@ -119,6 +120,15 @@ static bool ensureCapacity(PrintBuffer* buffer, size_t additional) {
     }
     assert(buffer->text != NULL);
     return true;
+}
+
+static bool hasAnyLogicalLines(const RcnCountStatistics* stats) {
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        if (stats->count.results[i].hasLogicalLines) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -231,6 +241,13 @@ static void prCnt(PrintBuffer* buffer, RcnCount value, int width) {
     prRpt(buffer, ' ', left);
     prStrN(buffer, string, (size_t) written);
     prRpt(buffer, ' ', right);
+}
+
+static void prNotApplicable(PrintBuffer* buffer) {
+    const size_t pad = ((WIDTH_COL1 - strlen(LABEL_NOT_APPLICABLE)) / 2) - 1;
+    prRpt(buffer, ' ', pad);
+    prStr(buffer, LABEL_NOT_APPLICABLE);
+    prRpt(buffer, ' ', pad);
 }
 
 static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
@@ -384,7 +401,11 @@ static void prFileRowData(
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
-    prCnt(buffer, res->logicalLines, WIDTH_COL1);
+    if (res->hasLogicalLines) {
+        prCnt(buffer, res->logicalLines, WIDTH_COL1);
+    } else {
+        prNotApplicable(buffer);
+    }
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
@@ -443,6 +464,7 @@ static void prSummaryRows(
 ) {
     for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
         const char* label = NULL;
+        bool hasLogicalLines = false;
         switch (frmt) {
             case RCN_TEXT_UNFORMATTED:
                 label = "Plain Text";
@@ -452,9 +474,11 @@ static void prSummaryRows(
                 break;
             case RCN_LANG_C:
                 label = "C";
+                hasLogicalLines = true;
                 break;
             case RCN_LANG_JAVA:
                 label = "Java";
+                hasLogicalLines = true;
                 break;
             // LCOV_EXCL_START
             default:
@@ -475,7 +499,11 @@ static void prSummaryRows(
         prChr(buffer, ' ');
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
-        prCnt(buffer, stats->logicalLines[frmt], WIDTH_COL1);
+        if (hasLogicalLines) {
+            prCnt(buffer, stats->logicalLines[frmt], WIDTH_COL1);
+        } else {
+            prNotApplicable(buffer);
+        }
         prChr(buffer, ' ');
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
@@ -506,7 +534,11 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
-    prCnt(buffer, stats->totalLogicalLines, WIDTH_COL1);
+    if (hasAnyLogicalLines(stats)) {
+        prCnt(buffer, stats->totalLogicalLines, WIDTH_COL1);
+    } else {
+        prNotApplicable(buffer);
+    }
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
@@ -540,7 +572,12 @@ PrintBuffer printResultSingle(const RcnCountStatistics* stats) {
     prChr(&buffer, '\n');
     prChr(&buffer, '\n');
     prStr(&buffer, "  Logical Lines of Code (LLC):   ");
-    pr8ld(&buffer, result->logicalLines);
+    if (result->hasLogicalLines) {
+        pr8ld(&buffer, result->logicalLines);
+    } else {
+        prRpt(&buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));
+        prStr(&buffer, LABEL_NOT_APPLICABLE);
+    }
     prChr(&buffer, '\n');
     prStr(&buffer, "  Physical Lines        (PHL):   ");
     pr8ld(&buffer, result->physicalLines);

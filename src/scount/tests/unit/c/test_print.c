@@ -15,6 +15,7 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -50,6 +51,7 @@ static RcnCountStatistics* mkStats(
         stats->count.results[i].words = words;
         stats->count.results[i].characters = characters;
         stats->count.results[i].sourceSize = sourceSize;
+        stats->count.results[i].hasLogicalLines = true;
     }
     stats->logicalLines[RCN_LANG_JAVA] = logical;
     stats->physicalLines[RCN_LANG_JAVA] = physical;
