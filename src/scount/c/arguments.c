@@ -97,7 +97,7 @@ void showHelpText(void) {
     logI("  [--annotate-counts] Mark counted logical lines and output the result.");
     logI("                      This option can only be used on a single file input.");
     logI(" ");
-    logI("  [--stop-on-error]   Stop processing on first error.");
+    logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");
     logI("  [--verbose]         Enable verbose output.");
     logI(" ");
