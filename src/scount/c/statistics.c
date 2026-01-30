@@ -21,7 +21,28 @@
 #include "reckon/reckon.h"
 #include "scount.h"
 
-static void reportError(const char* path, RcnCountStatistics* stats) {
+static void reportFileError(
+    const RcnCountStatistics* stats,
+    const RcnSourceFile* file,
+    const RcnCountResultGroup* result
+) {
+    logE("The following file encountered an error: '%s'", file->path);
+    const char* const statErr = (
+        stats->state.errorMessage
+        ? stats->state.errorMessage
+        : ""
+    );
+    const char* const fileErr = (
+        result->state.errorMessage
+        ? result->state.errorMessage
+        : ""
+    );
+    if (strcmp(fileErr, "") != 0 && strcmp(statErr, fileErr) != 0) {
+        logE("%s (%#04x)", fileErr, result->state.errorCode); // LCOV_EXCL_LINE
+    }
+}
+
+static void reportError(const char* path, const RcnCountStatistics* stats) {
     if (stats->state.errorCode == RCN_ERR_INVALID_INPUT) {
         logE("Invalid input path: '%s'", path);
     } else {
@@ -40,6 +61,15 @@ static void reportError(const char* path, RcnCountStatistics* stats) {
             stats->state.errorCode
         );
         // LCOV_EXCL_STOP
+    }
+    if (stats->count.size > 1) {
+        for (size_t i = 0; i < stats->count.size; ++i) {
+            const RcnCountResultGroup* const result = &stats->count.results[i];
+            if (result->state.errorCode != RCN_ERR_NONE) {
+                reportFileError(stats, &stats->count.files[i], result);
+                break;
+            }
+        }
     }
 }
 
