@@ -125,11 +125,26 @@ function test_scount_with_directory_that_contains_file_with_syntax_error() {
 }
 
 function test_scount_with_file_that_has_syntax_error() {
-  local file="${TEST_RES_DIR}/mixedWithSyntaxError/has_syntax_error.c";
+  local file="${TEST_RES_DIR}/mixedWithSyntaxError/02_has_syntax_error.c";
   run_app "$file";
   assert_exit_status $EXIT_INVALID_INPUT;
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred for: ";
   assert_stderr_contains "${file}";
   assert_stderr_contains "Syntax error detected in source code (0x04)";
+}
+
+function test_scount_with_stop_on_error_option() {
+  run_app --stop-on-error "${TEST_RES_DIR}/mixedWithSyntaxError";
+  assert_exit_status $EXIT_INVALID_INPUT;
+  assert_stdout_is_empty;
+  assert_stderr_contains "An error has occurred";
+  assert_stderr_contains "Syntax error detected in source code";
+}
+
+function test_scount_with_valid_directory_input_and_stop_on_error_option() {
+  run_app --stop-on-error "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_multiple_files.txt";
+  assert_stderr_is_empty;
 }
