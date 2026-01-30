@@ -250,6 +250,18 @@ static void prNotApplicable(PrintBuffer* buffer) {
     prRpt(buffer, ' ', pad);
 }
 
+static void prLogicalLineCount(
+    PrintBuffer* buffer,
+    bool hasLogicalLines,
+    RcnCount value
+) {
+    if (hasLogicalLines) {
+        prCnt(buffer, value, WIDTH_COL1);
+    } else {
+        prNotApplicable(buffer);
+    }
+}
+
 static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
     assert(label != NULL);
     const int length = (int) strlen(label);
@@ -401,11 +413,7 @@ static void prFileRowData(
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
-    if (res->hasLogicalLines) {
-        prCnt(buffer, res->logicalLines, WIDTH_COL1);
-    } else {
-        prNotApplicable(buffer);
-    }
+    prLogicalLineCount(buffer, res->hasLogicalLines, res->logicalLines);
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
@@ -499,11 +507,7 @@ static void prSummaryRows(
         prChr(buffer, ' ');
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
-        if (hasLogicalLines) {
-            prCnt(buffer, stats->logicalLines[frmt], WIDTH_COL1);
-        } else {
-            prNotApplicable(buffer);
-        }
+        prLogicalLineCount(buffer, hasLogicalLines, stats->logicalLines[frmt]);
         prChr(buffer, ' ');
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
@@ -534,11 +538,11 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
-    if (hasAnyLogicalLines(stats)) {
-        prCnt(buffer, stats->totalLogicalLines, WIDTH_COL1);
-    } else {
-        prNotApplicable(buffer);
-    }
+    prLogicalLineCount(
+        buffer,
+        hasAnyLogicalLines(stats),
+        stats->totalLogicalLines
+    );
     prChr(buffer, ' ');
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, ' ');
