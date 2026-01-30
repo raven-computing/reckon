@@ -1,0 +1,8 @@
+File: sample1.md
+
+  Logical Lines of Code (LLC):        n/a
+  Physical Lines        (PHL):          1
+  Words                 (WRD):          8
+  Characters            (CHR):         52
+  Source Size in Bytes  (SZE):         52
+

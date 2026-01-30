@@ -45,6 +45,20 @@ function test_scount_with_relative_directory_input() {
   assert_stderr_is_empty;
 }
 
+function test_scount_prints_correct_output_for_single_file_no_llc() {
+  run_app "${TEST_RES_DIR}/mixed/sample1.md";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_single_file_no_llc.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_prints_correct_output_for_multiple_files_no_llc() {
+  run_app "${TEST_PROJECT_DIR}/src/lib/tests/res/txt";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_multiple_files_no_llc.txt";
+  assert_stderr_is_empty;
+}
+
 function test_scount_prints_annotated_source_code() {
   run_app --annotate-counts "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
   assert_exit_status $EXIT_SUCCESS;

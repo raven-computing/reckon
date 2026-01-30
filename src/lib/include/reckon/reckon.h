@@ -347,6 +347,19 @@ typedef struct RcnCountResultGroup {
      */
     bool isProcessed;
 
+    /**
+     * Indicates whether logical lines can be computed for the source entity.
+     * 
+     * If `true`, the `logicalLines` field contains a valid count. If `false`,
+     * then logical lines are not applicable for the source entity's format,
+     * e.g. for plain text files, and the `logicalLines` field is zero.
+     * This field is only set by a counting operation and remains initialized
+     * as `false` if no such operation was performed.
+     * 
+     * @since 1.1.0
+     */
+    bool hasLogicalLines;
+
 } RcnCountResultGroup;
 
 /**
