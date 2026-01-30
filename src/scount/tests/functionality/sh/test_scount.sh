@@ -142,7 +142,7 @@ function test_scount_with_stop_on_error_option() {
   assert_stderr_contains "Syntax error detected in source code";
 }
 
-function test_scount_with_ok_directory_input_and_stop_on_error_option() {
+function test_scount_with_valid_directory_input_and_stop_on_error_option() {
   run_app --stop-on-error "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files.txt";
