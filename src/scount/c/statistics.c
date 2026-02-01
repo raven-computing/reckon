@@ -37,6 +37,7 @@ static void reportFileError(
         ? result->state.errorMessage
         : ""
     );
+    // Report only if it differs from the overall stats error message
     if (strcmp(fileErr, "") != 0 && strcmp(statErr, fileErr) != 0) {
         logE("%s (%#04x)", fileErr, result->state.errorCode); // LCOV_EXCL_LINE
     }
@@ -67,7 +68,7 @@ static void reportError(const char* path, const RcnCountStatistics* stats) {
             const RcnCountResultGroup* const result = &stats->count.results[i];
             if (result->state.errorCode != RCN_ERR_NONE) {
                 reportFileError(stats, &stats->count.files[i], result);
-                break;
+                break; // Show the first file-specific error only
             }
         }
     }
