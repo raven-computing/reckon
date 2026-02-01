@@ -26,7 +26,7 @@ static void reportFileError(
     const RcnSourceFile* file,
     const RcnCountResultGroup* result
 ) {
-    logE("The following file encountered an error: '%s'", file->path);
+    logE("An error was encountered for the following file: '%s'", file->path);
     const char* const statErr = (
         stats->state.errorMessage
         ? stats->state.errorMessage
