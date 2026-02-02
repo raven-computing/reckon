@@ -154,6 +154,8 @@ function test_scount_with_stop_on_error_option() {
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred";
   assert_stderr_contains "Syntax error detected in source code";
+  assert_stderr_contains "An error was encountered for the following file:";
+  assert_stderr_contains "mixedWithSyntaxError/02_has_syntax_error.c";
 }
 
 function test_scount_with_valid_directory_input_and_stop_on_error_option() {
