@@ -2,7 +2,7 @@
 
 Reckon is a tool for computing various size-based source code metrics, including counting logical lines of code (LLC) across source trees. The `scount` application is intended to be used on the command-line, whereas the `libreckon` library provides a C API to access the functionality programmatically. 
 
-As opposed to the more traditional physical lines of code metric, logical lines of code focuses on how many *meaningful* lines exist. For example, a single statement would count as one logical line of code, regardless of how many physical lines the statemenet spans across. This makes the LLC metric more unaffected by arbitrary style-related decisions that can be different between software projects.
+As opposed to the more traditional physical lines of code metric, logical lines of code focuses on how many *meaningful* lines exist. For example, a single statement would count as one logical line of code, regardless of how many physical lines the statement spans across. This makes the LLC metric more unaffected by arbitrary style-related decisions that can be different between software projects.
 
 ## Getting Started
 
