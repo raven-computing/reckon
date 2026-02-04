@@ -7,6 +7,7 @@ jobs:
   build:
     name: '${{ matrix.os_label }}, ${{ matrix.c_compiler_label }}, ${{ matrix.build_type }}'
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -117,6 +118,7 @@ jobs:
   build-docs:
     name: 'Docs'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v6
