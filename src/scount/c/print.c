@@ -488,6 +488,10 @@ static void prSummaryRows(
                 label = "Java";
                 hasLogicalLines = true;
                 break;
+            case RCN_LANG_PYTHON:
+                label = "Python";
+                hasLogicalLines = true;
+                break;
             // LCOV_EXCL_START
             default:
                 assert(0 && "Unhandled text format");

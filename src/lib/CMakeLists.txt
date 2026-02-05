@@ -35,6 +35,7 @@ target_sources(
     "$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/c/win32/fileio.c>"
     "c/lang_c.c"
     "c/lang_java.c"
+    "c/lang_python.c"
     "c/logical.c"
     "c/physical.c"
     "c/statistics.c"

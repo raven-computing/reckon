@@ -92,6 +92,13 @@ add_test_suite(
     TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
 )
 
+add_test_suite(
+    TEST_SUITE_NAME        PythonLanguageUnitTest
+    TEST_SUITE_TARGET      test_lang_python
+    TEST_SUITE_SOURCE      unit/c/test_lang_python.c
+    TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
+)
+
 add_compile_definitions(
     RECKON_TEST_PATH_RES_BASE="${CMAKE_CURRENT_SOURCE_DIR}/res"
 )
