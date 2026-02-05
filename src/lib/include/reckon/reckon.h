@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 4
+#define RECKON_NUM_SUPPORTED_FORMATS 5
 
 /**
  * Macro to create a format option bitmask.
@@ -146,14 +146,19 @@ typedef enum RcnTextFormat {
     RCN_TEXT_MARKDOWN = 1,
 
     /**
+     * Text formatted in XML, as found in files with a '.xml' extension.
+     */
+    RCN_TEXT_XML = 2,
+
+    /**
      * Source files for the C programming language.
      */
-    RCN_LANG_C = 2,
+    RCN_LANG_C = 3,
 
     /**
      * Source files for the Java programming language.
      */
-    RCN_LANG_JAVA = 3
+    RCN_LANG_JAVA = 4
 
 } RcnTextFormat;
 
@@ -690,6 +695,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for Markdown text files.
      */
     RCN_OPT_TEXT_MARKDOWN = RECKON_MK_FRMT_OPT(RCN_TEXT_MARKDOWN),
+
+    /**
+     * Option to select statistics for XML files.
+     */
+    RCN_OPT_TEXT_XML = RECKON_MK_FRMT_OPT(RCN_TEXT_XML),
 
     /**
      * Option to select statistics for source code files written in

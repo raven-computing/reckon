@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sample>
+  <title>Second Sample</title>
+  <items>
+    <item id="1" value="One"/>
+    <item id="2" value="Two"/>
+    <item id="3" value="Three"/>
+    <item id="4" value="Four"/>
+  </items>
+</sample>

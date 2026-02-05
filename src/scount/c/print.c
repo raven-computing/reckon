@@ -480,6 +480,9 @@ static void prSummaryRows(
             case RCN_TEXT_MARKDOWN:
                 label = "Markdown";
                 break;
+            case RCN_TEXT_XML:
+                label = "XML";
+                break;
             case RCN_LANG_C:
                 label = "C";
                 hasLogicalLines = true;
