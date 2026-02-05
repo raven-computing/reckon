@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
 #include <string.h>
 
 #include "tree_sitter/api.h"
@@ -88,14 +89,16 @@ static RcnCount evaluateNodeWeightPythonImpl(
     TSSymbol sym = ts_node_grammar_symbol(node);
     switch (sym) {
         case sym_expression_statement: {
+            RcnCount expressionWeight = 1;
             char* sExpression = ts_node_string(node);
-            if (sExpression) {
+            if (sExpression != NULL) {
                 if (strcmp(sExpression, S_EXPR_PY_DOCSTRING) == 0) {
-                    return weight;
+                    expressionWeight = 0;
                 }
                 free(sExpression);
             }
-            FALLTHROUGH;
+            weight += expressionWeight;
+            break;
         }
         case sym_import_statement:
         case sym_future_import_statement:
