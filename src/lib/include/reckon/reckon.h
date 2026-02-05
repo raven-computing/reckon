@@ -687,6 +687,11 @@ typedef enum RcnFormatOption {
     RCN_OPT_TEXT_UNFORMATTED = RECKON_MK_FRMT_OPT(RCN_TEXT_UNFORMATTED),
 
     /**
+     * Option to select statistics for Markdown text files.
+     */
+    RCN_OPT_TEXT_MARKDOWN = RECKON_MK_FRMT_OPT(RCN_TEXT_MARKDOWN),
+
+    /**
      * Option to select statistics for source code files written in
      * the C programming language.
      */
