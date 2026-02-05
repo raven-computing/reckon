@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "name": "sample",
+    "version": 1,
+    "generatedAt": "1970-01-01T00:00:00Z",
+    "tags": [
+      "test",
+      "fixture",
+      "json"
+    ]
+  },
+  "user": {
+    "id": 12345,
+    "username": "bla",
+    "active": true
+  },
+  "items": [
+    {
+      "id": "itm_001",
+      "name": "Widget",
+      "qty": 2,
+      "attributes": {
+        "color": "blue",
+        "size": "M"
+      }
+    },
+    {
+      "id": "itm_002",
+      "name": "Gadget",
+      "qty": 1,
+      "attributes": {
+        "color": "red",
+        "size": "S"
+      }
+    }
+  ]
+}

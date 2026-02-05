@@ -244,6 +244,31 @@ void testCountResultGroupLogicalLineCheckField(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testCountResultsJson(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.json";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .formats = RCN_OPT_TEXT_JSON
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    RcnSourceFile* file = &stats->count.files[0];
+    RcnCountResultGroup* result = &stats->count.results[0];
+    TEST_ASSERT_TRUE(result->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+    TEST_ASSERT_NULL(result->state.errorMessage);
+    TEST_ASSERT_EQUAL_STRING("sample.json", file->name);
+    TEST_ASSERT_TRUE(result->isProcessed);
+    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(37, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(59, result->words);
+    TEST_ASSERT_EQUAL_INT(561, result->characters);
+    TEST_ASSERT_EQUAL_INT(561, result->sourceSize);
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -255,5 +280,6 @@ int main(void) {
     RUN_TEST(testCountWhenFileHasUnsupportedFormat);
     RUN_TEST(testCountWithMultipleFilesWhenOneFileHasError);
     RUN_TEST(testCountResultGroupLogicalLineCheckField);
+    RUN_TEST(testCountResultsJson);
     return UNITY_END();
 }
