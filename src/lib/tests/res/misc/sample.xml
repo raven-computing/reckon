@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sample xmlns="urn:reckon:sample" version="1.0">
+  <title>Sample Document</title>
+  <items>
+    <item id="1" enabled="true">Alpha</item>
+    <item id="2" enabled="false">Beta</item>
+    <item id="3" enabled="true">
+      <name>Gamma</name>
+      <value unit="ms">42</value>
+    </item>
+  </items>
+  <meta>
+    <created>1970-01-01</created>
+    <notes><![CDATA[This is a minimal XML fixture for tests.]]></notes>
+  </meta>
+</sample>
