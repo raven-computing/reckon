@@ -39,6 +39,7 @@ static RcnCountStatistics* mkStats(
 ) {
     RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
     stats->count.size = size;
+    stats->count.sizeProcessed = size;
     stats->count.files = calloc(size, sizeof(RcnSourceFile));
     stats->count.results = calloc(size, sizeof(RcnCountResultGroup));
     for (size_t i = 0; i < size; ++i) {
@@ -52,6 +53,7 @@ static RcnCountStatistics* mkStats(
         stats->count.results[i].characters = characters;
         stats->count.results[i].sourceSize = sourceSize;
         stats->count.results[i].hasLogicalLines = true;
+        stats->count.results[i].isProcessed = true;
     }
     stats->logicalLines[RCN_LANG_JAVA] = logical;
     stats->physicalLines[RCN_LANG_JAVA] = physical;
