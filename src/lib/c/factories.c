@@ -86,6 +86,9 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "xml") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_XML;
+    } else if (strcmp(extension, "json") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_JSON;
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_UNFORMATTED;
