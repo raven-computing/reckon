@@ -825,7 +825,8 @@ RECKON_EXPORT RcnCountResult rcnCountLogicalLines(
  * Marks the counted logical lines in the source code of the specified file.
  *
  * Reads the file located at the specified file system path and adds source
- * code comments to lines that are counted as logical lines of code.
+ * code comments to lines that are counted as logical lines of code. The file
+ * is not modified on disk, the content is processed in memory and returned.
  * The comments are according to the syntax of the underlying used programming
  * language and indicate the count number plus the type of syntactic construct
  * that contributes to the logical line count. One physical line of code can
