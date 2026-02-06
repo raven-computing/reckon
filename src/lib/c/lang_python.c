@@ -15,6 +15,7 @@
  */
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "tree_sitter/api.h"
@@ -25,10 +26,6 @@
 
 RECKON_NO_EXPORT const TSLanguage* tree_sitter_python(void);
 
-static const char* S_EXPR_PY_DOCSTRING = (
-"(expression_statement (string (string_start) (string_content) (string_end)))"
-);
-
 /**
  * These are the symbol identifiers as defined by the Python language parser
  * of tree-sitter. We have only copied the symbol identifiers that we are
@@ -36,6 +33,8 @@ static const char* S_EXPR_PY_DOCSTRING = (
  * of a node in the AST.
  */
 enum SymbolIdentifiersPython {
+  sym_string_start = 104,
+  sym_string_end = 107,
   sym_import_statement = 111,
   sym_future_import_statement = 114,
   sym_import_from_statement = 115,
@@ -66,6 +65,8 @@ enum SymbolIdentifiersPython {
   sym_type_alias_statement = 153,
   sym_class_definition = 154,
   sym_decorator = 159,
+  sym_string = 231,
+  sym_string_content = 232,
 };
 
 TSParser* createParserPython(void) {
@@ -81,6 +82,32 @@ TSParser* createParserPython(void) {
     return parser;
 }
 
+/**
+ * Checks whether the given expression statement node represents
+ * the following S-expression:
+ * (expression_statement (string (string_start) (string_content) (string_end)))
+ */
+static bool isPyDocstring(TSNode node) {
+    node = ts_node_child(node, 0);
+    TSSymbol symbol = ts_node_grammar_symbol(node);
+    if (symbol == sym_string) {
+        node = ts_node_child(node, 0);
+        symbol = ts_node_grammar_symbol(node);
+        if (symbol == sym_string_start) {
+            node = ts_node_next_sibling(node);
+            symbol = ts_node_grammar_symbol(node);
+            if (symbol == sym_string_content) {
+                node = ts_node_next_sibling(node);
+                symbol = ts_node_grammar_symbol(node);
+                if (symbol == sym_string_end) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 static RcnCount evaluateNodeWeightPythonImpl(
     TSNode node,
     NodeEvalTrace* trace
@@ -88,16 +115,13 @@ static RcnCount evaluateNodeWeightPythonImpl(
     RcnCount weight = 0;
     TSSymbol sym = ts_node_grammar_symbol(node);
     switch (sym) {
+        case sym_string_start:
+        case sym_string_end:
+        case sym_string:
+        case sym_string_content:
+            break;
         case sym_expression_statement: {
-            RcnCount expressionWeight = 1;
-            char* sExpression = ts_node_string(node);
-            if (sExpression != NULL) {
-                if (strcmp(sExpression, S_EXPR_PY_DOCSTRING) == 0) {
-                    expressionWeight = 0;
-                }
-                free(sExpression);
-            }
-            weight += expressionWeight;
+            weight += isPyDocstring(node) ? 0 : 1;
             break;
         }
         case sym_import_statement:
