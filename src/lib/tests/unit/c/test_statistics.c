@@ -266,6 +266,7 @@ void testCountResultsXml(void) {
     TEST_ASSERT_EQUAL_INT(35, result->words);
     TEST_ASSERT_EQUAL_INT(471, result->characters);
     TEST_ASSERT_EQUAL_INT(471, result->sourceSize);
+    rcnFreeCountStatistics(stats);
 }
 
 void testCountResultsJson(void) {
