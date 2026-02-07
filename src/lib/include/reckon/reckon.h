@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 6
+#define RECKON_NUM_SUPPORTED_FORMATS 7
 
 /**
  * Macro to create a format option bitmask.
@@ -163,7 +163,12 @@ typedef enum RcnTextFormat {
     /**
      * Source files for the Java programming language.
      */
-    RCN_LANG_JAVA = 5
+    RCN_LANG_JAVA = 5,
+
+    /**
+     * Source files for the Python programming language.
+     */
+    RCN_LANG_PYTHON = 6
 
 } RcnTextFormat;
 
@@ -721,7 +726,13 @@ typedef enum RcnFormatOption {
      * Option to select statistics for source code files written in
      * the Java programming language.
      */
-    RCN_OPT_LANG_JAVA = RECKON_MK_FRMT_OPT(RCN_LANG_JAVA)
+    RCN_OPT_LANG_JAVA = RECKON_MK_FRMT_OPT(RCN_LANG_JAVA),
+
+    /**
+     * Option to select statistics for source code files written in
+     * the Python programming language.
+     */
+    RCN_OPT_LANG_PYTHON = RECKON_MK_FRMT_OPT(RCN_LANG_PYTHON)
 
 } RcnFormatOption;
 

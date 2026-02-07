@@ -24,9 +24,11 @@
 
 TSParser* createParserC(void);
 TSParser* createParserJava(void);
+TSParser* createParserPython(void);
 
 void evaluateNodeC(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeJava(TSNode node, NodeEvalTrace* trace);
+void evaluateNodePython(TSNode node, NodeEvalTrace* trace);
 
 TSParser* createParser(RcnTextFormat language) {
     switch (language) {
@@ -34,6 +36,8 @@ TSParser* createParser(RcnTextFormat language) {
             return createParserC();
         case RCN_LANG_JAVA:
             return createParserJava();
+        case RCN_LANG_PYTHON:
+            return createParserPython();
         default:
             return NULL;
     }
@@ -45,6 +49,8 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
             return evaluateNodeC;
         case RCN_LANG_JAVA:
             return evaluateNodeJava;
+        case RCN_LANG_PYTHON:
+            return evaluateNodePython;
         default:
             return NULL;
     }
@@ -52,6 +58,8 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
 
 const char* getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
+        case RCN_LANG_PYTHON:
+            return "#";
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         default:
@@ -79,6 +87,10 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_JAVA;
+    } else if (strcmp(extension, "py") == 0) {
+        detection.isSupportedFormat = true;
+        detection.isProgrammingLanguage = true;
+        detection.format = RCN_LANG_PYTHON;
     } else if (strcmp(extension, "md") == 0
         || strcmp(extension, "markdown") == 0) {
         detection.isSupportedFormat = true;
