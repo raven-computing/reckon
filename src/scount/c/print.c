@@ -435,10 +435,23 @@ static void prFileRowData(
     prChr(buffer, '\n');
 }
 
+static size_t getIndexLastProcessedFile(const RcnCountStatistics* stats) {
+    for (size_t i = stats->count.size - 1; i > 0; --i) {
+        if (stats->count.results[i].isProcessed) {
+            return i;
+        }
+    }
+    return 0;
+}
+
 static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
-    const bool isLargeResult = stats->count.size > LARGE_RESULT_THRESHOLD;
+    const bool isLargeResult = (
+        stats->count.sizeProcessed > LARGE_RESULT_THRESHOLD
+    );
     bool ellipsisRowPrinted = false;
     const size_t nFiles = stats->count.size;
+    const size_t indexLastProcessed = getIndexLastProcessedFile(stats);
+    size_t rowsPrinted = 0;
     for (size_t i = 0; i < nFiles; ++i) {
         const RcnSourceFile* file = &stats->count.files[i];
         const RcnCountResultGroup* resultGroup = &stats->count.results[i];
@@ -446,8 +459,8 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
             continue;
         }
         const bool isInSkipRange = (
-            i >= LARGE_RESULT_THRESHOLD - 1
-            && i != nFiles - 1
+            rowsPrinted >= LARGE_RESULT_THRESHOLD - 1
+            && i != indexLastProcessed
         );
         if (isLargeResult && isInSkipRange) {
             if (ellipsisRowPrinted) {
@@ -462,6 +475,7 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
                 : "(unknown)"
             );
             prFileRowData(buffer, fileName, resultGroup);
+            ++rowsPrinted;
         }
     }
 }
