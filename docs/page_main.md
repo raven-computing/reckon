@@ -52,6 +52,10 @@ At the time of writing, the library supports the processing of the following fil
 
 - C
 - Java
+- Python
+- Markdown
+- XML
+- JSON
 - Plain text (`.txt`-style unformatted text)
 
 Support for more formats is under way.
