@@ -66,7 +66,8 @@ static void reportError(const char* path, const RcnCountStatistics* stats) {
     if (stats->count.size > 1) {
         for (size_t i = 0; i < stats->count.size; ++i) {
             const RcnCountResultGroup* const result = &stats->count.results[i];
-            if (result->state.errorCode != RCN_ERR_NONE) {
+            const RcnErrorCode error = result->state.errorCode;
+            if (error != RCN_ERR_NONE && error != RCN_ERR_UNSUPPORTED_FORMAT) {
                 reportFileError(stats, &stats->count.files[i], result);
                 break; // Show the first file-specific error only
             }
