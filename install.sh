@@ -15,16 +15,23 @@ ${USAGE}
 
 Options:
 
+  [--yes]     Skip the confirmation prompt.
+
   [-?|--help] Show this help message.
 EOS
 )
 
 # Arg flags
 ARG_SHOW_HELP=false;
+ARG_ASSUME_YES=false;
 
 # Parse all arguments given to this script
 for arg in "$@"; do
   case $arg in
+    --yes)
+    ARG_ASSUME_YES=true;
+    shift
+    ;;
     -\?|--help)
     ARG_SHOW_HELP=true;
     shift
@@ -72,8 +79,6 @@ if [ -z "$BUILD_CONFIGURATION" ]; then
   exit 1;
 fi
 
-echo "Installing scount executable";
-
 INSTALL_PREFIX="/usr/local";
 if (( $(id -u) != 0 )); then
   INSTALL_PREFIX="${HOME}/.local";
@@ -81,6 +86,29 @@ fi
 if [ -n "$MSYSTEM" ]; then
   INSTALL_PREFIX="${HOME}/AppData/Local/Programs";
 fi
+
+if [[ $ARG_ASSUME_YES == false ]]; then
+  if [[ ! -t 0 ]]; then
+    echo "Error: Refusing to install without confirmation in a non-interactive shell.";
+    echo "Re-run with '--yes' to proceed.";
+    exit 1;
+  fi
+  read -r -p "Do you want to install scount? (y/N): " ANSWER;
+  case "$ANSWER" in
+    1|YES|yes|Yes|Y|y|true|True)
+    ;;
+    0|NO|no|No|N|n|false|False)
+    echo "Abort.";
+    exit 1;
+    ;;
+    *)
+    echo "Invalid input. Please enter either yes or no";
+    exit 1;
+    ;;
+  esac
+fi
+
+echo "Installing scount application";
 
 if ! cmake --install build --component "reckon_scount" --prefix "$INSTALL_PREFIX"; then
   exit $?;
