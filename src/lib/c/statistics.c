@@ -50,6 +50,8 @@ after adding support for another text format?" \
  */
 static const uint32_t DEFAULT_OPT_ENABLE_ALL = 0xffffffff;
 
+static_assert(RECKON_NUM_SUPPORTED_FORMATS < 64, "Too many formats");
+
 static bool isFormatSelected(RcnStatOptions options, RcnTextFormat srcFormat) {
     return (options.formats & RECKON_MK_FRMT_OPT(srcFormat)) != 0;
 }
