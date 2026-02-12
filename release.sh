@@ -278,6 +278,7 @@ function commit_release() {
     exit 1;
   fi
   echo "Running post-release actions";
+  local release_version="$VERSION";
   echo -n "-dev" >> "$FILE_VERSION";
   bump_version "p";
   echo "Post-release actions completed";
@@ -301,7 +302,7 @@ function commit_release() {
     exit 1;
   fi
   echo "";
-  echo "Reckon v${VERSION} has been released";
+  echo "Reckon v${release_version} has been released";
   echo "";
 }
 
