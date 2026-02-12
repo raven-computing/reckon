@@ -138,37 +138,37 @@ typedef enum RcnTextFormat {
      * Text with no specific formatting, as usually found in
      * files with a '.txt' extension.
      */
-    RCN_TEXT_UNFORMATTED = 0,
+    RCN_TEXT_UNFORMATTED,
 
     /**
      * Text formatted in Markdown, as found in files with a '.md' extension.
      */
-    RCN_TEXT_MARKDOWN = 1,
+    RCN_TEXT_MARKDOWN,
 
     /**
      * Text formatted in XML, as found in files with a '.xml' extension.
      */
-    RCN_TEXT_XML = 2,
+    RCN_TEXT_XML,
 
     /**
      * Text formatted in JSON, as found in files with a '.json' extension.
      */
-    RCN_TEXT_JSON = 3,
+    RCN_TEXT_JSON,
 
     /**
      * Source files for the C programming language.
      */
-    RCN_LANG_C = 4,
+    RCN_LANG_C,
 
     /**
      * Source files for the Java programming language.
      */
-    RCN_LANG_JAVA = 5,
+    RCN_LANG_JAVA,
 
     /**
      * Source files for the Python programming language.
      */
-    RCN_LANG_PYTHON = 6
+    RCN_LANG_PYTHON
 
 } RcnTextFormat;
 
