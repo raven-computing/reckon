@@ -441,7 +441,7 @@ static size_t getIndexLastProcessedFile(const RcnCountStatistics* stats) {
             return i;
         }
     }
-    return 0;
+    return 0; // LCOV_EXCL_LINE
 }
 
 static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
