@@ -33,6 +33,13 @@ dependency(
 )
 
 dependency(
+    DEPENDENCY_NAME         tree-sitter-bash
+    DEPENDENCY_RESOURCE     kilo52/tree-sitter-bash
+    DEPENDENCY_VERSION      v0.25.1-patch-cmakeliststxt
+    DEPENDENCY_LINK_TARGETS tree-sitter-bash
+)
+
+dependency(
     DEPENDENCY_NAME         unity
     DEPENDENCY_RESOURCE     ThrowTheSwitch/Unity
     DEPENDENCY_VERSION      v2.6.1

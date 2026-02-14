@@ -512,6 +512,10 @@ static void prSummaryRows(
                 label = "Python";
                 hasLogicalLines = true;
                 break;
+            case RCN_LANG_BASH:
+                label = "Shell";
+                hasLogicalLines = true;
+                break;
             // LCOV_EXCL_START
             default:
                 assert(0 && "Unhandled text format");

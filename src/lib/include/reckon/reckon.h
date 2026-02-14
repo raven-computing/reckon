@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 7
+#define RECKON_NUM_SUPPORTED_FORMATS 8
 
 /**
  * Macro to create a format option bitmask.
@@ -168,7 +168,12 @@ typedef enum RcnTextFormat {
     /**
      * Source files for the Python programming language.
      */
-    RCN_LANG_PYTHON
+    RCN_LANG_PYTHON,
+
+    /**
+     * Source files for Bash shell scripts.
+     */
+    RCN_LANG_BASH
 
 } RcnTextFormat;
 
@@ -732,7 +737,12 @@ typedef enum RcnFormatOption {
      * Option to select statistics for source code files written in
      * the Python programming language.
      */
-    RCN_OPT_LANG_PYTHON = RECKON_MK_FRMT_OPT(RCN_LANG_PYTHON)
+    RCN_OPT_LANG_PYTHON = RECKON_MK_FRMT_OPT(RCN_LANG_PYTHON),
+
+    /**
+     * Option to select statistics for source files containing Bash shell code.
+     */
+    RCN_OPT_LANG_BASH = RECKON_MK_FRMT_OPT(RCN_LANG_BASH)
 
 } RcnFormatOption;
 
