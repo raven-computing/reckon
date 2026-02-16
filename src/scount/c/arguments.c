@@ -28,6 +28,9 @@ AppArgs parseArgs(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--annotate-counts") == 0) {
             args.annotateCounts = true;
+        } else if (strcmp(argv[i], "--lines") == 0
+                || strcmp(argv[i], "-l") == 0) {
+            args.linesOnly = true;
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
         } else if (strcmp(argv[i], "--verbose") == 0) {
@@ -60,7 +63,7 @@ AppArgs parseArgs(int argc, char** argv) {
 }
 
 void showUsage(void) {
-    logI("Usage: scount [--verbose] [--annotate-counts] [--stop-on-error] <PATH>");
+    logI("Usage: scount [--verbose] [--annotate-counts] [-l|--lines] [--stop-on-error] <PATH>");
 }
 
 void showVersion(AppArgs args) {
@@ -96,6 +99,9 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--annotate-counts] Mark counted logical lines and output the result.");
     logI("                      This option can only be used on a single file input.");
+    logI(" ");
+    logI("  [-l|--lines]        Compute and display only line-specific metrics.");
+    logI("                      This includes logical and physical lines.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");

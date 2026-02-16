@@ -50,6 +50,7 @@ typedef struct AppArgs {
     char* errorMessage;  // Error message in case of invalid input
     int indexUnknown;    // Index into `argv` when unknown arg found, or zero
     bool annotateCounts; // Option: `--annotate-counts`
+    bool linesOnly;      // Option: `-l|--lines`
     bool stopOnError;    // Option: `--stop-on-error`
     bool verbose;        // Option: `--verbose`
     bool version;        // Option: `-#|--version`
@@ -95,6 +96,11 @@ typedef struct PrintBuffer {
     char* text;
     size_t size;
     size_t capacity;
+    bool showLogicalLines;
+    bool showPhysicalLines;
+    bool showWords;
+    bool showCharacters;
+    bool showSourceSize;
 } PrintBuffer;
 
 /**
@@ -151,22 +157,21 @@ ExitStatus outputAnnotatedSource(AppArgs args);
  * Creates textual result output for processed statistics when the
  * given input is a single regular file.
  * 
+ * @param buffer The output print buffer with formatting options.
  * @param stats The statistics containing one processed file.
- * @return A `PrintBuffer` containing the formatted result.
- *         The caller must free the text buffer.
  */
-PrintBuffer printResultSingle(const RcnCountStatistics* stats);
+void printResultSingle(PrintBuffer* buffer, const RcnCountStatistics* stats);
 
 /**
  * Creates textual result output for processed statistics when the
  * given input is a directory possibly containing multiple files.
  * 
+ * @param buffer The output print buffer with formatting options.
  * @param path The path to the input directory.
  * @param stats The statistics for the files.
- * @return A `PrintBuffer` containing the formatted result.
- *         The caller must free the text buffer.
  */
-PrintBuffer printResultsMultiple(
+void printResultsMultiple(
+    PrintBuffer* buffer,
     const char* path,
     const RcnCountStatistics* stats
 );

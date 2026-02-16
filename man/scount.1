@@ -5,6 +5,7 @@ scount \- A tool to count logical lines of code and other metrics
 .B scount
 [\fB\-\-verbose\fR]
 [\fB\-\-annotate\-counts\fR]
+[\fB\-l\fR|\fB\-\-lines\fR]
 [\fB\-\-stop\-on\-error\fR]
 .I <PATH>
 .SH DESCRIPTION
@@ -43,6 +44,11 @@ This is a mandatory argument.
 Mark counted logical lines and output the result.
 .br
 This option can only be used on a single file input.
+.TP
+.B \-l, \-\-lines
+Compute and display only line-specific metrics.
+.br
+This includes logical and physical lines.
 .TP
 .B \-\-stop\-on\-error
 Stop the processing on the first encountered error,

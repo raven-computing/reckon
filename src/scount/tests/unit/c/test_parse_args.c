@@ -30,6 +30,7 @@ void testNoArgsSetsMessageNoInputAndInvalid(void) {
     TEST_ASSERT_FALSE(isValid);
     TEST_ASSERT_NULL(args.inputPath);
     TEST_ASSERT_FALSE(args.annotateCounts);
+    TEST_ASSERT_FALSE(args.linesOnly);
     TEST_ASSERT_FALSE(args.verbose);
     TEST_ASSERT_FALSE(args.help);
     TEST_ASSERT_NOT_NULL(args.errorMessage);
@@ -45,6 +46,7 @@ void testSingleInputSetsInputPathAndValid(void) {
     bool isValid = isInputValid(args);
     TEST_ASSERT_TRUE(isValid);
     TEST_ASSERT_FALSE(args.annotateCounts);
+    TEST_ASSERT_FALSE(args.linesOnly);
     TEST_ASSERT_FALSE(args.verbose);
     TEST_ASSERT_FALSE(args.help);
     TEST_ASSERT_NULL(args.errorMessage);
@@ -58,6 +60,7 @@ void testAnnotateAndVerboseFlagsSetBooleans(void) {
     bool isValid = isInputValid(args);
     TEST_ASSERT_TRUE(isValid);
     TEST_ASSERT_TRUE(args.annotateCounts);
+    TEST_ASSERT_FALSE(args.linesOnly);
     TEST_ASSERT_TRUE(args.verbose);
     TEST_ASSERT_FALSE(args.help);
     TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
@@ -161,6 +164,7 @@ void testFlagsAndInputOrderMixed(void) {
     TEST_ASSERT_TRUE(isValid);
     TEST_ASSERT_TRUE(args.verbose);
     TEST_ASSERT_TRUE(args.annotateCounts);
+    TEST_ASSERT_FALSE(args.linesOnly);
     TEST_ASSERT_FALSE(args.help);
     TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
     TEST_ASSERT_NULL(args.errorMessage);
@@ -174,8 +178,31 @@ void testHelpWithInputSetsHelpAndInput(void) {
     bool isValid = isInputValid(args);
     TEST_ASSERT_TRUE(isValid);
     TEST_ASSERT_TRUE(args.help);
+    TEST_ASSERT_FALSE(args.linesOnly);
     TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
     // message remains NULL because input is present
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
+void testLinesLongOptionSetsLinesOnlyTrue(void) {
+    char* argv[] = { "scount", "--lines", "File.java" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.linesOnly);
+    TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
+void testLinesShortOptionSetsLinesOnlyTrue(void) {
+    char* argv[] = { "scount", "-l", "File.java" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.linesOnly);
+    TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
@@ -193,5 +220,7 @@ int main(void) {
     RUN_TEST(testMultipleInputsSetsMessageMultiple);
     RUN_TEST(testFlagsAndInputOrderMixed);
     RUN_TEST(testHelpWithInputSetsHelpAndInput);
+    RUN_TEST(testLinesLongOptionSetsLinesOnlyTrue);
+    RUN_TEST(testLinesShortOptionSetsLinesOnlyTrue);
     return UNITY_END();
 }
