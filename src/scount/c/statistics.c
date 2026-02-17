@@ -163,9 +163,9 @@ ExitStatus outputStatistics(AppArgs args) {
     };
 
     if (stats->count.size == 1) {
-        printResultSingle(&buffer, stats);
+        printResultSingle(stats, &buffer);
     } else {
-        printResultsMultiple(&buffer, path, stats);
+        printResultsMultiple(path, stats, &buffer);
     }
 
     if (buffer.size > 0) {

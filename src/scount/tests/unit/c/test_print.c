@@ -103,7 +103,7 @@ void testPrintSingleResultBasic(void) {
         "SomeFile.java", 1, 123, 456, 7890, 8765, 4321
     );
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultSingle(&buffer, stats);
+    printResultSingle(stats, &buffer);
 
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
@@ -123,7 +123,7 @@ void testPrintSingleResultWithUnknownFileName(void) {
     );
     RcnCountStatistics* stats = mkStats(NULL, 1, 1, 2, 3, 4, 5);
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultSingle(&buffer, stats);
+    printResultSingle(stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -157,7 +157,7 @@ void testPrintMultiResultBasic(void) {
         3, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_EQUAL_INT(strlen(expected), buffer.size);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -205,7 +205,7 @@ void testPrintMultiResultForDirectoryInputWithManyFiles(void) {
         18, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_EQUAL_INT(strlen(expected), buffer.size);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -222,7 +222,7 @@ void testPrintMultiResultWithLongFileNames(void) {
         3, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "...catedWhenPrinted.java"));
@@ -240,7 +240,7 @@ void testPrintMultiResultWithErrorInResultGroup(void) {
     stats->count.files[2].path[8] = '2';
     stats->count.results[1].state.errorCode = RCN_ERR_SYNTAX_ERROR;
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 3"));
@@ -259,7 +259,7 @@ void testPrintMultiResultWithBigNumbers(void) {
     );
     stats->count.files[1].path[8] = '1';
     PrintBuffer buffer = mkBufferAllMetrics();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 2"));
@@ -281,7 +281,7 @@ void testPrintSingleResultLinesOnly(void) {
         "SomeFile.java", 1, 123, 456, 7890, 8765, 4321
     );
     PrintBuffer buffer = mkBufferLinesOnly();
-    printResultSingle(&buffer, stats);
+    printResultSingle(stats, &buffer);
 
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
@@ -296,7 +296,7 @@ void testPrintMultiResultLinesOnly(void) {
         3, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferLinesOnly();
-    printResultsMultiple(&buffer, "/some/path/to/myDirectory", stats);
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
 
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);

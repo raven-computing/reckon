@@ -160,23 +160,23 @@ ExitStatus outputAnnotatedSource(AppArgs args);
  * Creates textual result output for processed statistics when the
  * given input is a single regular file.
  * 
- * @param buffer The output print buffer with formatting options.
  * @param stats The statistics containing one processed file.
+ * @param buffer The output print buffer to write to.
  */
-void printResultSingle(PrintBuffer* buffer, const RcnCountStatistics* stats);
+void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer);
 
 /**
  * Creates textual result output for processed statistics when the
  * given input is a directory possibly containing multiple files.
  * 
- * @param buffer The output print buffer with formatting options.
  * @param path The path to the input directory.
  * @param stats The statistics for the files.
+ * @param buffer The output print buffer to write to.
  */
 void printResultsMultiple(
-    PrintBuffer* buffer,
     const char* path,
-    const RcnCountStatistics* stats
+    const RcnCountStatistics* stats,
+    PrintBuffer* buffer
 );
 
 /**

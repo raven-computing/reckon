@@ -652,7 +652,7 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, '\n');
 }
 
-void printResultSingle(PrintBuffer* buffer, const RcnCountStatistics* stats) {
+void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
     assert(buffer != NULL);
     assert(stats != NULL);
     assert(stats->count.size == 1);
@@ -697,9 +697,9 @@ void printResultSingle(PrintBuffer* buffer, const RcnCountStatistics* stats) {
 }
 
 void printResultsMultiple(
-    PrintBuffer* buffer,
     const char* path,
-    const RcnCountStatistics* stats
+    const RcnCountStatistics* stats,
+    PrintBuffer* buffer
 ) {
     assert(buffer != NULL);
     assert(path != NULL);
