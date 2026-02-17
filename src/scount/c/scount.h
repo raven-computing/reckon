@@ -91,6 +91,9 @@ extern bool LOG_IO_ERROR_DETECTED;
 
 /**
  * Text buffer of a null-terminated formatted string used for printing.
+ * 
+ * Use option members during initialization to control which statistics
+ * are included in the output.
  */
 typedef struct PrintBuffer {
     char* text;
