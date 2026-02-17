@@ -286,9 +286,6 @@ void testPrintSingleResultLinesOnly(void) {
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
-    TEST_ASSERT_NULL(strstr(buffer.text, "Words"));
-    TEST_ASSERT_NULL(strstr(buffer.text, "Characters"));
-    TEST_ASSERT_NULL(strstr(buffer.text, "Source Size"));
     free(buffer.text);
     rcnFreeCountStatistics(stats);
 }
