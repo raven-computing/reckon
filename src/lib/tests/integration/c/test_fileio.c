@@ -38,6 +38,7 @@
 #define PATH_SAMPLE_DIR2_FILE2 PATH_DIR_RES2 "/2" FILE_SAMPLE2
 #define PATH_SAMPLE_DIR3_FILE1 PATH_DIR_RES3 "/3" FILE_SAMPLE1
 #define PATH_SAMPLE_JAVA_FILE RECKON_TEST_PATH_RES_BASE "/java/Sample.java"
+#define PATH_SAMPLE_R_FILE RECKON_TEST_PATH_RES_BASE "/misc/sample.R"
 
 void setUp(void) { }
 
@@ -233,6 +234,16 @@ void testDetectSourceFormatSupported(void) {
     freeSourceFile(file);
 }
 
+void testDetectSourceFormatR(void) {
+    RcnSourceFile* file = newSourceFile(PATH_SAMPLE_R_FILE);
+    TEST_ASSERT_NOT_NULL(file);
+    SourceFormatDetection detection = detectSourceFormat(file);
+    TEST_ASSERT_TRUE(detection.isSupportedFormat);
+    TEST_ASSERT_FALSE(detection.isProgrammingLanguage); // Special case
+    TEST_ASSERT_EQUAL_INT(RCN_LANG_R, detection.format);
+    freeSourceFile(file);
+}
+
 void testDetectSourceFormatUnsupported(void) {
     RcnSourceFile* file = newSourceFile("/tmp/res/unknown.xyz");
     TEST_ASSERT_NOT_NULL(file);
@@ -339,6 +350,7 @@ int main(void) {
     RUN_TEST(testReadSourceFileContentIsNotReadIfAlreadyRead);
     RUN_TEST(testReadSourceFileFailsWhenFilePathIsNull);
     RUN_TEST(testDetectSourceFormatSupported);
+    RUN_TEST(testDetectSourceFormatR);
     RUN_TEST(testDetectSourceFormatUnsupported);
     RUN_TEST(testCreateSourceFileListOfEmptyDirectory);
     RUN_TEST(testCreateSourceFileListFailsWhenInputPathIsNull);

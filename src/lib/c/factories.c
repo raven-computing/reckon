@@ -101,6 +101,11 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "json") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_JSON;
+    } else if (strcmp(extension, "R") == 0) {
+        // isProgrammingLanguage is false for R format due to missing
+        // support for logical line counting in R files
+        detection.isSupportedFormat = true;
+        detection.format = RCN_LANG_R;
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_UNFORMATTED;
