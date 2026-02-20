@@ -349,7 +349,7 @@ void annotateLineWithNodeType(TSNode node, NodeEvalTrace* trace) {
     ctx->evaluator(node, trace);
     // Weight assigned during evaluation
     const RcnCount symbolWeight = trace->result->count;
-    if (symbolWeight) {
+    if (symbolWeight > 0) {
         LineCommentBuffer* buffer = &ctx->lines[row];
         buffer->weight += symbolWeight;
         linebufferRecordType(buffer, symbolName);
