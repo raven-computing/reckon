@@ -67,7 +67,7 @@ Reckon supports processing text encoded as:
 - UTF-8
 - UTF-16
 
-For UTF-16, a BOM must be present to indicate endianness. For UTF-8, a BOM may or may not be present, although, UTF-8 BOMs are generally discouraged. If a given text does not exhibit any BOM, it is asasumed to be encoded in UTF-8.  
+For UTF-16, a BOM must be present to indicate endianness. For UTF-8, a BOM may or may not be present, although, UTF-8 BOMs are generally discouraged. If a given text does not exhibit any BOM, it is assumed to be encoded in UTF-8.  
 If an input has encoding errors, operations complete gracefully but the computed results are undefined and may therefore not be accurate.
 
 ## Library Usage
