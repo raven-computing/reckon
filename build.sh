@@ -176,8 +176,12 @@ if [[ $ARG_DOCS == true ]]; then
     echo "Doxygen finished with exit status $docs_status";
   fi
   page_label="build/docs/html/index.html";
-  page_url="file://${PWD}/${page_label}";
-  page_link="\e]8;;${page_url}\e\\\\${page_label}\e]8;;\e\\\\";
+  if tty --silent; then
+    page_url="file://${PWD}/${page_label}";
+    page_link="\e]8;;${page_url}\e\\\\${page_label}\e]8;;\e\\\\";
+  else
+    page_link="$page_label";
+  fi
   echo -e "Documentation HTML page is available at ${page_link}";
   exit $docs_status;
 fi
