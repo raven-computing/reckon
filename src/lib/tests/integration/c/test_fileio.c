@@ -239,7 +239,8 @@ void testDetectSourceFormatR(void) {
     TEST_ASSERT_NOT_NULL(file);
     SourceFormatDetection detection = detectSourceFormat(file);
     TEST_ASSERT_TRUE(detection.isSupportedFormat);
-    TEST_ASSERT_FALSE(detection.isProgrammingLanguage); // Special case
+    // Special case: Missing support for LLC metric.
+    TEST_ASSERT_FALSE(detection.isProgrammingLanguage);
     TEST_ASSERT_EQUAL_INT(RCN_LANG_R, detection.format);
     freeSourceFile(file);
 }
