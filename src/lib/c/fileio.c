@@ -62,7 +62,7 @@ static const size_t FILE_MAX_PROC_SIZE = 512UL * 1024UL * 1024UL;
  * due to e.g. symlink loops. Under normal circumstances, this limit is high
  * enough and should not be reached.
  */
-static const size_t FILES_LIST_MAX_SIZE = 10000;
+static const size_t FILES_LIST_MAX_SIZE = 500000;
 
 static char* findFilename(const char* path) {
     if (!path) {
