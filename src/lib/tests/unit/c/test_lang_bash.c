@@ -45,7 +45,7 @@ void testBashLogicalLineCountIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(159, result.count);
+    TEST_ASSERT_EQUAL_INT(294, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
@@ -71,7 +71,7 @@ void testBashPhysicalLineCountIsCorrect(void) {
     RcnCountResult result = rcnCountPhysicalLines(file->content);
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(196, result.count);
+    TEST_ASSERT_EQUAL_INT(516, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
@@ -98,7 +98,7 @@ void testBashLogicalLineCountMarksAreCorrect(void) {
         file->content
     );
     TEST_ASSERT_NOT_NULL(actual.text);
-    TEST_ASSERT_EQUAL_INT(6466, actual.size);
+    TEST_ASSERT_EQUAL_INT(23452, actual.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, actual.text);
     freeSourceFile(file);
     freeSourceFile(goldenSample);
@@ -111,7 +111,7 @@ void testBashLogicalLineCountMarksForFilePathInput(void) {
     readSourceFileContent(goldenSample);
     RcnSourceText annotated = rcnMarkLogicalLinesInFile(path);
     TEST_ASSERT_NOT_NULL(annotated.text);
-    TEST_ASSERT_EQUAL_INT(6466, annotated.size);
+    TEST_ASSERT_EQUAL_INT(23452, annotated.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, annotated.text);
     freeSourceFile(goldenSample);
     rcnFreeSourceText(&annotated);
@@ -125,12 +125,12 @@ void testBashCountAllIsCorrect(void) {
     TEST_ASSERT_TRUE(stats->state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
     TEST_ASSERT_NULL(stats->state.errorMessage);
-    TEST_ASSERT_EQUAL_INT(478, stats->totalLogicalLines);
-    TEST_ASSERT_EQUAL_INT(588, stats->totalPhysicalLines);
-    TEST_ASSERT_EQUAL_INT(13900, stats->totalSourceSize);
-    TEST_ASSERT_EQUAL_INT(478, stats->logicalLines[RCN_LANG_BASH]);
-    TEST_ASSERT_EQUAL_INT(588, stats->physicalLines[RCN_LANG_BASH]);
-    TEST_ASSERT_EQUAL_INT(13900, stats->sourceSize[RCN_LANG_BASH]);
+    TEST_ASSERT_EQUAL_INT(882, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(1548, stats->totalPhysicalLines);
+    TEST_ASSERT_EQUAL_INT(59994, stats->totalSourceSize);
+    TEST_ASSERT_EQUAL_INT(882, stats->logicalLines[RCN_LANG_BASH]);
+    TEST_ASSERT_EQUAL_INT(1548, stats->physicalLines[RCN_LANG_BASH]);
+    TEST_ASSERT_EQUAL_INT(59994, stats->sourceSize[RCN_LANG_BASH]);
     TEST_ASSERT_EQUAL_INT(3, stats->count.size);
     TEST_ASSERT_EQUAL_INT(3, stats->count.sizeProcessed);
     RcnSourceFile* filelist = stats->count.files;
@@ -149,7 +149,7 @@ void testBashLogicalLineCountForMinimizedFormattingIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(159, result.count);
+    TEST_ASSERT_EQUAL_INT(294, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
