@@ -180,7 +180,6 @@ fi
 # =================================================================================================
 case "${1:-x}" in # +1 (case statement)
   a*)   : ;& # +2 (case item, command)
-  b*)   : ;;& # +2 (case item, command)
   c|d)  : ;; # +2 (case item, command)
   *)    : ;; # +2 (case item, command)
 esac
