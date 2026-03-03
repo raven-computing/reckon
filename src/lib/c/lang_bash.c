@@ -71,34 +71,33 @@ static RcnCount evaluateNodeWeightBashImpl(
     RcnCount weight = 0;
     TSSymbol sym = ts_node_grammar_symbol(node);
     const uint64_t line = currentLine(node);
-    bool hitAny = true;
+    bool hasAnyhit = true;
     switch (sym) {
         case sym_variable_assignment: {
             TSNode parent = ts_node_parent(node);
             if ((!ts_node_is_null(parent)
                 && ts_node_grammar_symbol(parent) == sym_declaration_command)
-                || trace->lnLastAny == currentLine(node)) {
+                || trace->lnLastAny == line) {
                 break;
             }
             weight += 1;
             break;
         }
         case sym_command: {
-            if (trace->lnLastAny != currentLine(node)
-                || trace->lnLastCaseItem == currentLine(node)) {
+            if (trace->lnLastAny != line || trace->lnLastCaseItem == line) {
                 weight += 1;
             }
             break;
         }
         case sym_compound_statement: {
-            if (trace->lnLastFuncDef != currentLine(node)
-                && trace->idxLastWhileSym != currentLine(node)) {
+            if (trace->lnLastFuncDef != line
+                && trace->idxLastWhileSym != line) {
                 weight += 1;
             }
             break;
         }
         case sym_function_definition: {
-            trace->lnLastFuncDef = currentLine(node);
+            trace->lnLastFuncDef = line;
             weight += 1;
             break;
         }
@@ -106,18 +105,14 @@ static RcnCount evaluateNodeWeightBashImpl(
             weight += 1;
             break;
         }
-        case sym_case_item: {
-            trace->lnLastCaseItem = currentLine(node);
-            weight += 1;
-            break;
-        }
-        case sym_last_case_item: {
-            trace->lnLastCaseItem = currentLine(node);
-            weight += 1;
-            break;
-        }
         case sym_while_statement: {
-            trace->idxLastWhileSym = currentLine(node);
+            trace->idxLastWhileSym = line;
+            weight += 1;
+            break;
+        }
+        case sym_case_item:
+        case sym_last_case_item: {
+            trace->lnLastCaseItem = line;
             weight += 1;
             break;
         }
@@ -133,10 +128,10 @@ static RcnCount evaluateNodeWeightBashImpl(
             weight += 1;
             break;
         default:
-            hitAny = false;
+            hasAnyhit = false;
             break;
     }
-    if (hitAny) {
+    if (hasAnyhit) {
         trace->lnLastAny = line;
     }
     return weight;
