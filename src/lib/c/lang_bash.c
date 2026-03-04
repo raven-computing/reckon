@@ -83,39 +83,33 @@ static RcnCount evaluateNodeWeightBashImpl(
             weight += 1;
             break;
         }
-        case sym_command: {
+        case sym_command:
             if (trace->lnLastAny != line || trace->lnLastCaseItem == line) {
                 weight += 1;
             }
             break;
-        }
-        case sym_compound_statement: {
+        case sym_compound_statement:
             if (trace->lnLastFuncDef != line
                 && trace->lnLastWhileSym != line) {
                 weight += 1;
             }
             break;
-        }
-        case sym_function_definition: {
+        case sym_function_definition:
             trace->lnLastFuncDef = line;
             weight += 1;
             break;
-        }
-        case sym_pipeline: {
+        case sym_pipeline:
             weight += 1;
             break;
-        }
-        case sym_while_statement: {
+        case sym_while_statement:
             trace->lnLastWhileSym = line;
             weight += 1;
             break;
-        }
         case sym_case_item:
-        case sym_last_case_item: {
+        case sym_last_case_item:
             trace->lnLastCaseItem = line;
             weight += 1;
             break;
-        }
         case sym_declaration_command:
         case sym_unset_command:
         case sym_if_statement:
