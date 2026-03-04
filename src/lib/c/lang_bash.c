@@ -91,7 +91,7 @@ static RcnCount evaluateNodeWeightBashImpl(
         }
         case sym_compound_statement: {
             if (trace->lnLastFuncDef != line
-                && trace->idxLastWhileSym != line) {
+                && trace->lnLastWhileSym != line) {
                 weight += 1;
             }
             break;
@@ -106,7 +106,7 @@ static RcnCount evaluateNodeWeightBashImpl(
             break;
         }
         case sym_while_statement: {
-            trace->idxLastWhileSym = line;
+            trace->lnLastWhileSym = line;
             weight += 1;
             break;
         }

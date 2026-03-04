@@ -66,13 +66,13 @@ typedef struct NodeEvalTrace {
     NodeEvalContext* ctx;
     uint64_t idx;
     uint64_t idxLastForSym;
-    uint64_t idxLastWhileSym;
     uint64_t idxLastElse;
     uint64_t idxLastTypeDef;
     uint64_t lnLastAny;
     uint64_t lnLastFuncDef;
     uint64_t lnLastDecl;
     uint64_t lnLastExpr;
+    uint64_t lnLastWhileSym;
     uint64_t lnLastSwitchLabel;
     uint64_t lnLastCaseItem;
     uint64_t lnLastArrow;
