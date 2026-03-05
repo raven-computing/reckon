@@ -81,6 +81,7 @@ static RcnCount evaluateNodeWeightBashImpl(
                 break;
             }
             weight += 1;
+            trace->lnLastVarAssign = line;
             break;
         }
         case sym_command:
@@ -90,7 +91,8 @@ static RcnCount evaluateNodeWeightBashImpl(
             break;
         case sym_compound_statement:
             if (trace->lnLastFuncDef != line
-                && trace->lnLastWhileSym != line) {
+                && trace->lnLastWhileSym != line
+                && (trace->idx - 2) != trace->idxLastIf) {
                 weight += 1;
             }
             break;
@@ -99,7 +101,9 @@ static RcnCount evaluateNodeWeightBashImpl(
             weight += 1;
             break;
         case sym_pipeline:
-            weight += 1;
+            if (trace->lnLastVarAssign != line) {
+                weight += 1;
+            }
             break;
         case sym_while_statement:
             trace->lnLastWhileSym = line;
@@ -110,9 +114,12 @@ static RcnCount evaluateNodeWeightBashImpl(
             trace->lnLastCaseItem = line;
             weight += 1;
             break;
+        case sym_if_statement:
+            trace->idxLastIf = trace->idx;
+            weight += 1;
+            break;
         case sym_declaration_command:
         case sym_unset_command:
-        case sym_if_statement:
         case sym_elif_clause:
         case sym_else_clause:
         case sym_for_statement:
