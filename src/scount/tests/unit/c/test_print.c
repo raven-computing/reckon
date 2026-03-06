@@ -28,6 +28,26 @@ void setUp(void) { }
 
 void tearDown(void) { }
 
+static PrintBuffer mkBufferAllMetrics(void) {
+    return (PrintBuffer) {
+        .showLogicalLines = true,
+        .showPhysicalLines = true,
+        .showWords = true,
+        .showCharacters = true,
+        .showSourceSize = true
+    };
+}
+
+static PrintBuffer mkBufferLinesOnly(void) {
+    return (PrintBuffer) {
+        .showLogicalLines = true,
+        .showPhysicalLines = true,
+        .showWords = false,
+        .showCharacters = false,
+        .showSourceSize = false
+    };
+}
+
 static RcnCountStatistics* mkStats(
     char* fileName,
     size_t size,
@@ -82,7 +102,8 @@ void testPrintSingleResultBasic(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile.java", 1, 123, 456, 7890, 8765, 4321
     );
-    PrintBuffer buffer = printResultSingle(stats);
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultSingle(stats, &buffer);
 
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
@@ -101,7 +122,8 @@ void testPrintSingleResultWithUnknownFileName(void) {
         "  Source Size in Bytes  (SZE):          5\n\n"
     );
     RcnCountStatistics* stats = mkStats(NULL, 1, 1, 2, 3, 4, 5);
-    PrintBuffer buffer = printResultSingle(stats);
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultSingle(stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -134,10 +156,8 @@ void testPrintMultiResultBasic(void) {
         "SomeFile.java",
         3, 1, 2, 3, 4, 5
     );
-    PrintBuffer buffer = printResultsMultiple(
-        "/some/path/to/myDirectory",
-        stats
-    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_EQUAL_INT(strlen(expected), buffer.size);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -184,10 +204,8 @@ void testPrintMultiResultForDirectoryInputWithManyFiles(void) {
         "SomeFile.java",
         18, 1, 2, 3, 4, 5
     );
-    PrintBuffer buffer = printResultsMultiple(
-        "/some/path/to/myDirectory",
-        stats
-    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_EQUAL_INT(strlen(expected), buffer.size);
     TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
@@ -203,10 +221,8 @@ void testPrintMultiResultWithLongFileNames(void) {
         longFileName,
         3, 1, 2, 3, 4, 5
     );
-    PrintBuffer buffer = printResultsMultiple(
-        "/some/path/to/myDirectory",
-        stats
-    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "...catedWhenPrinted.java"));
@@ -223,10 +239,8 @@ void testPrintMultiResultWithErrorInResultGroup(void) {
     stats->count.files[1].path[8] = '1';
     stats->count.files[2].path[8] = '2';
     stats->count.results[1].state.errorCode = RCN_ERR_SYNTAX_ERROR;
-    PrintBuffer buffer = printResultsMultiple(
-        "/some/path/to/myDirectory",
-        stats
-    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 3"));
@@ -244,10 +258,8 @@ void testPrintMultiResultWithBigNumbers(void) {
         2, big, big, big, big, big
     );
     stats->count.files[1].path[8] = '1';
-    PrintBuffer buffer = printResultsMultiple(
-        "/some/path/to/myDirectory",
-        stats
-    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 2"));
@@ -255,6 +267,44 @@ void testPrintMultiResultWithBigNumbers(void) {
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile1.java"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "| 123456789 |"));
     TEST_ASSERT_NULL(strstr(buffer.text, "| 12345678901234567 |"));
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
+void testPrintSingleResultLinesOnly(void) {
+    char* expected = (
+        "File: SomeFile.java\n\n"
+        "  Logical Lines of Code (LLC):        123\n"
+        "  Physical Lines        (PHL):        456\n\n"
+    );
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile.java", 1, 123, 456, 7890, 8765, 4321
+    );
+    PrintBuffer buffer = mkBufferLinesOnly();
+    printResultSingle(stats, &buffer);
+
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
+void testPrintMultiResultLinesOnly(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile.java",
+        3, 1, 2, 3, 4, 5
+    );
+    PrintBuffer buffer = mkBufferLinesOnly();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "--- LLC ---"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "--- PHL ---"));
+    TEST_ASSERT_NULL(strstr(buffer.text, "--- WRD ---"));
+    TEST_ASSERT_NULL(strstr(buffer.text, "--- CHR ---"));
+    TEST_ASSERT_NULL(strstr(buffer.text, "--- SZE ---"));
     free(buffer.text);
     rcnFreeCountStatistics(stats);
 }
@@ -270,5 +320,7 @@ int main(void) {
     RUN_TEST(testPrintMultiResultWithLongFileNames);
     RUN_TEST(testPrintMultiResultWithErrorInResultGroup);
     RUN_TEST(testPrintMultiResultWithBigNumbers);
+    RUN_TEST(testPrintSingleResultLinesOnly);
+    RUN_TEST(testPrintMultiResultLinesOnly);
     return UNITY_END();
 }

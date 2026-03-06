@@ -323,16 +323,26 @@ static void prTableTop(PrintBuffer* buffer, const char* title) {
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
     prHeaderCell(buffer, title, WIDTH_COL0);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, "LLC", WIDTH_COL1);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, "PHL", WIDTH_COL2);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, "WRD", WIDTH_COL3);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, "CHR", WIDTH_COL4);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, "SZE", WIDTH_COL5);
+    if (buffer->showLogicalLines) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prHeaderCell(buffer, "LLC", WIDTH_COL1);
+    }
+    if (buffer->showPhysicalLines) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prHeaderCell(buffer, "PHL", WIDTH_COL2);
+    }
+    if (buffer->showWords) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prHeaderCell(buffer, "WRD", WIDTH_COL3);
+    }
+    if (buffer->showCharacters) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prHeaderCell(buffer, "CHR", WIDTH_COL4);
+    }
+    if (buffer->showSourceSize) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prHeaderCell(buffer, "SZE", WIDTH_COL5);
+    }
     prChr(buffer, TABLE_BORDER_CORNER);
     prChr(buffer, '\n');
 }
@@ -341,16 +351,26 @@ static void prTableBottom(PrintBuffer* buffer, char border) {
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
     prRpt(buffer, border, WIDTH_COL0);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prRpt(buffer, border, WIDTH_COL1);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prRpt(buffer, border, WIDTH_COL2);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prRpt(buffer, border, WIDTH_COL3);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prRpt(buffer, border, WIDTH_COL4);
-    prChr(buffer, TABLE_BORDER_CORNER);
-    prRpt(buffer, border, WIDTH_COL5);
+    if (buffer->showLogicalLines) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prRpt(buffer, border, WIDTH_COL1);
+    }
+    if (buffer->showPhysicalLines) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prRpt(buffer, border, WIDTH_COL2);
+    }
+    if (buffer->showWords) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prRpt(buffer, border, WIDTH_COL3);
+    }
+    if (buffer->showCharacters) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prRpt(buffer, border, WIDTH_COL4);
+    }
+    if (buffer->showSourceSize) {
+        prChr(buffer, TABLE_BORDER_CORNER);
+        prRpt(buffer, border, WIDTH_COL5);
+    }
     prChr(buffer, TABLE_BORDER_CORNER);
     prChr(buffer, '\n');
 }
@@ -367,36 +387,46 @@ static void prFileRowSkipped(PrintBuffer* buffer) {
     prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
     prStr(buffer, even ? ellipsisEven : ellipsisOdd);
     prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    even = WIDTH_COL1 % 2 == 0;
-    correction = even ? ellEvenLen : ellOddLen;
-    prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-    prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    even = WIDTH_COL2 % 2 == 0;
-    correction = even ? ellEvenLen : ellOddLen;
-    prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-    prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    even = WIDTH_COL3 % 2 == 0;
-    correction = even ? ellEvenLen : ellOddLen;
-    prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-    prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    even = WIDTH_COL4 % 2 == 0;
-    correction = even ? ellEvenLen : ellOddLen;
-    prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-    prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    even = WIDTH_COL5 % 2 == 0;
-    correction = even ? ellEvenLen : ellOddLen;
-    prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-    prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
+    if (buffer->showLogicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        even = WIDTH_COL1 % 2 == 0;
+        correction = even ? ellEvenLen : ellOddLen;
+        prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
+        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+        prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
+    }
+    if (buffer->showPhysicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        even = WIDTH_COL2 % 2 == 0;
+        correction = even ? ellEvenLen : ellOddLen;
+        prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
+        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+        prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
+    }
+    if (buffer->showWords) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        even = WIDTH_COL3 % 2 == 0;
+        correction = even ? ellEvenLen : ellOddLen;
+        prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
+        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+        prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
+    }
+    if (buffer->showCharacters) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        even = WIDTH_COL4 % 2 == 0;
+        correction = even ? ellEvenLen : ellOddLen;
+        prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
+        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+        prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
+    }
+    if (buffer->showSourceSize) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        even = WIDTH_COL5 % 2 == 0;
+        correction = even ? ellEvenLen : ellOddLen;
+        prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
+        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+        prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
+    }
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, '\n');
 }
@@ -411,26 +441,36 @@ static void prFileRowData(
     prChr(buffer, ' ');
     prLeftEllipse(buffer, fileName, WIDTH_COL0);
     prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prLogicalLineCount(buffer, res->hasLogicalLines, res->logicalLines);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, res->physicalLines, WIDTH_COL2);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, res->words, WIDTH_COL3);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, res->characters, WIDTH_COL4);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, res->sourceSize, WIDTH_COL5);
-    prChr(buffer, ' ');
+    if (buffer->showLogicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prLogicalLineCount(buffer, res->hasLogicalLines, res->logicalLines);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showPhysicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, res->physicalLines, WIDTH_COL2);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showWords) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, res->words, WIDTH_COL3);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showCharacters) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, res->characters, WIDTH_COL4);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showSourceSize) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, res->sourceSize, WIDTH_COL5);
+        prChr(buffer, ' ');
+    }
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, '\n');
 }
@@ -532,26 +572,40 @@ static void prSummaryRows(
         prChr(buffer, ' ');
         prLeftEllipse(buffer, label, WIDTH_COL0);
         prChr(buffer, ' ');
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        prChr(buffer, ' ');
-        prLogicalLineCount(buffer, hasLogicalLines, stats->logicalLines[frmt]);
-        prChr(buffer, ' ');
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        prChr(buffer, ' ');
-        prCnt(buffer, stats->physicalLines[frmt], WIDTH_COL2);
-        prChr(buffer, ' ');
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        prChr(buffer, ' ');
-        prCnt(buffer, stats->words[frmt], WIDTH_COL3);
-        prChr(buffer, ' ');
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        prChr(buffer, ' ');
-        prCnt(buffer, stats->characters[frmt], WIDTH_COL4);
-        prChr(buffer, ' ');
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        prChr(buffer, ' ');
-        prCnt(buffer, stats->sourceSize[frmt], WIDTH_COL5);
-        prChr(buffer, ' ');
+        if (buffer->showLogicalLines) {
+            prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+            prChr(buffer, ' ');
+            prLogicalLineCount(
+                buffer,
+                hasLogicalLines,
+                stats->logicalLines[frmt]
+            );
+            prChr(buffer, ' ');
+        }
+        if (buffer->showPhysicalLines) {
+            prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+            prChr(buffer, ' ');
+            prCnt(buffer, stats->physicalLines[frmt], WIDTH_COL2);
+            prChr(buffer, ' ');
+        }
+        if (buffer->showWords) {
+            prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+            prChr(buffer, ' ');
+            prCnt(buffer, stats->words[frmt], WIDTH_COL3);
+            prChr(buffer, ' ');
+        }
+        if (buffer->showCharacters) {
+            prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+            prChr(buffer, ' ');
+            prCnt(buffer, stats->characters[frmt], WIDTH_COL4);
+            prChr(buffer, ' ');
+        }
+        if (buffer->showSourceSize) {
+            prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+            prChr(buffer, ' ');
+            prCnt(buffer, stats->sourceSize[frmt], WIDTH_COL5);
+            prChr(buffer, ' ');
+        }
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, '\n');
     }
@@ -563,93 +617,110 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, ' ');
     prLeftEllipse(buffer, "Total:", WIDTH_COL0);
     prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prLogicalLineCount(
-        buffer,
-        hasAnyLogicalLines(stats),
-        stats->totalLogicalLines
-    );
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, stats->totalPhysicalLines, WIDTH_COL2);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, stats->totalWords, WIDTH_COL3);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, stats->totalCharacters, WIDTH_COL4);
-    prChr(buffer, ' ');
-    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-    prChr(buffer, ' ');
-    prCnt(buffer, stats->totalSourceSize, WIDTH_COL5);
-    prChr(buffer, ' ');
+    if (buffer->showLogicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prLogicalLineCount(
+            buffer,
+            hasAnyLogicalLines(stats),
+            stats->totalLogicalLines
+        );
+        prChr(buffer, ' ');
+    }
+    if (buffer->showPhysicalLines) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, stats->totalPhysicalLines, WIDTH_COL2);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showWords) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, stats->totalWords, WIDTH_COL3);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showCharacters) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, stats->totalCharacters, WIDTH_COL4);
+        prChr(buffer, ' ');
+    }
+    if (buffer->showSourceSize) {
+        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+        prChr(buffer, ' ');
+        prCnt(buffer, stats->totalSourceSize, WIDTH_COL5);
+        prChr(buffer, ' ');
+    }
     prChr(buffer, TABLE_BORDER_VERTICAL_EMPHASIS);
     prChr(buffer, '\n');
 }
 
-PrintBuffer printResultSingle(const RcnCountStatistics* stats) {
+void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
+    assert(buffer != NULL);
     assert(stats != NULL);
     assert(stats->count.size == 1);
-    PrintBuffer buffer = {0};
     RcnSourceFile* file = &stats->count.files[0];
     RcnCountResultGroup* result = &stats->count.results[0];
 
-    prStr(&buffer, "File: ");
-    prStr(&buffer, file->name ? file->name : "(unknown)");
-    prChr(&buffer, '\n');
-    prChr(&buffer, '\n');
-    prStr(&buffer, "  Logical Lines of Code (LLC):   ");
-    if (result->hasLogicalLines) {
-        pr8ld(&buffer, result->logicalLines);
-    } else {
-        prRpt(&buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));
-        prStr(&buffer, LABEL_NOT_APPLICABLE);
+    prStr(buffer, "File: ");
+    prStr(buffer, file->name ? file->name : "(unknown)");
+    prChr(buffer, '\n');
+    prChr(buffer, '\n');
+    if (buffer->showLogicalLines) {
+        prStr(buffer, "  Logical Lines of Code (LLC):   ");
+        if (result->hasLogicalLines) {
+            pr8ld(buffer, result->logicalLines);
+        } else {
+            prRpt(buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));
+            prStr(buffer, LABEL_NOT_APPLICABLE);
+        }
+        prChr(buffer, '\n');
     }
-    prChr(&buffer, '\n');
-    prStr(&buffer, "  Physical Lines        (PHL):   ");
-    pr8ld(&buffer, result->physicalLines);
-    prChr(&buffer, '\n');
-    prStr(&buffer, "  Words                 (WRD):   ");
-    pr8ld(&buffer, result->words);
-    prChr(&buffer, '\n');
-    prStr(&buffer, "  Characters            (CHR):   ");
-    pr8ld(&buffer, result->characters);
-    prChr(&buffer, '\n');
-    prStr(&buffer, "  Source Size in Bytes  (SZE):   ");
-    pr8ld(&buffer, result->sourceSize);
-    prChr(&buffer, '\n');
-    prChr(&buffer, '\n');
-
-    return buffer;
+    if (buffer->showPhysicalLines) {
+        prStr(buffer, "  Physical Lines        (PHL):   ");
+        pr8ld(buffer, result->physicalLines);
+        prChr(buffer, '\n');
+    }
+    if (buffer->showWords) {
+        prStr(buffer, "  Words                 (WRD):   ");
+        pr8ld(buffer, result->words);
+        prChr(buffer, '\n');
+    }
+    if (buffer->showCharacters) {
+        prStr(buffer, "  Characters            (CHR):   ");
+        pr8ld(buffer, result->characters);
+        prChr(buffer, '\n');
+    }
+    if (buffer->showSourceSize) {
+        prStr(buffer, "  Source Size in Bytes  (SZE):   ");
+        pr8ld(buffer, result->sourceSize);
+        prChr(buffer, '\n');
+    }
+    prChr(buffer, '\n');
 }
 
-PrintBuffer printResultsMultiple(
+void printResultsMultiple(
     const char* path,
-    const RcnCountStatistics* stats
+    const RcnCountStatistics* stats,
+    PrintBuffer* buffer
 ) {
+    assert(buffer != NULL);
     assert(path != NULL);
     assert(stats != NULL);
     assert(stats->count.size > 1);
-    PrintBuffer buffer = {0};
 
-    prInputInfo(&buffer, path, stats);
+    prInputInfo(buffer, path, stats);
 
-    prTableTop(&buffer, "File");
-    prFileRows(&buffer, stats);
-    prTableBottom(&buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
+    prTableTop(buffer, "File");
+    prFileRows(buffer, stats);
+    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
 
-    prStr(&buffer, "\nSummary:\n\n");
+    prStr(buffer, "\nSummary:\n\n");
 
-    prTableTop(&buffer, "Language");
-    prSummaryRows(&buffer, stats);
-    prTableBottom(&buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
-    prTotalsRow(&buffer, stats);
-    prTableBottom(&buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
-    prStr(&buffer, "\n\n");
-
-    return buffer;
+    prTableTop(buffer, "Language");
+    prSummaryRows(buffer, stats);
+    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
+    prTotalsRow(buffer, stats);
+    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
+    prStr(buffer, "\n\n");
 }

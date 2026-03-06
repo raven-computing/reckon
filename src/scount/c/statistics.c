@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "reckon/reckon.h"
@@ -132,6 +133,11 @@ ExitStatus outputStatistics(AppArgs args) {
     RcnStatOptions options = {
         .stopOnError = args.stopOnError
     };
+    if (args.linesOnly) {
+        options.operations = (
+            RCN_OPT_COUNT_LOGICAL_LINES | RCN_OPT_COUNT_PHYSICAL_LINES
+        );
+    }
 
     rcnCount(stats, options);
 
@@ -148,11 +154,19 @@ ExitStatus outputStatistics(AppArgs args) {
         return APP_EXIT_NOTHING_PROCESSED;
     }
 
-    PrintBuffer buffer = (
-        stats->count.size == 1
-        ? printResultSingle(stats)
-        : printResultsMultiple(path, stats)
-    );
+    PrintBuffer buffer = {
+        .showLogicalLines = true,
+        .showPhysicalLines = true,
+        .showWords = !args.linesOnly,
+        .showCharacters = !args.linesOnly,
+        .showSourceSize = !args.linesOnly
+    };
+
+    if (stats->count.size == 1) {
+        printResultSingle(stats, &buffer);
+    } else {
+        printResultsMultiple(path, stats, &buffer);
+    }
 
     if (buffer.size > 0) {
         logStdout(buffer.text);

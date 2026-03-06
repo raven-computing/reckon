@@ -1,0 +1,18 @@
+Directory: java
+Scanned files: 3
+
+  o---------- File ----------o--- LLC ---o--- PHL ---o
+  | Sample.java              |    104    |    188    |
+  | SampleAnnotated.java     |    104    |    188    |
+  | SampleMinFormatting.java |    104    |    107    |
+  o--------------------------o-----------o-----------o
+
+Summary:
+
+  o-------- Language --------o--- LLC ---o--- PHL ---o
+  | Java                     |    312    |    483    |
+  o==========================o===========o===========o
+  | Total:                   |    312    |    483    |
+  o==========================o===========o===========o
+
+

@@ -50,6 +50,7 @@ typedef struct AppArgs {
     char* errorMessage;  // Error message in case of invalid input
     int indexUnknown;    // Index into `argv` when unknown arg found, or zero
     bool annotateCounts; // Option: `--annotate-counts`
+    bool linesOnly;      // Option: `-l|--lines`
     bool stopOnError;    // Option: `--stop-on-error`
     bool verbose;        // Option: `--verbose`
     bool version;        // Option: `-#|--version`
@@ -90,11 +91,19 @@ extern bool LOG_IO_ERROR_DETECTED;
 
 /**
  * Text buffer of a null-terminated formatted string used for printing.
+ * 
+ * Use option members during initialization to control which statistics
+ * are included in the output.
  */
 typedef struct PrintBuffer {
     char* text;
     size_t size;
     size_t capacity;
+    bool showLogicalLines;
+    bool showPhysicalLines;
+    bool showWords;
+    bool showCharacters;
+    bool showSourceSize;
 } PrintBuffer;
 
 /**
@@ -152,10 +161,9 @@ ExitStatus outputAnnotatedSource(AppArgs args);
  * given input is a single regular file.
  * 
  * @param stats The statistics containing one processed file.
- * @return A `PrintBuffer` containing the formatted result.
- *         The caller must free the text buffer.
+ * @param buffer The output print buffer to write to.
  */
-PrintBuffer printResultSingle(const RcnCountStatistics* stats);
+void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer);
 
 /**
  * Creates textual result output for processed statistics when the
@@ -163,12 +171,12 @@ PrintBuffer printResultSingle(const RcnCountStatistics* stats);
  * 
  * @param path The path to the input directory.
  * @param stats The statistics for the files.
- * @return A `PrintBuffer` containing the formatted result.
- *         The caller must free the text buffer.
+ * @param buffer The output print buffer to write to.
  */
-PrintBuffer printResultsMultiple(
+void printResultsMultiple(
     const char* path,
-    const RcnCountStatistics* stats
+    const RcnCountStatistics* stats,
+    PrintBuffer* buffer
 );
 
 /**
