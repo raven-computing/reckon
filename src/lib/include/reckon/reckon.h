@@ -175,6 +175,11 @@ typedef enum RcnTextFormat {
      */
     RCN_LANG_R,
 
+    /**
+     * Source files for Bash shell scripts.
+     */
+    RCN_LANG_BASH,
+
 } RcnTextFormat;
 
 /**
@@ -744,6 +749,11 @@ typedef enum RcnFormatOption {
      * the R programming language.
      */
     RCN_OPT_LANG_R = RECKON_MK_FRMT_OPT(RCN_LANG_R),
+
+    /**
+     * Option to select statistics for source files containing Bash shell code.
+     */
+    RCN_OPT_LANG_BASH = RECKON_MK_FRMT_OPT(RCN_LANG_BASH),
 
 } RcnFormatOption;
 
