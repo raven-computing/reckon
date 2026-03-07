@@ -4,7 +4,7 @@ This is the official documentation for the Reckon project and the `libreckon` AP
 
 ## Introduction
 
-Reckon is a tool to count things in source files. Predominantly, it is used to count the number of logical lines of code, but it also provides other general metrics. The purpose is to give an insight on the size of a source file or an entire source tree of a software project. Logical lines of code are a superior metric compared to the traditional number of physical lines of code. While the measurement results of latter heavily depends on the specific formatting and coding style used in source files, counting the number of logical lines is unaffected from subjective style-related aspects and physical line breaks. For differerent source trees written in the same programming language, and to some extend even different programming languages, a comparison becomes more viable.
+Reckon is a tool to count things in source files. Predominantly, it is used to count the number of logical lines of code, but it also provides other general metrics. The purpose is to give an insight on the size of a source file or an entire source tree of a software project. Logical lines of code are a superior metric compared to the traditional number of physical lines of code. While the measurement results of latter heavily depends on the specific formatting and coding style used in source files, counting the number of logical lines is unaffected from subjective style-related aspects and physical line breaks. For different source trees written in the same programming language, and to some extend even different programming languages, a comparison becomes more viable.
 
 Reckon provides:
 
