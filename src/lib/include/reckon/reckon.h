@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 8
+#define RECKON_NUM_SUPPORTED_FORMATS 9
 
 /**
  * Macro to create a format option bitmask.
