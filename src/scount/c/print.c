@@ -29,7 +29,7 @@
 #define MAX_DIGITS_INT64 22ULL
 
 static const size_t BUFFER_CAPACITY_INIT = 1024;
-static const size_t LARGE_RESULT_THRESHOLD = 16;
+static const size_t LARGE_RESULT_THRESHOLD = 32;
 
 static const int WIDTH_COL0 = 26; // File
 static const int WIDTH_COL1 = 11; // LLC
