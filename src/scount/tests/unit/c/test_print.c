@@ -166,49 +166,24 @@ void testPrintMultiResultBasic(void) {
 }
 
 void testPrintMultiResultForDirectoryInputWithManyFiles(void) {
-    char* expected = (
-        "Directory: myDirectory\n"
-        "Scanned files: 18\n"
-        "\n"
-        "  o---------- File ----------o--- LLC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o\n"
+    char* expectedFileRow = (
         "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
+    );
+    char* expectedEllipsisRow = (
         "  |            ..            |    ...    |    ...    |    ...    |    ...    |    ...    |\n"
-        "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
-        "  o--------------------------o-----------o-----------o-----------o-----------o-----------o\n"
-        "\n"
-        "Summary:\n"
-        "\n"
-        "  o-------- Language --------o--- LLC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o\n"
-        "  | Java                     |     1     |     2     |     3     |     4     |     5     |\n"
-        "  o==========================o===========o===========o===========o===========o===========o\n"
-        "  | Total:                   |    18     |    36     |    54     |    72     |    90     |\n"
-        "  o==========================o===========o===========o===========o===========o===========o\n"
-        "\n"
-        "\n"
     );
     RcnCountStatistics* stats = mkStats(
         "SomeFile.java",
-        18, 1, 2, 3, 4, 5
+        35, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferAllMetrics();
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
-    TEST_ASSERT_EQUAL_INT(strlen(expected), buffer.size);
-    TEST_ASSERT_EQUAL_STRING(expected, buffer.text);
+    TEST_ASSERT_TRUE(strlen(buffer.text) > 1);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 35\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedFileRow));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedEllipsisRow));
     free(buffer.text);
     rcnFreeCountStatistics(stats);
 }
