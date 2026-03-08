@@ -1,3 +1,15 @@
+#### 1.2.0
+* Added support for Bash shell source format. [[Issue#2]](https://github.com/raven-computing/reckon/issues/2)
+* Added support for R format. [[Issue#5]](https://github.com/raven-computing/reckon/issues/5)
+* Added the '--lines' CLI option to scount to only show line-related metrics. [[Issue#23]](https://github.com/raven-computing/reckon/issues/23)
+* Changed the file list limit to allow the processing of larger source trees. [[Issue#34]](https://github.com/raven-computing/reckon/issues/34)
+* Changed LARGE_RESULT_THRESHOLD in scount print functionality to a 32 row threshold.
+* Fixed typos in the documentation.
+* Improved internal static assertions.
+* Refactored printResultSingle() and printResultsMultiple() functions in scount.
+* Removed explicit enumerator numeric values from RcnTextFormat.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.1.0...v1.2.0)
+
 #### 1.1.0
 * Added support for Python format. [[Issue#1]](https://github.com/raven-computing/reckon/issues/1)
 * Added support for JSON format. [[Issue#6]](https://github.com/raven-computing/reckon/issues/6)
