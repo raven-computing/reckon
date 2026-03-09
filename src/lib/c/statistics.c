@@ -25,15 +25,6 @@
 #include "fileio.h"
 
 /**
- * Control flow macro used in the main processing loop in rcnCount().
- * Handles errors in a file processing interation. Either breaks out
- * of the loop or continues to the next iteration.
- * 
- * @param options The RcnStatOptions used in the count operation.
-*/
-#define LOOP_ITER_ERR(options) if ((options).stopOnError) break; else continue;
-
-/**
  * Asserts that the given RcnTextFormat enumerator value is within bounds.
  */
 #define ASSERT_SOURCE_FORMAT_INDEX(sourceFormat) \
