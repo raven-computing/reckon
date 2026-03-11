@@ -15,7 +15,6 @@
  */
 
 #include <stdbool.h>
-#include <stdint.h>
 
 #include "tree_sitter/api.h"
 
@@ -45,6 +44,7 @@ enum SymbolIdentifiersJavaScript {
     sym_lexical_declaration = 152,
     sym_using_declaration = 153,
     sym_variable_declarator = 154,
+    sym_statement_block = 155,
     sym_else_clause = 156,
     sym_if_statement = 157,
     sym_switch_statement = 158,
@@ -121,6 +121,21 @@ static bool isJsForInitializerDeclaration(TSNode node) {
     return parentHasSymbol(node, sym_for_statement);
 }
 
+static bool isJsLabeledBlock(TSNode node) {
+    // labeled_statement
+    // identifier
+    // :
+    // statement_block
+    // {
+
+    node = ts_node_next_sibling(ts_node_next_sibling(ts_node_child(node, 0)));
+    if (!ts_node_is_null(node)) {
+        TSSymbol symbol = ts_node_grammar_symbol(node);
+        return sym_statement_block == symbol;
+    }
+    return false;
+}
+
 static RcnCount evaluateNodeWeightJavaScriptImpl(
     TSNode node,
     NodeEvalTrace* trace
@@ -155,6 +170,11 @@ static RcnCount evaluateNodeWeightJavaScriptImpl(
                 weight += 1;
             }
             break;
+        case sym_labeled_statement:
+            if (isJsLabeledBlock(node)) {
+                weight += 1;
+            }
+            break;
         case sym_expression_statement:
         case sym_import_statement:
         case sym_export_statement:
@@ -169,7 +189,6 @@ static RcnCount evaluateNodeWeightJavaScriptImpl(
         case sym_continue_statement:
         case sym_return_statement:
         case sym_throw_statement:
-        case sym_labeled_statement:
         case sym_switch_case:
         case sym_switch_default:
         case sym_catch_clause:

@@ -48,7 +48,7 @@ void testJavaScriptLogicalLineCountIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(32, result.count);
+    TEST_ASSERT_EQUAL_INT(101, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
@@ -74,7 +74,7 @@ void testJavaScriptPhysicalLineCountIsCorrect(void) {
     RcnCountResult result = rcnCountPhysicalLines(file->content);
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(50, result.count);
+    TEST_ASSERT_EQUAL_INT(200, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
@@ -101,7 +101,7 @@ void testJavaScriptLogicalLineCountMarksAreCorrect(void) {
         file->content
     );
     TEST_ASSERT_NOT_NULL(actual.text);
-    TEST_ASSERT_EQUAL_INT(1689, actual.size);
+    TEST_ASSERT_EQUAL_INT(6712, actual.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, actual.text);
     freeSourceFile(file);
     freeSourceFile(goldenSample);
@@ -114,7 +114,7 @@ void testJavaScriptLogicalLineCountMarksForFilePathInput(void) {
     readSourceFileContent(goldenSample);
     RcnSourceText annotated = rcnMarkLogicalLinesInFile(path);
     TEST_ASSERT_NOT_NULL(annotated.text);
-    TEST_ASSERT_EQUAL_INT(1689, annotated.size);
+    TEST_ASSERT_EQUAL_INT(6712, annotated.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, annotated.text);
     freeSourceFile(goldenSample);
     rcnFreeSourceText(&annotated);
@@ -128,12 +128,12 @@ void testJavaScriptCountAllIsCorrect(void) {
     TEST_ASSERT_TRUE(stats->state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
     TEST_ASSERT_NULL(stats->state.errorMessage);
-    TEST_ASSERT_EQUAL_INT(96, stats->totalLogicalLines);
-    TEST_ASSERT_EQUAL_INT(128, stats->totalPhysicalLines);
-    TEST_ASSERT_EQUAL_INT(3365, stats->totalSourceSize);
-    TEST_ASSERT_EQUAL_INT(96, stats->logicalLines[RCN_LANG_JAVASCRIPT]);
-    TEST_ASSERT_EQUAL_INT(128, stats->physicalLines[RCN_LANG_JAVASCRIPT]);
-    TEST_ASSERT_EQUAL_INT(3365, stats->sourceSize[RCN_LANG_JAVASCRIPT]);
+    TEST_ASSERT_EQUAL_INT(303, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(503, stats->totalPhysicalLines);
+    TEST_ASSERT_EQUAL_INT(14298, stats->totalSourceSize);
+    TEST_ASSERT_EQUAL_INT(303, stats->logicalLines[RCN_LANG_JAVASCRIPT]);
+    TEST_ASSERT_EQUAL_INT(503, stats->physicalLines[RCN_LANG_JAVASCRIPT]);
+    TEST_ASSERT_EQUAL_INT(14298, stats->sourceSize[RCN_LANG_JAVASCRIPT]);
     TEST_ASSERT_EQUAL_INT(3, stats->count.size);
     TEST_ASSERT_EQUAL_INT(3, stats->count.sizeProcessed);
     RcnSourceFile* filelist = stats->count.files;
@@ -152,7 +152,7 @@ void testJavaScriptLogicalLineCountForMinimizedFormattingIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(32, result.count);
+    TEST_ASSERT_EQUAL_INT(101, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
