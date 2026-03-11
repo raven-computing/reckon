@@ -284,6 +284,46 @@ void testPrintMultiResultLinesOnly(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testPrintMultiResultWithFileSyntaxWarnings(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile0.java",
+        7, 1, 2, 3, 4, 5
+    );
+    stats->count.files[1].path[8] = '1';
+    stats->count.files[3].path[8] = '3';
+    stats->count.files[5].path[8] = '5';
+    stats->count.results[1].state.errorCode = RCN_ERR_SYNTAX_ERROR;
+    stats->count.results[3].state.errorCode = RCN_ERR_SYNTAX_ERROR;
+    stats->count.results[5].state.errorCode = RCN_ERR_SYNTAX_ERROR;
+    PrintBuffer buffer = mkBufferAllMetrics();
+    buffer.showWarnings = true;
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 7"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile0.java"));
+    TEST_ASSERT_NOT_NULL(
+        strstr(
+            buffer.text,
+            "Warning: Syntax errors detected in file: 'SomeFile1.java'"
+        )
+    );
+    TEST_ASSERT_NOT_NULL(
+        strstr(
+            buffer.text,
+            "Warning: Syntax errors detected in file: 'SomeFile3.java'"
+        )
+    );
+    TEST_ASSERT_NOT_NULL(
+        strstr(
+            buffer.text,
+            "Warning: Syntax errors detected in file: 'SomeFile5.java'"
+        )
+    );
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -297,5 +337,6 @@ int main(void) {
     RUN_TEST(testPrintMultiResultWithBigNumbers);
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
+    RUN_TEST(testPrintMultiResultWithFileSyntaxWarnings);
     return UNITY_END();
 }
