@@ -326,14 +326,21 @@ static void prFileWarnings(
     bool hasWarnings = false;
     for (size_t i = 0; i < stats->count.size; ++i) {
         const RcnCountResultGroup* const result = &stats->count.results[i];
-        if (result->state.errorCode == RCN_ERR_SYNTAX_ERROR) {
+        const RcnErrorCode code = result->state.errorCode;
+        if (code == RCN_ERR_SYNTAX_ERROR || code == RCN_ERR_INPUT_TOO_LARGE) {
             hasWarnings = true;
             const char* fileName = (
                 stats->count.files[i].path
                 ? stats->count.files[i].path
                 : "(unknown)"
             );
-            prStr(buffer, "Warning: Syntax errors detected in file: '");
+            prStr(buffer, "Warning: ");
+            prStr(
+                buffer,
+                code == RCN_ERR_SYNTAX_ERROR
+                ? "Syntax errors detected in file: '"
+                : "File is too large: '"
+            );
             prStr(buffer, fileName);
             prStr(buffer, "'\n");
         }
