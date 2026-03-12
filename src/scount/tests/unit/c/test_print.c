@@ -284,7 +284,7 @@ void testPrintMultiResultLinesOnly(void) {
     rcnFreeCountStatistics(stats);
 }
 
-void testPrintMultiResultWithFileSyntaxWarnings(void) {
+void testPrintMultiResultWithFileWarnings(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile0.java",
         7, 1, 2, 3, 4, 5
@@ -293,7 +293,7 @@ void testPrintMultiResultWithFileSyntaxWarnings(void) {
     stats->count.files[3].path[8] = '3';
     stats->count.files[5].path[8] = '5';
     stats->count.results[1].state.errorCode = RCN_ERR_SYNTAX_ERROR;
-    stats->count.results[3].state.errorCode = RCN_ERR_SYNTAX_ERROR;
+    stats->count.results[3].state.errorCode = RCN_ERR_INPUT_TOO_LARGE;
     stats->count.results[5].state.errorCode = RCN_ERR_SYNTAX_ERROR;
     PrintBuffer buffer = mkBufferAllMetrics();
     buffer.showWarnings = true;
@@ -311,7 +311,7 @@ void testPrintMultiResultWithFileSyntaxWarnings(void) {
     TEST_ASSERT_NOT_NULL(
         strstr(
             buffer.text,
-            "Warning: Syntax errors detected in file: 'SomeFile3.java'"
+            "Warning: File is too large: 'SomeFile3.java'"
         )
     );
     TEST_ASSERT_NOT_NULL(
@@ -337,6 +337,6 @@ int main(void) {
     RUN_TEST(testPrintMultiResultWithBigNumbers);
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
-    RUN_TEST(testPrintMultiResultWithFileSyntaxWarnings);
+    RUN_TEST(testPrintMultiResultWithFileWarnings);
     return UNITY_END();
 }
