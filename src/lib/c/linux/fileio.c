@@ -98,8 +98,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         }
         if (entryIsRegularFile) {
             appendFile(list, fullPath);
-        }
-        if (entryIsDirectory) {
+        } else if (entryIsDirectory) {
             dirStackPush(stack, fullPath);
             continue;
         }
