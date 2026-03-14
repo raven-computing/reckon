@@ -190,8 +190,7 @@ void testEvaluateSourceTreeFailsWhenGivenInputWithUnknownLanguage(void) {
         source,
         12345, // NOLINT
         NULL,
-        NULL,
-        false
+        NULL
     );
     TEST_ASSERT_FALSE(result.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_UNSUPPORTED_FORMAT, result.errorCode);

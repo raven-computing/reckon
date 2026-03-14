@@ -20,51 +20,60 @@
 #include "evaluation.h"
 #include "fileio.h"
 
-static inline RcnCountResult countLogicalLinesImpl(
+static inline void countLogicalLinesImpl(
     RcnTextFormat language,
     RcnSourceText sourceCode,
-    bool strict
+    NodeEvalTrace* trace
 ) {
-    RcnCountResult result = {0};
+    RcnCountResult* result = trace->result;
     if (!sourceCode.text) {
-        result.state.errorCode = RCN_ERR_INVALID_INPUT;
-        result.state.errorMessage = "Source code input must not be NULL";
-        return result;
+        result->state.errorCode = RCN_ERR_INVALID_INPUT;
+        result->state.errorMessage = "Source code input must not be NULL";
+        return;
     }
-    NodeEvalTrace trace = {0};
-    trace.result = &result;
 
     NodeVisitor evaluator = createEvaluationFunction(language);
     if (evaluator == NULL) {
-        result.state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
-        result.state.errorMessage = (
+        result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
+        result->state.errorMessage = (
             "The input format or programming language is not supported"
         );
-        return result;
+        return;
     }
     RcnResultState evalState = evaluateSourceTree(
         sourceCode,
         language,
         evaluator,
-        &trace,
-        strict
+        trace
     );
-    result.state = evalState;
-    return result;
+    result->state = evalState;
+    return;
 }
 
 RcnCountResult rcnCountLogicalLines(
     RcnTextFormat language,
     RcnSourceText sourceCode
 ) {
-    return countLogicalLinesImpl(language, sourceCode, false);
+    RcnCountResult result = {0};
+    NodeEvalTrace trace = {
+        .result = &result,
+        .strict = false,
+    };
+    countLogicalLinesImpl(language, sourceCode, &trace);
+    return result;
 }
 
 RcnCountResult rcnCountLogicalLinesStrict(
     RcnTextFormat language,
     RcnSourceText sourceCode
 ) {
-    return countLogicalLinesImpl(language, sourceCode, true);
+    RcnCountResult result = {0};
+    NodeEvalTrace trace = {
+        .result = &result,
+        .strict = true,
+    };
+    countLogicalLinesImpl(language, sourceCode, &trace);
+    return result;
 }
 
 RcnSourceText rcnMarkLogicalLinesInFile(const char* path) {
@@ -122,8 +131,7 @@ RcnSourceText rcnMarkLogicalLinesInSourceText(
         sourceCode,
         language,
         annotateLineWithNodeType,
-        &trace,
-        false
+        &trace
     );
     if (evalState.ok) {
         resultText = buildAnnotatedSource(sourceCode.text, &trace);
