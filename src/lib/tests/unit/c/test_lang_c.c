@@ -50,12 +50,24 @@ void testClogicalLineCountIsCorrect(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
 
-void testClogicalLineCountFailsWithSyntaxError(void) {
+void testClogicalLineCountIsLenientWithSyntaxError(void) {
     RcnSourceText source = {
         .text = cSourceWithSyntaxError,
         .size = strlen(cSourceWithSyntaxError)
     };
     RcnCountResult result = rcnCountLogicalLines(RCN_LANG_C, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(3, result.count);
+}
+
+void testClogicalLineCountStrictFailsWithSyntaxError(void) {
+    RcnSourceText source = {
+        .text = cSourceWithSyntaxError,
+        .size = strlen(cSourceWithSyntaxError)
+    };
+    RcnCountResult result = rcnCountLogicalLinesStrict(RCN_LANG_C, source);
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(0, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, result.state.errorCode);
@@ -157,7 +169,8 @@ void testClogicalLineCountForMinimizedFormattingIsCorrect(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testClogicalLineCountIsCorrect);
-    RUN_TEST(testClogicalLineCountFailsWithSyntaxError);
+    RUN_TEST(testClogicalLineCountIsLenientWithSyntaxError);
+    RUN_TEST(testClogicalLineCountStrictFailsWithSyntaxError);
     RUN_TEST(testCphysicalLineCountIsCorrect);
     RUN_TEST(testCphysicalLineCountWithSyntacticallyIncorrectCode);
     RUN_TEST(testClogicalLineCountMarksAreCorrect);

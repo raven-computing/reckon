@@ -131,7 +131,8 @@ ExitStatus outputStatistics(AppArgs args) {
     }
 
     RcnStatOptions options = {
-        .stopOnError = args.stopOnError
+        .stopOnError = args.stopOnError,
+        .strict = args.strict
     };
     if (args.linesOnly) {
         options.operations = (

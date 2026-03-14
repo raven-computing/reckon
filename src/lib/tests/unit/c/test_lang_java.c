@@ -51,12 +51,24 @@ void testJavaLogicalLineCountIsCorrect(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
 
-void testJavaLogicalLineCountFailsWithSyntaxError(void) {
+void testJavaLogicalLineCountIsLenientWithSyntaxError(void) {
     RcnSourceText source = {
         .text = javaSourceWithSyntaxError,
         .size = strlen(javaSourceWithSyntaxError)
     };
     RcnCountResult result = rcnCountLogicalLines(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(3, result.count);
+}
+
+void testJavaLogicalLineCountStrictFailsWithSyntaxError(void) {
+    RcnSourceText source = {
+        .text = javaSourceWithSyntaxError,
+        .size = strlen(javaSourceWithSyntaxError)
+    };
+    RcnCountResult result = rcnCountLogicalLinesStrict(RCN_LANG_JAVA, source);
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(0, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, result.state.errorCode);
@@ -158,7 +170,8 @@ void testJavaLogicalLineCountForMinimizedFormattingIsCorrect(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testJavaLogicalLineCountIsCorrect);
-    RUN_TEST(testJavaLogicalLineCountFailsWithSyntaxError);
+    RUN_TEST(testJavaLogicalLineCountIsLenientWithSyntaxError);
+    RUN_TEST(testJavaLogicalLineCountStrictFailsWithSyntaxError);
     RUN_TEST(testJavaPhysicalLineCountIsCorrect);
     RUN_TEST(testJavaPhysicalLineCountWithSyntacticallyIncorrectCode);
     RUN_TEST(testJavaLogicalLineCountMarksAreCorrect);

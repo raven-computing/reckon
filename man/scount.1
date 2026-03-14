@@ -7,6 +7,7 @@ scount \- A tool to count logical lines of code and other metrics
 [\fB\-\-annotate\-counts\fR]
 [\fB\-l\fR|\fB\-\-lines\fR]
 [\fB\-\-stop\-on\-error\fR]
+[\fB\-\-strict\fR]
 .I <PATH>
 .SH DESCRIPTION
 scount counts source code lines in a single file
@@ -55,6 +56,14 @@ Stop the processing on the first encountered error,
 even for non\-critical errors. Without this option (the default),
 some errors are considered non-critical, in which case the corresponding
 file is skipped and the processing continues.
+.TP
+.B \-\-strict
+Use strict syntax checking for source code files when counting logical lines.
+If set, any syntax error detected in the source code will cause the
+processing of logical lines of code to fail for the affected file and the overall
+operation will continue. Without this option (the default), partial syntax errors
+are tolerated. If an entire source file is syntactically invalid, the processing
+for that file still fails regardless of this option.
 .TP
 .B \-\-verbose
 Enable verbose output.

@@ -190,7 +190,8 @@ void testEvaluateSourceTreeFailsWhenGivenInputWithUnknownLanguage(void) {
         source,
         12345, // NOLINT
         NULL,
-        NULL
+        NULL,
+        false
     );
     TEST_ASSERT_FALSE(result.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_UNSUPPORTED_FORMAT, result.errorCode);
@@ -342,7 +343,7 @@ void testMarkLogicalLineCountLastLineWithoutLineFeed(void) {
     free(marked.text);
 }
 
-void testLogicalLineCountWithSyntaxErrorFails(void) {
+void testLogicalLineCountWithPartialSyntaxErrorIsLenient(void) {
     char* code =
         "public bla class A {\n"
         "  void m( { }\n"
@@ -353,6 +354,23 @@ void testLogicalLineCountWithSyntaxErrorFails(void) {
         .size = strlen(code)
     };
     RcnCountResult res = rcnCountLogicalLines(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, res.state.errorCode);
+    TEST_ASSERT_NULL(res.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(1, res.count);
+}
+
+void testLogicalLineCountStrictWithPartialSyntaxError(void) {
+    char* code =
+        "public bla class A {\n"
+        "  void m( { }\n"
+        "}\n";
+
+    RcnSourceText source = {
+        .text = code,
+        .size = strlen(code)
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_JAVA, source);
     TEST_ASSERT_FALSE(res.state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, res.state.errorCode);
     TEST_ASSERT_EQUAL_STRING(
@@ -414,7 +432,8 @@ int main(void) {
     RUN_TEST(testLogicalLineCountWithEncodedSourceUTF16BE);
     RUN_TEST(testLogicalLineCountWithTooLargeTextInputFails);
     RUN_TEST(testEvaluateSourceTreeFailsWhenGivenInputWithUnknownLanguage);
-    RUN_TEST(testLogicalLineCountWithSyntaxErrorFails);
+    RUN_TEST(testLogicalLineCountWithPartialSyntaxErrorIsLenient);
+    RUN_TEST(testLogicalLineCountStrictWithPartialSyntaxError);
     RUN_TEST(testMarkLogicalLinesSimpleJavaIsSuccessful);
     RUN_TEST(testMarkLogicalLinesWithTooLargeTextInputFails);
     RUN_TEST(testMarkLogicalLinesWithNullTextInputFails);

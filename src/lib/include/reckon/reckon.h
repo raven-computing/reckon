@@ -810,6 +810,19 @@ typedef struct RcnStatOptions {
      */
     bool keepFileContent;
 
+    /**
+     * Whether to use strict syntax checking when parsing source code.
+     * 
+     * If this is set to `true`, then any syntax error detected in the source
+     * code will cause the processing of logical lines of code to fail for the
+     * affected file. If this is set to `false` (default), then the processing
+     * is lenient and will tolerate syntax errors that only affect individual
+     * nodes in the AST while continuing the tree traversal. In lenient mode,
+     * if the entire source file is syntactically invalid, the processing still
+     * fails for the affected file.
+     */
+    bool strict;
+
 } RcnStatOptions;
 
 /**
@@ -869,6 +882,25 @@ RECKON_EXPORT void rcnCount(RcnCountStatistics* stats, RcnStatOptions options);
  * @return A `RcnCountResult` struct containing the line count.
  */
 RECKON_EXPORT RcnCountResult rcnCountLogicalLines(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+);
+
+/**
+ * Counts the logical lines of code in the given source text with strict
+ * syntax checking.
+ *
+ * This function behaves like `rcnCountLogicalLines()`, but any syntax error
+ * detected in the source code causes the operation to fail immediately.
+ * Use this variant when the source code must be syntactically correct in its
+ * entirety for the result to be considered valid.
+ *
+ * @param language The format of the specified source text. Must denote a
+ *                 supported programming language.
+ * @param sourceCode The source code text to count logical lines in.
+ * @return A `RcnCountResult` struct containing the line count.
+ */
+RECKON_EXPORT RcnCountResult rcnCountLogicalLinesStrict(
     RcnTextFormat language,
     RcnSourceText sourceCode
 );

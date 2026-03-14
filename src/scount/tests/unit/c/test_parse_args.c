@@ -206,6 +206,17 @@ void testLinesShortOptionSetsLinesOnlyTrue(void) {
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
+void testStrictOptionSetsStrictTrue(void) {
+    char* argv[] = { "scount", "--strict", "File.java" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.strict);
+    TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testNoArgsSetsMessageNoInputAndInvalid);
@@ -222,5 +233,6 @@ int main(void) {
     RUN_TEST(testHelpWithInputSetsHelpAndInput);
     RUN_TEST(testLinesLongOptionSetsLinesOnlyTrue);
     RUN_TEST(testLinesShortOptionSetsLinesOnlyTrue);
+    RUN_TEST(testStrictOptionSetsStrictTrue);
     return UNITY_END();
 }

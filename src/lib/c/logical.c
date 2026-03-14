@@ -20,9 +20,10 @@
 #include "evaluation.h"
 #include "fileio.h"
 
-RcnCountResult rcnCountLogicalLines(
+static inline RcnCountResult countLogicalLinesImpl(
     RcnTextFormat language,
-    RcnSourceText sourceCode
+    RcnSourceText sourceCode,
+    bool strict
 ) {
     RcnCountResult result = {0};
     if (!sourceCode.text) {
@@ -45,10 +46,25 @@ RcnCountResult rcnCountLogicalLines(
         sourceCode,
         language,
         evaluator,
-        &trace
+        &trace,
+        strict
     );
     result.state = evalState;
     return result;
+}
+
+RcnCountResult rcnCountLogicalLines(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+) {
+    return countLogicalLinesImpl(language, sourceCode, false);
+}
+
+RcnCountResult rcnCountLogicalLinesStrict(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+) {
+    return countLogicalLinesImpl(language, sourceCode, true);
 }
 
 RcnSourceText rcnMarkLogicalLinesInFile(const char* path) {
@@ -106,7 +122,8 @@ RcnSourceText rcnMarkLogicalLinesInSourceText(
         sourceCode,
         language,
         annotateLineWithNodeType,
-        &trace
+        &trace,
+        false
     );
     if (evalState.ok) {
         resultText = buildAnnotatedSource(sourceCode.text, &trace);

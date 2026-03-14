@@ -51,12 +51,24 @@ void testPythonLogicalLineCountIsCorrect(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
 
-void testPythonLogicalLineCountFailsWithSyntaxError(void) {
+void testPythonLogicalLineCountIsLenientWithSyntaxError(void) {
     RcnSourceText source = {
         .text = pythonSourceWithSyntaxError,
         .size = strlen(pythonSourceWithSyntaxError)
     };
     RcnCountResult result = rcnCountLogicalLines(RCN_LANG_PYTHON, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(2, result.count);
+}
+
+void testPythonLogicalLineCountStrictFailsWithSyntaxError(void) {
+    RcnSourceText source = {
+        .text = pythonSourceWithSyntaxError,
+        .size = strlen(pythonSourceWithSyntaxError)
+    };
+    RcnCountResult result = rcnCountLogicalLinesStrict(RCN_LANG_PYTHON, source);
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(0, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, result.state.errorCode);
@@ -158,7 +170,8 @@ void testPythonLogicalLineCountForMinimizedFormattingIsCorrect(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testPythonLogicalLineCountIsCorrect);
-    RUN_TEST(testPythonLogicalLineCountFailsWithSyntaxError);
+    RUN_TEST(testPythonLogicalLineCountIsLenientWithSyntaxError);
+    RUN_TEST(testPythonLogicalLineCountStrictFailsWithSyntaxError);
     RUN_TEST(testPythonPhysicalLineCountIsCorrect);
     RUN_TEST(testPythonPhysicalLineCountWithSyntacticallyIncorrectCode);
     RUN_TEST(testPythonLogicalLineCountMarksAreCorrect);
