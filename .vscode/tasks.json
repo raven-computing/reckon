@@ -98,8 +98,8 @@
         "isDefault": true
       },
       "problemMatcher": [],
-      "detail": "CMake Buld",
-      "dependsOn":["CMake: Configure"],
+      "detail": "CMake Build",
+      "dependsOn": ["CMake: Configure"],
     }
   ]
 }
