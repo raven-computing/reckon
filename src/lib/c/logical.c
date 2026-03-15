@@ -31,6 +31,15 @@ static inline void countLogicalLinesImpl(
         result->state.errorMessage = "Source code input must not be NULL";
         return;
     }
+    if (sourceCode.size == 0) {
+        if (trace->strict) {
+            result->state.errorCode = RCN_ERR_INVALID_INPUT;
+            result->state.errorMessage = "Source input must not be empty";
+        } else {
+            result->state.ok = true;
+        }
+        return;
+    }
 
     NodeVisitor evaluator = createEvaluationFunction(language);
     if (evaluator == NULL) {

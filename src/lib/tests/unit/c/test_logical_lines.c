@@ -35,7 +35,7 @@ void tearDown(void) { }
 
 // NOLINTBEGIN(readability-magic-numbers)
 
-void testLogicalLineCountWithInvalidInputReturnsNull(void) {
+void testLogicalLineCountWithInvalidInputFails(void) {
     RcnSourceText source = {
         .text = NULL,
         .size = 0
@@ -45,6 +45,48 @@ void testLogicalLineCountWithInvalidInputReturnsNull(void) {
     TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
     TEST_ASSERT_EQUAL_STRING(
         "Source code input must not be NULL",
+        res.state.errorMessage
+    );
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountLenientWithEmptyStringInputSucceeds(void) {
+    RcnSourceText source = {
+        .text = "",
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLines(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, res.state.errorCode);
+    TEST_ASSERT_NULL(res.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountStrictWithInvalidInputFails(void) {
+    RcnSourceText source = {
+        .text = NULL,
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_C, source);
+    TEST_ASSERT_FALSE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "Source code input must not be NULL",
+        res.state.errorMessage
+    );
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountStrictWithEmptyStringInputFails(void) {
+    RcnSourceText source = {
+        .text = "",
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_JAVA, source);
+    TEST_ASSERT_FALSE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "Source input must not be empty",
         res.state.errorMessage
     );
     TEST_ASSERT_EQUAL_INT(0, res.count);
@@ -421,7 +463,10 @@ void testMarkLogicalLinesFailsWhenGivenInputWithUnknownLanguage(void) {
 
 int main(void) {
     UNITY_BEGIN();
-    RUN_TEST(testLogicalLineCountWithInvalidInputReturnsNull);
+    RUN_TEST(testLogicalLineCountWithInvalidInputFails);
+    RUN_TEST(testLogicalLineCountLenientWithEmptyStringInputSucceeds);
+    RUN_TEST(testLogicalLineCountStrictWithInvalidInputFails);
+    RUN_TEST(testLogicalLineCountStrictWithEmptyStringInputFails);
     RUN_TEST(testLogicalCountMarkWithInvalidInputReturnsNull);
     RUN_TEST(testLogicalCountFailsWhenGivenInputWithUnknownLanguage);
     RUN_TEST(testLogicalLineCountSimpleJavaIsSuccessful);
