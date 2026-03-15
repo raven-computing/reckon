@@ -47,7 +47,6 @@ static inline void countLogicalLinesImpl(
         trace
     );
     result->state = evalState;
-    return;
 }
 
 RcnCountResult rcnCountLogicalLines(
