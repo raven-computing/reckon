@@ -817,9 +817,8 @@ typedef struct RcnStatOptions {
      * code will cause the processing of logical lines of code to fail for the
      * affected file. If this is set to `false` (default), then the processing
      * is lenient and will tolerate syntax errors that only affect individual
-     * nodes in the AST while continuing the tree traversal. In lenient mode,
-     * if the entire source file is syntactically invalid, the processing still
-     * fails for the affected file.
+     * parts in a source file. In lenient mode, if the entire source file is
+     * syntactically invalid, the processing still fails for the affected file.
      */
     bool strict;
 
