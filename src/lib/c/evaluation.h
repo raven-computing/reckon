@@ -78,6 +78,7 @@ typedef struct NodeEvalTrace {
     uint64_t lnLastSwitchLabel;
     uint64_t lnLastCaseItem;
     uint64_t lnLastArrow;
+    bool strict;
 } NodeEvalTrace;
 
 /**
@@ -102,6 +103,11 @@ typedef enum TextEncoding {
  * specified `NodeEvalTrace` can be passed by the caller to track
  * the evaluation state across nodes. The returned `RcnResultState` indicates
  * whether the evaluation was successful or if an error occurred.
+ * If `trace->strict` is `true`, any syntax error in the source code results
+ * in an immediate failure. If `trace->strict` is `false` (lenient mode),
+ * syntax errors concerning individual nodes are tolerated and the tree
+ * traversal continues. If the entire source is syntactically invalid, the
+ * operation still fails regardless of the `trace->strict` flag.
  */
 RcnResultState evaluateSourceTree(
     RcnSourceText source,

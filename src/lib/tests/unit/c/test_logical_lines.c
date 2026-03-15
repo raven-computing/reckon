@@ -35,7 +35,7 @@ void tearDown(void) { }
 
 // NOLINTBEGIN(readability-magic-numbers)
 
-void testLogicalLineCountWithInvalidInputReturnsNull(void) {
+void testLogicalLineCountWithInvalidInputFails(void) {
     RcnSourceText source = {
         .text = NULL,
         .size = 0
@@ -45,6 +45,48 @@ void testLogicalLineCountWithInvalidInputReturnsNull(void) {
     TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
     TEST_ASSERT_EQUAL_STRING(
         "Source code input must not be NULL",
+        res.state.errorMessage
+    );
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountLenientWithEmptyStringInputSucceeds(void) {
+    RcnSourceText source = {
+        .text = "",
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLines(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, res.state.errorCode);
+    TEST_ASSERT_NULL(res.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountStrictWithInvalidInputFails(void) {
+    RcnSourceText source = {
+        .text = NULL,
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_C, source);
+    TEST_ASSERT_FALSE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "Source code input must not be NULL",
+        res.state.errorMessage
+    );
+    TEST_ASSERT_EQUAL_INT(0, res.count);
+}
+
+void testLogicalLineCountStrictWithEmptyStringInputFails(void) {
+    RcnSourceText source = {
+        .text = "",
+        .size = 0
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_JAVA, source);
+    TEST_ASSERT_FALSE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_INVALID_INPUT, res.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "Source input must not be empty",
         res.state.errorMessage
     );
     TEST_ASSERT_EQUAL_INT(0, res.count);
@@ -342,7 +384,7 @@ void testMarkLogicalLineCountLastLineWithoutLineFeed(void) {
     free(marked.text);
 }
 
-void testLogicalLineCountWithSyntaxErrorFails(void) {
+void testLogicalLineCountWithPartialSyntaxErrorIsLenient(void) {
     char* code =
         "public bla class A {\n"
         "  void m( { }\n"
@@ -353,6 +395,23 @@ void testLogicalLineCountWithSyntaxErrorFails(void) {
         .size = strlen(code)
     };
     RcnCountResult res = rcnCountLogicalLines(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(res.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, res.state.errorCode);
+    TEST_ASSERT_NULL(res.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(1, res.count);
+}
+
+void testLogicalLineCountStrictWithPartialSyntaxError(void) {
+    char* code =
+        "public bla class A {\n"
+        "  void m( { }\n"
+        "}\n";
+
+    RcnSourceText source = {
+        .text = code,
+        .size = strlen(code)
+    };
+    RcnCountResult res = rcnCountLogicalLinesStrict(RCN_LANG_JAVA, source);
     TEST_ASSERT_FALSE(res.state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, res.state.errorCode);
     TEST_ASSERT_EQUAL_STRING(
@@ -404,7 +463,10 @@ void testMarkLogicalLinesFailsWhenGivenInputWithUnknownLanguage(void) {
 
 int main(void) {
     UNITY_BEGIN();
-    RUN_TEST(testLogicalLineCountWithInvalidInputReturnsNull);
+    RUN_TEST(testLogicalLineCountWithInvalidInputFails);
+    RUN_TEST(testLogicalLineCountLenientWithEmptyStringInputSucceeds);
+    RUN_TEST(testLogicalLineCountStrictWithInvalidInputFails);
+    RUN_TEST(testLogicalLineCountStrictWithEmptyStringInputFails);
     RUN_TEST(testLogicalCountMarkWithInvalidInputReturnsNull);
     RUN_TEST(testLogicalCountFailsWhenGivenInputWithUnknownLanguage);
     RUN_TEST(testLogicalLineCountSimpleJavaIsSuccessful);
@@ -414,7 +476,8 @@ int main(void) {
     RUN_TEST(testLogicalLineCountWithEncodedSourceUTF16BE);
     RUN_TEST(testLogicalLineCountWithTooLargeTextInputFails);
     RUN_TEST(testEvaluateSourceTreeFailsWhenGivenInputWithUnknownLanguage);
-    RUN_TEST(testLogicalLineCountWithSyntaxErrorFails);
+    RUN_TEST(testLogicalLineCountWithPartialSyntaxErrorIsLenient);
+    RUN_TEST(testLogicalLineCountStrictWithPartialSyntaxError);
     RUN_TEST(testMarkLogicalLinesSimpleJavaIsSuccessful);
     RUN_TEST(testMarkLogicalLinesWithTooLargeTextInputFails);
     RUN_TEST(testMarkLogicalLinesWithNullTextInputFails);

@@ -111,11 +111,16 @@ static bool checkIntermediateResultState(
 
 static inline bool countLogicalLines(
     RcnCountStatistics* stats,
+    RcnStatOptions options,
     RcnSourceFile* file,
     RcnTextFormat language,
     RcnCountResultGroup* resultGroup
 ) {
-    RcnCountResult result = rcnCountLogicalLines(language, file->content);
+    RcnCountResult result =
+        options.strict
+        ? rcnCountLogicalLinesStrict(language, file->content)
+        : rcnCountLogicalLines(language, file->content);
+
     if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
         return false;
     }
@@ -248,7 +253,7 @@ static inline bool count(
     ok = ensureFileContent(stats, options, file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
         if (result->hasLogicalLines) {
-            ok = countLogicalLines(stats, file, sourceFormat, result);
+            ok = countLogicalLines(stats, options, file, sourceFormat, result);
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_PHYSICAL_LINES) {

@@ -148,13 +148,28 @@ function test_scount_prints_verbose_output() {
 function test_scount_with_directory_that_contains_file_with_syntax_error() {
   run_app "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_SUCCESS;
-  assert_stdout_equals_file "expected/mixedWithSyntaxError.txt";
+  assert_stdout_equals_file "expected/mixedWithSyntaxErrorLenient.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_strict_option_directory_that_contains_file_with_syntax_error() {
+  run_app --strict "${TEST_RES_DIR}/mixedWithSyntaxError";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixedWithSyntaxErrorStrict.txt";
   assert_stderr_is_empty;
 }
 
 function test_scount_with_file_that_has_syntax_error() {
   local file="${TEST_RES_DIR}/mixedWithSyntaxError/02_has_syntax_error.c";
   run_app "$file";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "02_has_syntax_error.c";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_strict_option_file_that_has_syntax_error() {
+  local file="${TEST_RES_DIR}/mixedWithSyntaxError/02_has_syntax_error.c";
+  run_app --strict "$file";
   assert_exit_status $EXIT_INVALID_INPUT;
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred for: ";
@@ -164,6 +179,13 @@ function test_scount_with_file_that_has_syntax_error() {
 
 function test_scount_with_stop_on_error_option() {
   run_app --stop-on-error "${TEST_RES_DIR}/mixedWithSyntaxError";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixedWithSyntaxErrorLenient.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_strict_and_stop_on_error_option() {
+  run_app --strict --stop-on-error "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_INVALID_INPUT;
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred";

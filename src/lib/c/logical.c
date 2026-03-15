@@ -20,34 +20,67 @@
 #include "evaluation.h"
 #include "fileio.h"
 
-RcnCountResult rcnCountLogicalLines(
+static inline void countLogicalLinesImpl(
     RcnTextFormat language,
-    RcnSourceText sourceCode
+    RcnSourceText sourceCode,
+    NodeEvalTrace* trace
 ) {
-    RcnCountResult result = {0};
+    RcnCountResult* result = trace->result;
     if (!sourceCode.text) {
-        result.state.errorCode = RCN_ERR_INVALID_INPUT;
-        result.state.errorMessage = "Source code input must not be NULL";
-        return result;
+        result->state.errorCode = RCN_ERR_INVALID_INPUT;
+        result->state.errorMessage = "Source code input must not be NULL";
+        return;
     }
-    NodeEvalTrace trace = {0};
-    trace.result = &result;
+    if (sourceCode.size == 0) {
+        if (trace->strict) {
+            result->state.errorCode = RCN_ERR_INVALID_INPUT;
+            result->state.errorMessage = "Source input must not be empty";
+        } else {
+            result->state.ok = true;
+        }
+        return;
+    }
 
     NodeVisitor evaluator = createEvaluationFunction(language);
     if (evaluator == NULL) {
-        result.state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
-        result.state.errorMessage = (
+        result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
+        result->state.errorMessage = (
             "The input format or programming language is not supported"
         );
-        return result;
+        return;
     }
     RcnResultState evalState = evaluateSourceTree(
         sourceCode,
         language,
         evaluator,
-        &trace
+        trace
     );
-    result.state = evalState;
+    result->state = evalState;
+}
+
+RcnCountResult rcnCountLogicalLines(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+) {
+    RcnCountResult result = {0};
+    NodeEvalTrace trace = {
+        .result = &result,
+        .strict = false,
+    };
+    countLogicalLinesImpl(language, sourceCode, &trace);
+    return result;
+}
+
+RcnCountResult rcnCountLogicalLinesStrict(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+) {
+    RcnCountResult result = {0};
+    NodeEvalTrace trace = {
+        .result = &result,
+        .strict = true,
+    };
+    countLogicalLinesImpl(language, sourceCode, &trace);
     return result;
 }
 

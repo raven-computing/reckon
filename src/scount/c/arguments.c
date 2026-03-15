@@ -33,6 +33,8 @@ AppArgs parseArgs(int argc, char** argv) {
             args.linesOnly = true;
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
+        } else if (strcmp(argv[i], "--strict") == 0) {
+            args.strict = true;
         } else if (strcmp(argv[i], "--verbose") == 0) {
             args.verbose = true;
         } else if (strcmp(argv[i], "--help") == 0
@@ -63,7 +65,7 @@ AppArgs parseArgs(int argc, char** argv) {
 }
 
 void showUsage(void) {
-    logI("Usage: scount [--verbose] [--annotate-counts] [-l|--lines] [--stop-on-error] <PATH>");
+    logI("Usage: scount [--verbose] [--annotate-counts] [-l|--lines] [--stop-on-error] [--strict] <PATH>");
 }
 
 void showVersion(AppArgs args) {
@@ -104,6 +106,10 @@ void showHelpText(void) {
     logI("                      This includes logical and physical lines.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
+    logI(" ");
+    logI("  [--strict]          Use strict syntax checking when parsing source code.");
+    logI("                      If set, any syntax error will cause failure for the");
+    logI("                      affected file. Otherwise, partial errors are tolerated.");
     logI(" ");
     logI("  [--verbose]         Enable verbose output.");
     logI(" ");

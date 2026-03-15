@@ -50,12 +50,24 @@ void testBashLogicalLineCountIsCorrect(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
 
-void testBashLogicalLineCountFailsWithSyntaxError(void) {
+void testBashLogicalLineCountIsLenientWithSyntaxError(void) {
     RcnSourceText source = {
         .text = bashSourceWithSyntaxError,
         .size = strlen(bashSourceWithSyntaxError)
     };
     RcnCountResult result = rcnCountLogicalLines(RCN_LANG_BASH, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(2, result.count);
+}
+
+void testBashLogicalLineCountStrictFailsWithSyntaxError(void) {
+    RcnSourceText source = {
+        .text = bashSourceWithSyntaxError,
+        .size = strlen(bashSourceWithSyntaxError)
+    };
+    RcnCountResult result = rcnCountLogicalLinesStrict(RCN_LANG_BASH, source);
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(0, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, result.state.errorCode);
@@ -157,7 +169,8 @@ void testBashLogicalLineCountForMinimizedFormattingIsCorrect(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testBashLogicalLineCountIsCorrect);
-    RUN_TEST(testBashLogicalLineCountFailsWithSyntaxError);
+    RUN_TEST(testBashLogicalLineCountIsLenientWithSyntaxError);
+    RUN_TEST(testBashLogicalLineCountStrictFailsWithSyntaxError);
     RUN_TEST(testBashPhysicalLineCountIsCorrect);
     RUN_TEST(testBashPhysicalLineCountWithSyntacticallyIncorrectCode);
     RUN_TEST(testBashLogicalLineCountMarksAreCorrect);

@@ -52,6 +52,7 @@ typedef struct AppArgs {
     bool annotateCounts; // Option: `--annotate-counts`
     bool linesOnly;      // Option: `-l|--lines`
     bool stopOnError;    // Option: `--stop-on-error`
+    bool strict;         // Option: `--strict`
     bool verbose;        // Option: `--verbose`
     bool version;        // Option: `-#|--version`
     bool versionShort;   // Option: `-#`

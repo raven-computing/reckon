@@ -65,6 +65,27 @@ static inline TSInputEncoding mapInputEncoding(TextEncoding encoding) {
     }
 }
 
+/**
+ * Checks whether the entire source is syntactically invalid by inspecting the
+ * top-level named children of the root node. Returns `true` if all named
+ * children are error nodes (or missing), indicating that the file is
+ * essentially unparseable. Returns `false` if at least one child parsed
+ * successfully, which means partial errors can potentially be tolerated.
+ */
+static bool isEntireSourceInvalid(TSNode rootNode) {
+    uint32_t childCount = ts_node_named_child_count(rootNode);
+    if (childCount == 0) {
+        return true;
+    }
+    for (uint32_t i = 0; i < childCount; ++i) {
+        TSNode child = ts_node_named_child(rootNode, i);
+        if (!ts_node_is_error(child) && !ts_node_is_missing(child)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void traverseTree(TSNode root, NodeVisitor visitor, NodeEvalTrace* trace) {
     TSTreeCursor cursor = ts_tree_cursor_new(root);
     enum TraversalState state = DESCEND;
@@ -130,11 +151,13 @@ RcnResultState evaluateSourceTree(
 
     if (ts_node_has_error(rootNode)) {
         RECKON_LOG_SYNTAX_ERRORS
-        ts_tree_delete(tree);
-        ts_parser_delete(parser);
-        state.errorCode = RCN_ERR_SYNTAX_ERROR;
-        state.errorMessage = "Syntax error detected in source code";
-        return state;
+        if (trace->strict || isEntireSourceInvalid(rootNode)) {
+            ts_tree_delete(tree);
+            ts_parser_delete(parser);
+            state.errorCode = RCN_ERR_SYNTAX_ERROR;
+            state.errorMessage = "Syntax error detected in source code";
+            return state;
+        }
     }
 
     traverseTree(rootNode, evaluator, trace);
