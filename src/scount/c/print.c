@@ -555,6 +555,10 @@ static void prSummaryRows(
                 label = "Python";
                 hasLogicalLines = true;
                 break;
+            case RCN_LANG_JAVASCRIPT:
+                label = "JavaScript";
+                hasLogicalLines = true;
+                break;
             case RCN_LANG_BASH:
                 label = "Shell";
                 hasLogicalLines = true;

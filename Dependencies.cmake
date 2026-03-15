@@ -33,6 +33,13 @@ dependency(
 )
 
 dependency(
+    DEPENDENCY_NAME         tree-sitter-javascript
+    DEPENDENCY_RESOURCE     kilo52/tree-sitter-javascript
+    DEPENDENCY_VERSION      v0.25.0-patch-cmakeliststxt
+    DEPENDENCY_LINK_TARGETS tree-sitter-javascript
+)
+
+dependency(
     DEPENDENCY_NAME         tree-sitter-bash
     DEPENDENCY_RESOURCE     kilo52/tree-sitter-bash
     DEPENDENCY_VERSION      v0.25.1-patch-cmakeliststxt

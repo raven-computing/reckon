@@ -25,11 +25,13 @@
 TSParser* createParserC(void);
 TSParser* createParserJava(void);
 TSParser* createParserPython(void);
+TSParser* createParserJavaScript(void);
 TSParser* createParserBash(void);
 
 void evaluateNodeC(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeJava(TSNode node, NodeEvalTrace* trace);
 void evaluateNodePython(TSNode node, NodeEvalTrace* trace);
+void evaluateNodeJavaScript(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeBash(TSNode node, NodeEvalTrace* trace);
 
 TSParser* createParser(RcnTextFormat language) {
@@ -40,6 +42,8 @@ TSParser* createParser(RcnTextFormat language) {
             return createParserJava();
         case RCN_LANG_PYTHON:
             return createParserPython();
+        case RCN_LANG_JAVASCRIPT:
+            return createParserJavaScript();
         case RCN_LANG_BASH:
             return createParserBash();
         default:
@@ -55,6 +59,8 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
             return evaluateNodeJava;
         case RCN_LANG_PYTHON:
             return evaluateNodePython;
+        case RCN_LANG_JAVASCRIPT:
+            return evaluateNodeJavaScript;
         case RCN_LANG_BASH:
             return evaluateNodeBash;
         default:
@@ -69,6 +75,7 @@ const char* getInlineSourceCommentString(RcnTextFormat language) {
             return "#";
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
+        case RCN_LANG_JAVASCRIPT:
         default:
             return "//";
     }
@@ -98,6 +105,10 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_PYTHON;
+    } else if (strcmp(extension, "js") == 0) {
+        detection.isSupportedFormat = true;
+        detection.isProgrammingLanguage = true;
+        detection.format = RCN_LANG_JAVASCRIPT;
     } else if (strcmp(extension, "sh") == 0
         || strcmp(extension, "bash") == 0) {
         detection.isSupportedFormat = true;
