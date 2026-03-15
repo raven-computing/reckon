@@ -874,6 +874,10 @@ RECKON_EXPORT void rcnCount(RcnCountStatistics* stats, RcnStatOptions options);
  * 
  * See header documentation for details on how logical lines of code are
  * defined and for supported encodings.
+ * The counting is lenient and performed on a best-effort basis, which means
+ * that small syntax errors might be tolerated and the function will attempt
+ * to compute a result even if the source code is not fully syntactically
+ * correct.
  *
  * @param language The format of the specified source text. Must denote a
  *                 supported programming language.
@@ -886,8 +890,8 @@ RECKON_EXPORT RcnCountResult rcnCountLogicalLines(
 );
 
 /**
- * Counts the logical lines of code in the given source text with strict
- * syntax checking.
+ * Counts logical lines of code in the given source text
+ * with strict syntax checking.
  *
  * This function behaves like `rcnCountLogicalLines()`, but any syntax error
  * detected in the source code causes the operation to fail immediately.
