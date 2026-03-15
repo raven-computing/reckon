@@ -104,6 +104,7 @@ typedef struct PrintBuffer {
     bool showWords;
     bool showCharacters;
     bool showSourceSize;
+    bool showWarnings;
 } PrintBuffer;
 
 /**

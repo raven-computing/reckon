@@ -319,6 +319,37 @@ static void prInputInfo(
 
 }
 
+static void prFileWarnings(
+    PrintBuffer* buffer,
+    const RcnCountStatistics* stats
+) {
+    bool hasWarnings = false;
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        const RcnCountResultGroup* const result = &stats->count.results[i];
+        const RcnErrorCode code = result->state.errorCode;
+        if (code == RCN_ERR_SYNTAX_ERROR || code == RCN_ERR_INPUT_TOO_LARGE) {
+            hasWarnings = true;
+            const char* fileName = (
+                stats->count.files[i].path
+                ? stats->count.files[i].path
+                : "(unknown)"
+            );
+            prStr(buffer, "Warning: ");
+            prStr(
+                buffer,
+                code == RCN_ERR_SYNTAX_ERROR
+                ? "Syntax errors detected in file: '"
+                : "File is too large: '"
+            );
+            prStr(buffer, fileName);
+            prStr(buffer, "'\n");
+        }
+    }
+    if (hasWarnings) {
+        prChr(buffer, '\n');
+    }
+}
+
 static void prTableTop(PrintBuffer* buffer, const char* title) {
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
@@ -718,6 +749,10 @@ void printResultsMultiple(
     assert(stats->count.size > 1);
 
     prInputInfo(buffer, path, stats);
+
+    if (buffer->showWarnings) {
+        prFileWarnings(buffer, stats);
+    }
 
     prTableTop(buffer, "File");
     prFileRows(buffer, stats);
