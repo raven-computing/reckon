@@ -53,12 +53,24 @@ void testJavaScriptLogicalLineCountIsCorrect(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
 
-void testJavaScriptLogicalLineCountFailsWithSyntaxError(void) {
+void testJavaScriptLogicalLineCountIsLenientWithSyntaxError(void) {
     RcnSourceText source = {
         .text = javaScriptSourceWithSyntaxError,
         .size = strlen(javaScriptSourceWithSyntaxError)
     };
     RcnCountResult result = rcnCountLogicalLines(RCN_LANG_JAVASCRIPT, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(5, result.count);
+}
+
+void testJavaScriptLogicalLineCountStrictFailsWithSyntaxError(void) {
+    RcnSourceText source = {
+        .text = javaScriptSourceWithSyntaxError,
+        .size = strlen(javaScriptSourceWithSyntaxError)
+    };
+    RcnCountResult result = rcnCountLogicalLinesStrict(RCN_LANG_JAVASCRIPT, source);
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(0, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_SYNTAX_ERROR, result.state.errorCode);
@@ -160,7 +172,8 @@ void testJavaScriptLogicalLineCountForMinimizedFormattingIsCorrect(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testJavaScriptLogicalLineCountIsCorrect);
-    RUN_TEST(testJavaScriptLogicalLineCountFailsWithSyntaxError);
+    RUN_TEST(testJavaScriptLogicalLineCountIsLenientWithSyntaxError);
+    RUN_TEST(testJavaScriptLogicalLineCountStrictFailsWithSyntaxError);
     RUN_TEST(testJavaScriptPhysicalLineCountIsCorrect);
     RUN_TEST(testJavaScriptPhysicalLineCountWithSyntacticallyIncorrectCode);
     RUN_TEST(testJavaScriptLogicalLineCountMarksAreCorrect);
