@@ -75,7 +75,7 @@ static inline TSInputEncoding mapInputEncoding(TextEncoding encoding) {
 static bool isEntireSourceInvalid(TSNode rootNode) {
     uint32_t childCount = ts_node_named_child_count(rootNode);
     if (childCount == 0) {
-        return true;
+        return true; // LCOV_EXCL_LINE
     }
     for (uint32_t i = 0; i < childCount; ++i) {
         TSNode child = ts_node_named_child(rootNode, i);

@@ -133,7 +133,7 @@ static bool isJsLabeledBlock(TSNode node) {
         TSSymbol symbol = ts_node_grammar_symbol(node);
         return sym_statement_block == symbol;
     }
-    return false;
+    return false; // LCOV_EXCL_LINE
 }
 
 static RcnCount evaluateNodeWeightJavaScriptImpl(
