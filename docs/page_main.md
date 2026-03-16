@@ -53,6 +53,7 @@ At the time of writing, the library supports the processing of the following fil
 - C
 - Java
 - Python
+- JavaScript
 - Shell
 - R
 - Markdown
