@@ -1,3 +1,13 @@
+#### 1.3.0
+* Added support for JavaScript source format. [[Issue#3]](https://github.com/raven-computing/reckon/issues/3)
+* Added the rcnCountLogicalLinesStrict() API function. [[Issue#38]](https://github.com/raven-computing/reckon/issues/38)
+* Added the 'strict' flag to the RcnStatOptions struct. [[Issue#38]](https://github.com/raven-computing/reckon/issues/38)
+* Added the '--strict' option to the scount CLI for strict syntax checking. [[Issue#38]](https://github.com/raven-computing/reckon/issues/38)
+* Changed the behaviour of the rcnCountLogicalLines() API function to be lenient by default. [[Issue#38]](https://github.com/raven-computing/reckon/issues/38)
+* Improved shown warnings for individual source files that produce errors when processed. [[Issue#25]](https://github.com/raven-computing/reckon/issues/25)
+* Refactored some minor things internally.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.2.0...v1.3.0)
+
 #### 1.2.0
 * Added support for Bash shell source format. [[Issue#2]](https://github.com/raven-computing/reckon/issues/2)
 * Added support for R format. [[Issue#5]](https://github.com/raven-computing/reckon/issues/5)
