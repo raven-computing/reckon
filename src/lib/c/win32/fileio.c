@@ -123,8 +123,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         const bool isRegularFile = isRegularFileAttr(attributes);
         if (isRegularFile) {
             appendFile(list, fullPath);
-        }
-        if (isDirectory) {
+        } else if (isDirectory) {
             dirStackPush(stack, fullPath);
             continue;
         }
