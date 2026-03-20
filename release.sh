@@ -279,7 +279,9 @@ function commit_release() {
   fi
   echo "Running post-release actions";
   local release_version="$VERSION";
-  echo -n "-dev" >> "$FILE_VERSION";
+  IS_DEV_VERSION=true;
+  update_version;
+  write_version;
   bump_version "p";
   echo "Post-release actions completed";
   echo "Pushing release";
