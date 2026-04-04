@@ -105,7 +105,9 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_PYTHON;
-    } else if (strcmp(extension, "js") == 0) {
+    } else if (strcmp(extension, "js") == 0
+        || strcmp(extension, "mjs") == 0
+        || strcmp(extension, "cjs") == 0) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_JAVASCRIPT;
