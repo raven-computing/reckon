@@ -139,7 +139,8 @@ static RcnCount evaluateNodeWeightCimpl(TSNode node, NodeEvalTrace* trace) {
             break;
         case sym_enum_specifier:
         case sym_union_specifier:
-            if (trace->lnLastDecl == currentLine(node)) {
+            if (trace->idxLastTypeDef == (trace->idx - 2)
+                || trace->lnLastDecl == currentLine(node)) {
                 break;
             }
             weight += 1;
