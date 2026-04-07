@@ -830,6 +830,8 @@ typedef struct RcnStatOptions {
      * is lenient and will tolerate syntax errors that only affect individual
      * parts in a source file. In lenient mode, if the entire source file is
      * syntactically invalid, the processing still fails for the affected file.
+     * 
+     * @since 1.3.0
      */
     bool strict;
 
@@ -913,6 +915,7 @@ RECKON_EXPORT RcnCountResult rcnCountLogicalLines(
  *                 supported programming language.
  * @param sourceCode The source code text to count logical lines in.
  * @return A `RcnCountResult` struct containing the line count.
+ * @since 1.3.0
  */
 RECKON_EXPORT RcnCountResult rcnCountLogicalLinesStrict(
     RcnTextFormat language,
