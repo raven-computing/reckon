@@ -1,3 +1,10 @@
+#### 1.3.1
+* Added support for handling .mjs and .cjs JavaScript file extensions.
+* Fixed missing version tags in header documentation. 
+* Improved accuracy of logical line count for C sources.
+* Internal improvements.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.3.0...v1.3.1)
+
 #### 1.3.0
 * Added support for JavaScript source format. [[Issue#3]](https://github.com/raven-computing/reckon/issues/3)
 * Added the rcnCountLogicalLinesStrict() API function. [[Issue#38]](https://github.com/raven-computing/reckon/issues/38)
