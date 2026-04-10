@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 10
+#define RECKON_NUM_SUPPORTED_FORMATS 11
 
 /**
  * Macro to create a format option bitmask.
@@ -154,6 +154,11 @@ typedef enum RcnTextFormat {
      * Text formatted in JSON, as found in files with a '.json' extension.
      */
     RCN_TEXT_JSON,
+
+    /**
+     * Text formatted in CSS, as found in files with a '.css' extension.
+     */
+    RCN_TEXT_CSS,
 
     /**
      * Source files for the C programming language.
@@ -730,6 +735,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for JSON text files.
      */
     RCN_OPT_TEXT_JSON = RECKON_MK_FRMT_OPT(RCN_TEXT_JSON),
+
+    /**
+     * Option to select statistics for CSS text files.
+     */
+    RCN_OPT_TEXT_CSS = RECKON_MK_FRMT_OPT(RCN_TEXT_CSS),
 
     /**
      * Option to select statistics for source code files written in
