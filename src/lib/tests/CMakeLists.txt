@@ -107,6 +107,13 @@ add_test_suite(
 )
 
 add_test_suite(
+    TEST_SUITE_NAME        TypeScriptLanguageUnitTest
+    TEST_SUITE_TARGET      test_lang_typescript
+    TEST_SUITE_SOURCE      unit/c/test_lang_typescript.c
+    TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
+)
+
+add_test_suite(
     TEST_SUITE_NAME        BashLanguageUnitTest
     TEST_SUITE_TARGET      test_lang_bash
     TEST_SUITE_SOURCE      unit/c/test_lang_bash.c

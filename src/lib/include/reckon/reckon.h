@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 10
+#define RECKON_NUM_SUPPORTED_FORMATS 11
 
 /**
  * Macro to create a format option bitmask.
@@ -174,6 +174,11 @@ typedef enum RcnTextFormat {
      * Source files for the JavaScript programming language.
      */
     RCN_LANG_JAVASCRIPT,
+
+    /**
+     * Source files for the TypeScript programming language.
+     */
+    RCN_LANG_TYPESCRIPT,
 
     /**
      * Source files for the R programming language.
@@ -754,6 +759,12 @@ typedef enum RcnFormatOption {
      * the JavaScript programming language.
      */
     RCN_OPT_LANG_JAVASCRIPT = RECKON_MK_FRMT_OPT(RCN_LANG_JAVASCRIPT),
+
+    /**
+     * Option to select statistics for source code files written in
+     * the TypeScript programming language.
+     */
+    RCN_OPT_LANG_TYPESCRIPT = RECKON_MK_FRMT_OPT(RCN_LANG_TYPESCRIPT),
 
     /**
      * Option to select statistics for source code files written in

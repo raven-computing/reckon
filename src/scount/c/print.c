@@ -590,6 +590,10 @@ static void prSummaryRows(
                 label = "JavaScript";
                 hasLogicalLines = true;
                 break;
+            case RCN_LANG_TYPESCRIPT:
+                label = "TypeScript";
+                hasLogicalLines = true;
+                break;
             case RCN_LANG_BASH:
                 label = "Shell";
                 hasLogicalLines = true;
