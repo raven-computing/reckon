@@ -125,8 +125,8 @@ async function asyncFn(input: string): Promise<string> { // +1 (function declara
 
 // --- Classes ---
 
-abstract class Base implements Named {
-    abstract describe(): string;
+abstract class Base implements Named { // +1 (abstract class declaration)
+    abstract describe(): string; // +1 (abstract method signature)
     readonly id: number; // +1 (public field definition)
 
     constructor(public readonly name: string, id: number) { // +1 (method definition)

@@ -48,7 +48,7 @@ void testTypeScriptLogicalLineCountIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(116, result.count);
+    TEST_ASSERT_EQUAL_INT(118, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }
@@ -113,7 +113,7 @@ void testTypeScriptLogicalLineCountMarksAreCorrect(void) {
         file->content
     );
     TEST_ASSERT_NOT_NULL(actual.text);
-    TEST_ASSERT_EQUAL_INT(9284, actual.size);
+    TEST_ASSERT_EQUAL_INT(9353, actual.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, actual.text);
     freeSourceFile(file);
     freeSourceFile(goldenSample);
@@ -126,7 +126,7 @@ void testTypeScriptLogicalLineCountMarksForFilePathInput(void) {
     readSourceFileContent(goldenSample);
     RcnSourceText annotated = rcnMarkLogicalLinesInFile(path);
     TEST_ASSERT_NOT_NULL(annotated.text);
-    TEST_ASSERT_EQUAL_INT(9284, annotated.size);
+    TEST_ASSERT_EQUAL_INT(9353, annotated.size);
     TEST_ASSERT_EQUAL_STRING(goldenSample->content.text, annotated.text);
     freeSourceFile(goldenSample);
     rcnFreeSourceText(&annotated);
@@ -140,12 +140,12 @@ void testTypeScriptCountAllIsCorrect(void) {
     TEST_ASSERT_TRUE(stats->state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
     TEST_ASSERT_NULL(stats->state.errorMessage);
-    TEST_ASSERT_EQUAL_INT(348, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(354, stats->totalLogicalLines);
     TEST_ASSERT_EQUAL_INT(717, stats->totalPhysicalLines);
-    TEST_ASSERT_EQUAL_INT(21042, stats->totalSourceSize);
-    TEST_ASSERT_EQUAL_INT(348, stats->logicalLines[RCN_LANG_TYPESCRIPT]);
+    TEST_ASSERT_EQUAL_INT(21111, stats->totalSourceSize);
+    TEST_ASSERT_EQUAL_INT(354, stats->logicalLines[RCN_LANG_TYPESCRIPT]);
     TEST_ASSERT_EQUAL_INT(717, stats->physicalLines[RCN_LANG_TYPESCRIPT]);
-    TEST_ASSERT_EQUAL_INT(21042, stats->sourceSize[RCN_LANG_TYPESCRIPT]);
+    TEST_ASSERT_EQUAL_INT(21111, stats->sourceSize[RCN_LANG_TYPESCRIPT]);
     TEST_ASSERT_EQUAL_INT(3, stats->count.size);
     TEST_ASSERT_EQUAL_INT(3, stats->count.sizeProcessed);
     RcnSourceFile* filelist = stats->count.files;
@@ -164,7 +164,7 @@ void testTypeScriptLogicalLineCountForMinimizedFormattingIsCorrect(void) {
     );
     freeSourceFile(file);
     TEST_ASSERT_TRUE(result.state.ok);
-    TEST_ASSERT_EQUAL_INT(116, result.count);
+    TEST_ASSERT_EQUAL_INT(118, result.count);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
 }

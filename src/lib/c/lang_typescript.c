@@ -90,6 +90,8 @@ enum SymbolIdentifiersTypeScript {
     sym_class_static_block = 258,
     sym_method_definition = 261,
     sym_public_field_definition = 266,
+    sym_abstract_method_signature = 270,
+    sym_abstract_class_declaration = 282,
 };
 
 TSParser* createParserTypeScript(void) {
@@ -194,6 +196,8 @@ static RcnCount evaluateNodeWeightTypeScriptImpl(
         case sym_public_field_definition:
         case sym_class_static_block:
         case sym_decorator:
+        case sym_abstract_method_signature:
+        case sym_abstract_class_declaration:
             weight += 1;
             break;
         default:
