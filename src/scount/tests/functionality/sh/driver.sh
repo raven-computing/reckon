@@ -166,8 +166,11 @@ function _read_file() {
 # Args:
 # $@ - The arguments forwarded to the executable.
 #
+# Stdin:
+# Optional data to be passed to the application via its stdin.
+#
 function run_app() {
-  "$TEST_TARGET_APP" $@ 1>"$TEST_TARGET_FILE_STDOUT" 2>"$TEST_TARGET_FILE_STDERR";
+  "$TEST_TARGET_APP" $@ <&0 1>"$TEST_TARGET_FILE_STDOUT" 2>"$TEST_TARGET_FILE_STDERR";
   TEST_TARGET_APP_EXIT_STATUS=$?;
 }
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -26,6 +27,7 @@
 AppArgs parseArgs(int argc, char** argv) {
     AppArgs args = {0};
     for (int i = 1; i < argc; ++i) {
+        const size_t argLen = strlen(argv[i]);
         if (strcmp(argv[i], "--annotate-counts") == 0) {
             args.annotateCounts = true;
         } else if (strcmp(argv[i], "--lines") == 0
@@ -46,6 +48,15 @@ AppArgs parseArgs(int argc, char** argv) {
         } else if (strcmp(argv[i], "-#") == 0) {
             args.versionShort = true;
             args.version = true;
+        } else if (strcmp(argv[i], "-") == 0
+            || (argLen > 2 && argv[i][0] == '-' && argv[i][1] == '.')) {
+            if (args.inputPath == NULL) {
+                args.readFromStdin = true;
+                args.inputPath = argv[i] + 1;
+            } else {
+                args.errorMessage = "Multiple input paths specified.";
+                break;
+            }
         } else if (argv[i][0] == '-') {
             args.indexUnknown = i;
             break;
@@ -96,6 +107,9 @@ void showHelpText(void) {
     logI("Positional Arguments:");
     logI(" ");
     logI("  <PATH>              The path to the input file or directory to process.");
+    logI("                      Use '-' to read plain text source input from stdin, or append a");
+    logI("                      file extension to indicate a specific source format or language,");
+    logI("                      e.g. '-.java' will treat the input provided by stdin as Java code.");
     logI(" ");
     logI("Options:");
     logI(" ");

@@ -702,7 +702,13 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
     RcnCountResultGroup* result = &stats->count.results[0];
 
     prStr(buffer, "File: ");
-    prStr(buffer, file->name ? file->name : "(unknown)");
+    if (buffer->fileIsStdin) {
+        prStr(buffer, "-  (Data from standard input treated as a .");
+        prStr(buffer, file->extension ? file->extension : ".text");
+        prStr(buffer, " file)");
+    } else {
+        prStr(buffer, file->name ? file->name : "(unknown)");
+    }
     prChr(buffer, '\n');
     prChr(buffer, '\n');
     if (buffer->showLogicalLines) {

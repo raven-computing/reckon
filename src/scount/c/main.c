@@ -45,12 +45,22 @@ int main(int argc, char** argv) {
         }
         return APP_EXIT_INVALID_ARGUMENT;
     }
+    char* tempInputPath = NULL;
+    if (args.readFromStdin) {
+        tempInputPath = createTempInputFileFromStdin(args.inputPath);
+        if (!tempInputPath) {
+            logE("Failed to read source input from stdin.");
+            return APP_EXIT_PROG_IO_ERROR;
+        }
+        args.inputPath = tempInputPath;
+    }
     ExitStatus status = APP_EXIT_UNSPECIFIED_ERROR;
     if (args.annotateCounts) {
         status = outputAnnotatedSource(args);
     } else {
         status = outputStatistics(args);
     }
+    removeTempInputFile(tempInputPath);
     if (LOG_IO_ERROR_DETECTED) {
         status = APP_EXIT_PROG_IO_ERROR;
     }

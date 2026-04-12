@@ -21,6 +21,7 @@ Checks: '
 CheckOptions:
   readability-function-cognitive-complexity.IgnoreMacros: true
   readability-function-cognitive-complexity.Threshold: 30
-  readability-identifier-length.IgnoredVariableNames: 'ok'
+  readability-identifier-length.IgnoredVariableNames: '(ok|fd)'
+  readability-identifier-length.IgnoredParameterNames: 'fd'
   readability-magic-numbers.IgnorePowersOf2IntegerValues: true
   hicpp-signed-bitwise.IgnorePositiveIntegerLiterals: true

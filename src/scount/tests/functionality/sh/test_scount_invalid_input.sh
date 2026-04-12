@@ -62,3 +62,24 @@ function test_scount_prints_error_when_annotating_source_of_directory() {
   assert_stderr_contains "Failed to annotate source file";
   assert_stderr_contains "Check the logical line count";
 }
+
+function test_scount_with_multiple_path_arguments_stdin_and_file_prints_error() {
+  run_app "MyFile.txt" -;
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stderr_equals "Multiple input paths specified.";
+  assert_stdout_is_empty;
+}
+
+function test_scount_prints_error_when_annotating_invalid_source_from_stdin() {
+  run_app --annotate-counts - <<< 'This is not valid source code';
+  assert_exit_status $EXIT_INVALID_INPUT;
+  assert_stderr_equals "Failed to annotate source input from stdin.";
+  assert_stdout_is_empty;
+}
+
+function test_scount_error_when_given_stdin_with_invalid_specified_extension() {
+  run_app -.invalid < "${TEST_PROJECT_DIR}/src/scount/tests/functionality/res/mixed/Sample1.java";
+  assert_exit_status $EXIT_NOTHING_PROCESSED;
+  assert_stdout_is_empty;
+  assert_stderr_equals "The file extension is not supported: 'invalid'";
+}

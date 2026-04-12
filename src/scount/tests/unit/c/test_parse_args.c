@@ -217,6 +217,30 @@ void testStrictOptionSetsStrictTrue(void) {
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
+void testStdinPathDashSetsInputPathAndValid(void) {
+    char* argv[] = { "scount", "-" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_EQUAL_STRING("", args.inputPath);
+    TEST_ASSERT_TRUE(args.readFromStdin);
+    TEST_ASSERT_NULL(args.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, args.indexUnknown);
+}
+
+void testStdinPathDashDotFileExtensionSetsInputPathAndValid(void) {
+    char* argv[] = { "scount", "-.java" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_EQUAL_STRING(".java", args.inputPath);
+    TEST_ASSERT_TRUE(args.readFromStdin);
+    TEST_ASSERT_NULL(args.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, args.indexUnknown);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testNoArgsSetsMessageNoInputAndInvalid);
@@ -234,5 +258,7 @@ int main(void) {
     RUN_TEST(testLinesLongOptionSetsLinesOnlyTrue);
     RUN_TEST(testLinesShortOptionSetsLinesOnlyTrue);
     RUN_TEST(testStrictOptionSetsStrictTrue);
+    RUN_TEST(testStdinPathDashSetsInputPathAndValid);
+    RUN_TEST(testStdinPathDashDotFileExtensionSetsInputPathAndValid);
     return UNITY_END();
 }
