@@ -22,6 +22,9 @@ Options:
 
   [--debug]       Build with debug symbols and with optimizations turned off.
 
+  [--disable-LTO] Disable link-time optimization. LTO is enabled by default for release build
+                  variants but can be explicitly disabled with this option.
+
   [--docs]        Build the documentation and then exit.
 
   [--ignore-warnings]
@@ -55,6 +58,7 @@ ARG_PACKAGE=false;
 ARG_SANITIZERS=false;
 ARG_SHARED=false;
 ARG_DEBUG=false;
+ARG_DISABLE_LTO=false;
 ARG_DOCS=false;
 ARG_IGNORE_WARNINGS=false;
 ARG_ONLY_LIBS=false;
@@ -95,6 +99,10 @@ for arg in "$@"; do
     ;;
     --debug)
     ARG_DEBUG=true;
+    shift
+    ;;
+    --disable-LTO)
+    ARG_DISABLE_LTO=true;
     shift
     ;;
     --ignore-warnings)
@@ -236,6 +244,7 @@ BUILD_ONLY_LIBS=OFF;
 BUILD_ANALYZE="OFF";
 BUILD_WITH_SANITIZERS="OFF";
 BUILD_WITH_COVERAGE="OFF";
+BUILD_WITH_LTO="ON";
 
 if [[ $ARG_IGNORE_WARNINGS == true ]]; then
   IGNORE_WARNINGS="ON";
@@ -251,6 +260,9 @@ if [[ $ARG_SKIP_TESTS == true ]]; then
 fi
 if [[ $ARG_SANITIZERS == true ]]; then
   BUILD_WITH_SANITIZERS="ON";
+fi
+if [[ $ARG_DISABLE_LTO == true ]]; then
+  BUILD_WITH_LTO="OFF";
 fi
 
 BUILD_SHARED_LIBS="OFF";
@@ -282,7 +294,8 @@ if [[ $ARG_SKIP_CONFIG == false ]]; then
         -DRECKON_BUILD_SHARED_LIBS="$BUILD_SHARED_LIBS" \
         -DRECKON_BUILD_ONLY_LIBS="$BUILD_ONLY_LIBS" \
         -DRECKON_USE_SANITIZERS="$BUILD_WITH_SANITIZERS" \
-        -DRECKON_BUILD_TEST_COVERAGE="$BUILD_WITH_COVERAGE" ..;
+        -DRECKON_BUILD_TEST_COVERAGE="$BUILD_WITH_COVERAGE" \
+        -DRECKON_ENABLE_LTO="$BUILD_WITH_LTO" ..;
 
   config_status=$?;
   if (( config_status != 0 )); then

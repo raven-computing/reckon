@@ -19,6 +19,8 @@
 #
 #==============================================================================
 
+include(CheckIPOSupported)
+
 # Enables all compiler warnings for the specified target.
 #
 # Sets non-default warning flags for the given target to help identify
@@ -209,4 +211,43 @@ function(set_stripped_executable target_name)
         "$<$<AND:${platform},${variant},${gcc_or_clang}>:${strip_opt}>"
     )
 
+endfunction()
+
+# Enables or disables link-time optimization (LTO) for the build.
+#
+# Checks whether LTO is supported by the current compiler and, if so, sets the
+# appropriate CMake variables to enable or disable LTO for Release
+# and MinSizeRel builds.
+#
+# Arguments:
+#
+#   enabled:
+#       Whether to enable or disable LTO. Should be either "ON" or "OFF".
+#
+# Example:
+#   set_link_time_optimization(ON)
+#   set_link_time_optimization(OFF)
+#
+function(set_link_time_optimization enabled)
+    set(DO_ENABLE ON)
+    if(enabled STREQUAL "OFF")
+        set(DO_ENABLE OFF)
+    endif()
+
+    check_ipo_supported(RESULT is_ipo_supported OUTPUT info)
+
+    if(is_ipo_supported)
+        set(
+            CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE
+            ${DO_ENABLE}
+            PARENT_SCOPE
+        )
+        set(
+            CMAKE_INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL
+            ${DO_ENABLE}
+            PARENT_SCOPE
+        )
+    else()
+        message(STATUS "LTO is not supported: ${info}")
+    endif()
 endfunction()

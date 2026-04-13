@@ -6,7 +6,8 @@
     "-DRECKON_BUILD_ONLY_LIBS=OFF",
     "-DRECKON_USE_SANITIZERS=OFF",
     "-DRECKON_BUILD_TEST_COVERAGE=OFF",
-    "-DRECKON_SOURCE_ANALYSIS=OFF"
+    "-DRECKON_SOURCE_ANALYSIS=OFF",
+    "-DRECKON_ENABLE_LTO=ON"
   ],
   "cmake.revealLog": "error",
   "cmake.ctest.debugLaunchTarget": "Debug Reckon Tests",

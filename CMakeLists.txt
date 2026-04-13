@@ -21,6 +21,7 @@ option(
 option(RECKON_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(RECKON_BUILD_ONLY_LIBS "Build only the Reckon libraries" OFF)
 option(RECKON_USE_SANITIZERS "Enable/disable the use of sanitizers" OFF)
+option(RECKON_ENABLE_LTO "Enable/disable link-time optimization (LTO)" ON)
 option(
     RECKON_BUILD_TEST_COVERAGE
     "Enable/disable test coverage instrumentation"
@@ -51,6 +52,10 @@ include(cmake/SanitizerUtil.cmake)
 
 if(NOT DEFINED RECKON_DO_NOT_OVERWRITE_OUTPUT_DIRECTORY)
     set_output_directories()
+endif()
+
+if(RECKON_ENABLE_LTO)
+    set_link_time_optimization(ON)
 endif()
 
 include(Dependencies.cmake)
