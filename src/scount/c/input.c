@@ -18,7 +18,20 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#define TEMP_CLOSE _close
+#define TEMP_UNLINK _unlink
+#else
 #include <unistd.h>
+#define TEMP_CLOSE close
+#define TEMP_UNLINK unlink
+#endif
 
 #include "scount.h"
 
@@ -26,12 +39,13 @@
 static char* cleanup(char* tmpPath, char* tmpPathMk, int fd, FILE* tmpFile) {
     if (tmpFile) {
         (void) fclose(tmpFile);
+        fd = -1;
     }
     if (fd >= 0) {
-        close(fd);
+        TEMP_CLOSE(fd);
     }
     if (tmpPathMk) {
-        unlink(tmpPathMk);
+        TEMP_UNLINK(tmpPathMk);
     }
     if (tmpPath) {
         free(tmpPath);
@@ -40,15 +54,66 @@ static char* cleanup(char* tmpPath, char* tmpPathMk, int fd, FILE* tmpFile) {
 }
 // LCOV_EXCL_STOP
 
-char* createTempInputFileFromStdin(const char* extension) {
+#ifdef _WIN32
+
+static char* createTempFileImpl(const char* suffix, int* outFd) {
+    char tempDir[MAX_PATH + 1];
+    const DWORD tempDirLen = GetTempPathA((DWORD) sizeof(tempDir), tempDir);
+    if (tempDirLen == 0 || tempDirLen >= sizeof(tempDir)) {
+        return NULL;
+    }
+
+    for (unsigned int i = 0; i < 256; ++i) {
+        const unsigned int unique = (
+            (unsigned int) GetTickCount()
+            ^ (unsigned int) GetCurrentProcessId()
+            ^ (i * 2654435761u)  // Knuth
+        );
+        const size_t pathLen = (
+            strlen(tempDir) + strlen("scount-stdin-") + 8 + strlen(suffix) + 1
+        );
+        char* pathTemplate = malloc(pathLen);
+        if (!pathTemplate) {
+            return NULL;
+        }
+        (void) snprintf(
+            pathTemplate,
+            pathLen,
+            "%sscount-stdin-%08x%s",
+            tempDir,
+            unique,
+            suffix
+        );
+        const int fd = _open(
+            pathTemplate,
+            _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY, _S_IREAD | _S_IWRITE
+        );
+        if (fd >= 0) {
+            *outFd = fd;
+            return pathTemplate;
+        }
+
+        free(pathTemplate);
+        if (errno != EEXIST) {
+            return NULL;
+        }
+    }
+
+    return NULL;
+}
+
+static FILE* openFileImpl(int fd) {
+    return _fdopen(fd, "wb");
+}
+
+#else
+
+static char* createTempFileImpl(const char* suffix, int* outFd) {
     const char* const prefix = "/tmp/scount-stdin-";
     const char* const templ = "XXXXXX";
-    const char* const suffix = (
-        extension && strcmp(extension, "") != 0
-        ? extension
-        : ".txt"
+    const size_t templateLen = (
+        strlen(prefix) + strlen(templ) + strlen(suffix) + 1
     );
-    const size_t templateLen = strlen(prefix) + strlen(templ) + strlen(suffix) + 1;
 
     char* pathTemplate = malloc(templateLen);
     if (!pathTemplate) {
@@ -59,11 +124,36 @@ char* createTempInputFileFromStdin(const char* extension) {
     strncat(pathTemplate, suffix, templateLen - strlen(pathTemplate) - 1);
     pathTemplate[templateLen - 1] = '\0';
 
-    int fd = mkstemps(pathTemplate, (int) strlen(suffix));
-    if (fd < 0) {
+    *outFd = mkstemps(pathTemplate, (int) strlen(suffix));
+    if (*outFd < 0) {
+        free(pathTemplate);
+        return NULL; // LCOV_EXCL_LINE
+    }
+
+    return pathTemplate;
+}
+
+static FILE* openFileImpl(int fd) {
+    return fdopen(fd, "wb");
+}
+
+#endif
+
+char* createTempInputFileFromStdin(const char* extension) {
+    const char* const suffix = (
+        extension && strcmp(extension, "") != 0
+        ? extension
+        : ".txt"
+    );
+    char* pathTemplate = NULL;
+    int fd = -1;
+
+    pathTemplate = createTempFileImpl(suffix, &fd);
+    if (!pathTemplate || fd < 0) {
         return cleanup(pathTemplate, NULL, fd, NULL); // LCOV_EXCL_LINE
     }
-    FILE* out = fdopen(fd, "wb");
+
+    FILE* out = openFileImpl(fd);
     if (!out) {
         return cleanup(pathTemplate, pathTemplate, fd, NULL); // LCOV_EXCL_LINE
     }
@@ -95,7 +185,7 @@ void removeTempInputFile(char* path) {
     if (!path) {
         return;
     }
-    if (unlink(path) != 0) {
+    if (TEMP_UNLINK(path) != 0) {
         logW("Failed to remove temporary input file '%s'", path); // LCOV_EXCL_LINE
     }
     free(path);
