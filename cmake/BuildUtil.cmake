@@ -202,7 +202,7 @@ endfunction()
 #
 function(set_stripped_executable target_name)
     set(platform "$<BOOL:${UNIX}>")
-    set(variant "$<CONFIG:Release>")
+    set(variant "$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>")
     set(compiler "$<OR:$<C_COMPILER_ID:GNU>,$<C_COMPILER_ID:Clang>>")
     set(strip_opt "-Wl,--strip-all")
     target_link_options(
