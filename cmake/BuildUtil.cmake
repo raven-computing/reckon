@@ -203,12 +203,12 @@ endfunction()
 function(set_stripped_executable target_name)
     set(platform "$<BOOL:${UNIX}>")
     set(variant "$<CONFIG:Release>")
-    set(gcc_or_clang "$<OR:$<C_COMPILER_ID:GNU>,$<C_COMPILER_ID:Clang>>")
+    set(compiler "$<OR:$<C_COMPILER_ID:GNU>,$<C_COMPILER_ID:Clang>>")
     set(strip_opt "-Wl,--strip-all")
     target_link_options(
         ${target_name}
         PRIVATE
-        "$<$<AND:${platform},${variant},${gcc_or_clang}>:${strip_opt}>"
+        "$<$<AND:${platform},${variant},${compiler}>:${strip_opt}>"
     )
 
 endfunction()
