@@ -704,7 +704,7 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
     prStr(buffer, "File: ");
     if (buffer->fileIsStdin) {
         prStr(buffer, "-  (Data from standard input treated as a .");
-        prStr(buffer, file->extension ? file->extension : ".text");
+        prStr(buffer, file->extension ? file->extension : "text");
         prStr(buffer, " file)");
     } else {
         prStr(buffer, file->name ? file->name : "(unknown)");
