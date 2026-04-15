@@ -48,7 +48,7 @@ Since Reckon must be classified as a project-level dependency, as opposed to a s
 
 ### Supported Formats
 
-At the time of writing, the library supports the processing of the following file formats:
+This version of the project supports processing the following file formats:
 
 - C
 - Java
