@@ -166,7 +166,8 @@ ExitStatus outputAnnotatedSource(AppArgs args);
  * The path of the created file is returned as an allocated string owned by
  * the caller. Must be freed using `removeTempInputFile()`.
  *
- * @param extension The file extension to use for the temporary file.
+ * @param extension The file extension to use for the temporary file,
+ *                  with a leading dot.
  * @return Allocated path string to the created temp file, or `NULL` on error.
  */
 char* createTempInputFileFromStdin(const char* extension);
