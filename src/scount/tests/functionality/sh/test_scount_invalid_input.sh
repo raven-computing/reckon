@@ -79,7 +79,7 @@ function test_scount_prints_error_when_annotating_invalid_source_from_stdin() {
 
 function test_scount_error_when_given_stdin_with_invalid_specified_extension() {
   run_app -.invalid < "${TEST_PROJECT_DIR}/src/scount/tests/functionality/res/mixed/Sample1.java";
-  assert_exit_status $EXIT_NOTHING_PROCESSED;
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
   assert_stdout_is_empty;
   assert_stderr_equals "The file extension is not supported: 'invalid'";
 }

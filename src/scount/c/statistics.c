@@ -160,7 +160,11 @@ ExitStatus outputStatistics(AppArgs args) {
     if (stats->count.sizeProcessed == 0) {
         reportNothingWasProc(path, stats, args.readFromStdin);
         rcnFreeCountStatistics(stats);
-        return APP_EXIT_NOTHING_PROCESSED;
+        return (
+            args.readFromStdin
+            ? APP_EXIT_INVALID_ARGUMENT
+            : APP_EXIT_NOTHING_PROCESSED
+        );
     }
 
     PrintBuffer buffer = {
