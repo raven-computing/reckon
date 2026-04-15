@@ -117,7 +117,7 @@ extern "C" {
  * 
  * If the environment has a variable with this name set to "1", then debug
  * logging is enabled and for certain operations additional information is
- * printed on stdout. A variable value of "0" disables all debug logging.
+ * printed to stdout. A variable value of "0" disables all debug logging.
  * If the environment variable is not set, debug logging is disabled
  * by default.
  * The definition of the environment variable only has an effect if the
