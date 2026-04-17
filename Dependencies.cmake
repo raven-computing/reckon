@@ -47,6 +47,13 @@ dependency(
 )
 
 dependency(
+    DEPENDENCY_NAME         tree-sitter-typescript
+    DEPENDENCY_RESOURCE     kilo52/tree-sitter-typescript
+    DEPENDENCY_VERSION      v0.23.2-patch-cmakeliststxt
+    DEPENDENCY_LINK_TARGETS tree-sitter-typescript
+)
+
+dependency(
     DEPENDENCY_NAME         unity
     DEPENDENCY_RESOURCE     ThrowTheSwitch/Unity
     DEPENDENCY_VERSION      v2.6.1
