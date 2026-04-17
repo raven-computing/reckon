@@ -1,0 +1,8 @@
+/* first CSS sample */
+:root {
+  --gap: 8px;
+}
+.container {
+  display: grid;
+  gap: var(--gap);
+}
