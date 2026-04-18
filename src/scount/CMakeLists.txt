@@ -13,6 +13,7 @@ add_library(
     c/logging.c
     c/print.c
     c/statistics.c
+    c/input.c
 )
 
 target_include_directories(

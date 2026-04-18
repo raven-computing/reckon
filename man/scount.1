@@ -39,6 +39,16 @@ SZE|File size in bytes
 The path to the input file or directory to process.
 .br
 This is a mandatory argument.
+.br
+Use
+.B \-
+to read source text from standard input instead and treat it as plain text.
+Use
+.B \-.EXT
+to read source text from standard input and treat it as if it was a file with the
+specified file extension. For example,
+.B \-.java
+to treat the data provided via stdin as Java source code.
 .SH OPTIONS
 .TP
 .B \-\-annotate\-counts
@@ -98,6 +108,20 @@ Count lines in a directory tree:
 .RS
 .nf
 scount /path/to/project
+.fi
+.RE
+.TP
+Count source text of two files from standard input as plain text:
+.RS
+.nf
+cat input1.txt input2.txt | scount -
+.fi
+.RE
+.TP
+Count lines of code from standard input using an explicit language extension:
+.RS
+.nf
+scount -.java < Sample.java
 .fi
 .RE
 .TP

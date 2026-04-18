@@ -49,6 +49,7 @@ typedef struct AppArgs {
     char* inputPath;     // The input `<PATH>` to process
     char* errorMessage;  // Error message in case of invalid input
     int indexUnknown;    // Index into `argv` when unknown arg found, or zero
+    bool readFromStdin;  // True when 'inputPath' is '-' or '-.ext'
     bool annotateCounts; // Option: `--annotate-counts`
     bool linesOnly;      // Option: `-l|--lines`
     bool stopOnError;    // Option: `--stop-on-error`
@@ -106,6 +107,7 @@ typedef struct PrintBuffer {
     bool showCharacters;
     bool showSourceSize;
     bool showWarnings;
+    bool fileIsStdin;
 } PrintBuffer;
 
 /**
@@ -157,6 +159,28 @@ ExitStatus outputStatistics(AppArgs args);
  * @return The exit status of the operation.
  */
 ExitStatus outputAnnotatedSource(AppArgs args);
+
+/**
+ * Reads all content from stdin and writes it into a temporary file.
+ *
+ * The path of the created file is returned as an allocated string owned by
+ * the caller. Must be freed using `removeTempInputFile()`.
+ *
+ * @param extension The file extension to use for the temporary file,
+ *                  with a leading dot.
+ * @return Allocated path string to the created temp file, or `NULL` on error.
+ */
+char* createTempInputFileFromStdin(const char* extension);
+
+/**
+ * Removes a previously created temporary input file and frees its path.
+ *
+ * This function is best-effort for deletion and always frees the given path.
+ *
+ * @param path Allocated file path previously returned by
+ *             `createTempInputFileFromStdin()`.
+ */
+void removeTempInputFile(char* path);
 
 /**
  * Creates textual result output for processed statistics when the

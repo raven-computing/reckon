@@ -20,15 +20,19 @@
 ExitStatus outputAnnotatedSource(AppArgs args) {
     RcnSourceText annotatedSource = rcnMarkLogicalLinesInFile(args.inputPath);
     if (!annotatedSource.text) {
-        logE("Failed to annotate source file '%s'", args.inputPath);
-        logE(
-            "Check the logical line count of that file to try to "
-            "get more information on the error."
-        );
-        logE(
-            "Hint: Try to run the previous command "
-            "without the '--annotate-counts' option."
-        );
+        if (args.readFromStdin) {
+            logE("Failed to annotate source input from stdin.");
+        } else {
+            logE("Failed to annotate source file '%s'", args.inputPath);
+            logE(
+                "Check the logical line count of that file to try to "
+                "get more information on the error."
+            );
+            logE(
+                "Hint: Try to run the previous command "
+                "without the '--annotate-counts' option."
+            );
+        }
         return APP_EXIT_INVALID_INPUT;
     }
     logStdout(annotatedSource.text);

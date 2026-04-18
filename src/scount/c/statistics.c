@@ -90,9 +90,17 @@ static void reportInputVerbose(const char* path, RcnCountStatistics* stats) {
     }
 }
 
-static void reportNothingWasProc(const char* path, RcnCountStatistics* stats) {
+static void reportNothingWasProc(
+    const char* path,
+    RcnCountStatistics* stats,
+    bool readFromStdin
+) {
     if (stats->count.size == 1) {
         const RcnSourceFile* const file = &stats->count.files[0];
+        if (readFromStdin) {
+            logE("The file extension is not supported: '%s'", file->extension);
+            return;
+        }
         const bool inputIsDirectory = strcmp(path, file->path) != 0;
         logE("Scanned %s '%s'", inputIsDirectory ? "directory" : "file", path);
         logE("The file '%s' cannot be processed.", file->name);
@@ -150,9 +158,13 @@ ExitStatus outputStatistics(AppArgs args) {
     }
 
     if (stats->count.sizeProcessed == 0) {
-        reportNothingWasProc(path, stats);
+        reportNothingWasProc(path, stats, args.readFromStdin);
         rcnFreeCountStatistics(stats);
-        return APP_EXIT_NOTHING_PROCESSED;
+        return (
+            args.readFromStdin
+            ? APP_EXIT_INVALID_ARGUMENT
+            : APP_EXIT_NOTHING_PROCESSED
+        );
     }
 
     PrintBuffer buffer = {
@@ -160,7 +172,8 @@ ExitStatus outputStatistics(AppArgs args) {
         .showPhysicalLines = true,
         .showWords = !args.linesOnly,
         .showCharacters = !args.linesOnly,
-        .showSourceSize = !args.linesOnly
+        .showSourceSize = !args.linesOnly,
+        .fileIsStdin = args.readFromStdin
     };
 
     if (stats->count.size == 1) {

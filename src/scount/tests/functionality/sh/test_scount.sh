@@ -45,6 +45,27 @@ function test_scount_with_relative_directory_input() {
   assert_stderr_is_empty;
 }
 
+function test_scount_reads_source_content_from_stdin() {
+  printf 'foo\nbar\n' | run_app -;
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_stdin.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_reads_source_content_from_stdin_lines_only() {
+  printf 'foo\nbar\nbaz' | run_app --lines -;
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_stdin_lines_only.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_reads_source_content_from_stdin_with_specified_extension() {
+  run_app -.java < "${TEST_RES_DIR}/mixed/Sample1.java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_stdin_with_ext.txt";
+  assert_stderr_is_empty;
+}
+
 function test_scount_prints_only_line_metrics_with_long_option() {
   run_app --lines "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
   assert_exit_status $EXIT_SUCCESS;

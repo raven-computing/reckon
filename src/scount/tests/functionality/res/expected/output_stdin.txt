@@ -1,0 +1,8 @@
+File: -  (Data from standard input treated as a .txt file)
+
+  Logical Lines of Code (LLC):        n/a
+  Physical Lines        (PHL):          2
+  Words                 (WRD):          2
+  Characters            (CHR):          8
+  Source Size in Bytes  (SZE):          8
+
