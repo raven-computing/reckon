@@ -119,10 +119,18 @@ static char* createTempFileImpl(const char* suffix, int* outFd) {
     if (!pathTemplate) {
         return NULL; // LCOV_EXCL_LINE
     }
-    strncpy(pathTemplate, prefix, templateLen - 1);
-    strncat(pathTemplate, templ, templateLen - strlen(pathTemplate) - 1);
-    strncat(pathTemplate, suffix, templateLen - strlen(pathTemplate) - 1);
-    pathTemplate[templateLen - 1] = '\0';
+    const int nWritten = snprintf(
+        pathTemplate,
+        templateLen,
+        "%s%s%s",
+        prefix,
+        templ,
+        suffix
+    );
+    if (nWritten < 0 || (size_t) nWritten >= templateLen) {
+        free(pathTemplate);
+        return NULL; // LCOV_EXCL_LINE
+    }
 
     *outFd = mkstemps(pathTemplate, (int) strlen(suffix));
     if (*outFd < 0) {
