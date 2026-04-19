@@ -54,11 +54,13 @@ This version of the project supports processing the following file formats:
 - Java
 - Python
 - JavaScript
+- TypeScript
 - Shell
 - R
 - Markdown
 - XML
 - JSON
+- CSS
 - Plain text (`.txt`-style unformatted text)
 
 Support for more formats is under way.
