@@ -27,6 +27,11 @@ include(CheckIPOSupported)
 # potential issues during compilation. The `inform_only` argument specifies
 # whether all warnings should be treated as errors (`OFF`) or whether warnings
 # should only be shown but the build should not fail (`ON`).
+# Contrary to the name of the function, this does not only enable compiler
+# warnings but also appropriate linker options to treat linker warnings as
+# errors when `inform_only` is set to `OFF`. This can reveal potential issues
+# during the linking stage that would otherwise be missed when only treating
+# compiler warnings as errors. This is useful, for example, when LTO is used.
 #
 # Arguments:
 #
@@ -71,6 +76,19 @@ function(enable_compiler_warnings target_name inform_only)
             $<$<C_COMPILER_ID:MSVC>:${FLAGS_MSVC}>
             $<$<CXX_COMPILER_ID:GNU>:${FLAGS_GCC}>
             $<$<CXX_COMPILER_ID:MSVC>:${FLAGS_MSVC}>
+        )
+
+        set(FLAGS_GCC_LINK "-Werror" "-Wl,--fatal-warnings")
+        set(FLAGS_MSVC_LINK "/WX")
+        target_link_options(
+            ${target_name}
+            PRIVATE
+            $<$<C_COMPILER_ID:GNU>:${FLAGS_GCC_LINK}>
+            $<$<C_COMPILER_ID:Clang>:${FLAGS_GCC_LINK}>
+            $<$<C_COMPILER_ID:MSVC>:${FLAGS_MSVC_LINK}>
+            $<$<CXX_COMPILER_ID:GNU>:${FLAGS_GCC_LINK}>
+            $<$<CXX_COMPILER_ID:Clang>:${FLAGS_GCC_LINK}>
+            $<$<CXX_COMPILER_ID:MSVC>:${FLAGS_MSVC_LINK}>
         )
     endif()
 endfunction()
