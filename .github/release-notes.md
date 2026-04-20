@@ -1,6 +1,7 @@
 #### Release notes:
 
-* Improvement to the accuracy of logical line count for C sources.
-* Fixed the missing support for additional JavaScript source file extensions.
+* We added support for TypeScript and CSS source files.
+* scount can now also read source input from its standard input.
+* Performance improvements.
 
-See [Changelog](https://github.com/raven-computing/reckon/blob/v1.3.1/CHANGELOG.md).
+See [Changelog](https://github.com/raven-computing/reckon/blob/v1.4.0/CHANGELOG.md).
