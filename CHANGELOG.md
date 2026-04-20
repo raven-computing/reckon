@@ -1,3 +1,11 @@
+#### 1.4.0
+* Added support for CSS format. [[Issue#40]](https://github.com/raven-computing/reckon/issues/40)
+* Added support for TypeScript source format. [[Issue#39]](https://github.com/raven-computing/reckon/issues/39)
+* Added support in scount for reading source input via stdin. [[Issue#31]](https://github.com/raven-computing/reckon/issues/31)
+* Added the --disable-LTO option to the build script, which interacts with the added RECKON_ENABLE_LTO CMake option to turn LTO off if requested. By default, LTO is now enabled for release build variants.
+* Improved documentation.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.3.1...v1.4.0)
+
 #### 1.3.1
 * Added support for handling .mjs and .cjs JavaScript file extensions.
 * Fixed missing version tags in header documentation. 
