@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 12
+#define RECKON_NUM_SUPPORTED_FORMATS 13
 
 /**
  * Macro to create a format option bitmask.
@@ -159,6 +159,12 @@ typedef enum RcnTextFormat {
      * Text formatted in CSS, as found in files with a '.css' extension.
      */
     RCN_TEXT_CSS,
+
+    /**
+     * Source files for the CMake build system language,
+     * as found in files with a '.cmake' extension.
+     */
+    RCN_TEXT_CMAKE,
 
     /**
      * Source files for the C programming language.
@@ -745,6 +751,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for CSS text files.
      */
     RCN_OPT_TEXT_CSS = RECKON_MK_FRMT_OPT(RCN_TEXT_CSS),
+
+    /**
+     * Option to select statistics for CMake source files.
+     */
+    RCN_OPT_TEXT_CMAKE = RECKON_MK_FRMT_OPT(RCN_TEXT_CMAKE),
 
     /**
      * Option to select statistics for source code files written in
