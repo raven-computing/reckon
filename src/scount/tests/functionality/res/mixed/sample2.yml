@@ -1,0 +1,7 @@
+# Second YAML sample
+
+database:
+  name: testdb
+  user: admin
+  password: secret
+  port: 5432
