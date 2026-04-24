@@ -574,6 +574,9 @@ static void prSummaryRows(
             case RCN_TEXT_CSS:
                 label = "CSS";
                 break;
+            case RCN_TEXT_SQL:
+                label = "SQL";
+                break;
             case RCN_LANG_R:
                 label = "R";
                 break;
