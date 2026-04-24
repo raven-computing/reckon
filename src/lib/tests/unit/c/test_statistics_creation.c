@@ -147,11 +147,68 @@ void testCreateStatisticsWithPathToNonexistingFile(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testAllocStatisticsWithZeroSize(void) {
+    RcnCountStatistics* stats = rcnAllocCountStatistics(0);
+    TEST_ASSERT_NOT_NULL(stats);
+    assertZeroInitializedStatsOk(stats);
+    TEST_ASSERT_EQUAL_INT(0, stats->count.size);
+    TEST_ASSERT_EQUAL_INT(0, stats->count.sizeProcessed);
+    TEST_ASSERT_NULL(stats->count.files);
+    TEST_ASSERT_NULL(stats->count.results);
+    rcnFreeCountStatistics(stats);
+}
+
+void testAllocStatisticsWithSizeOne(void) {
+    RcnCountStatistics* stats = rcnAllocCountStatistics(1);
+    TEST_ASSERT_NOT_NULL(stats);
+    assertZeroInitializedStatsOk(stats);
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    TEST_ASSERT_EQUAL_INT(0, stats->count.sizeProcessed);
+    TEST_ASSERT_NOT_NULL(stats->count.files);
+    TEST_ASSERT_NOT_NULL(stats->count.results);
+    RcnSourceFile* file = &stats->count.files[0];
+    TEST_ASSERT_NULL(file->path);
+    TEST_ASSERT_NULL(file->name);
+    TEST_ASSERT_NULL(file->extension);
+    TEST_ASSERT_NULL(file->content.text);
+    TEST_ASSERT_EQUAL_INT(0, file->content.size);
+    TEST_ASSERT_FALSE(file->isContentRead);
+    TEST_ASSERT_EQUAL_INT(RCN_FILE_OP_OK, file->status);
+    assertZeroInitializedResult(&stats->count.results[0]);
+    rcnFreeCountStatistics(stats);
+}
+
+void testAllocStatisticsWithLargerSize(void) {
+    const size_t size = 96;
+    RcnCountStatistics* stats = rcnAllocCountStatistics(size);
+    TEST_ASSERT_NOT_NULL(stats);
+    assertZeroInitializedStatsOk(stats);
+    TEST_ASSERT_EQUAL_INT(size, stats->count.size);
+    TEST_ASSERT_EQUAL_INT(0, stats->count.sizeProcessed);
+    TEST_ASSERT_NOT_NULL(stats->count.files);
+    TEST_ASSERT_NOT_NULL(stats->count.results);
+    for (size_t i = 0; i < size; ++i) {
+        RcnSourceFile* file = &stats->count.files[i];
+        TEST_ASSERT_NULL(file->path);
+        TEST_ASSERT_NULL(file->name);
+        TEST_ASSERT_NULL(file->extension);
+        TEST_ASSERT_NULL(file->content.text);
+        TEST_ASSERT_EQUAL_INT(0, file->content.size);
+        TEST_ASSERT_FALSE(file->isContentRead);
+        TEST_ASSERT_EQUAL_INT(RCN_FILE_OP_OK, file->status);
+        assertZeroInitializedResult(&stats->count.results[i]);
+    }
+    rcnFreeCountStatistics(stats);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testCreateStatisticsWithNullPathReturnsNull);
     RUN_TEST(testCreateStatisticsWithPathToRegularFile);
     RUN_TEST(testCreateStatisticsWithPathToDirectory);
     RUN_TEST(testCreateStatisticsWithPathToNonexistingFile);
+    RUN_TEST(testAllocStatisticsWithZeroSize);
+    RUN_TEST(testAllocStatisticsWithSizeOne);
+    RUN_TEST(testAllocStatisticsWithLargerSize);
     return UNITY_END();
 }

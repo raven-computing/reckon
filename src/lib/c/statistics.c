@@ -307,6 +307,30 @@ RcnCountStatistics* rcnCreateCountStatistics(const char* path) {
     return stats;
 }
 
+RcnCountStatistics* rcnAllocCountStatistics(size_t size) {
+    RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
+    if (!stats) {
+        return NULL;
+    }
+    if (size > 0) {
+        RcnSourceFile* files = calloc(size, sizeof(RcnSourceFile));
+        if (!files) {
+            free(stats);
+            return NULL;
+        }
+        RcnCountResultGroup* group = calloc(size, sizeof(RcnCountResultGroup));
+        if (!group) {
+            free(files);
+            free(stats);
+            return NULL;
+        }
+        stats->count.files = files;
+        stats->count.results = group;
+        stats->count.size = size;
+    }
+    return stats;
+}
+
 void rcnFreeCountStatistics(RcnCountStatistics* stats) {
     if (stats) {
         if (stats->count.files) {
