@@ -161,7 +161,7 @@ typedef enum RcnTextFormat {
     RCN_TEXT_CSS,
 
     /**
-     * Source files for the CMake build system language,
+     * Source files for the CMake script language,
      * as found in files with a '.cmake' extension.
      */
     RCN_TEXT_CMAKE,
