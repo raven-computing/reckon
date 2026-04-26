@@ -318,14 +318,17 @@ RcnCountStatistics* rcnAllocCountStatistics(size_t size) {
             free(stats);
             return NULL;
         }
-        RcnCountResultGroup* group = calloc(size, sizeof(RcnCountResultGroup));
-        if (!group) {
+        RcnCountResultGroup* groups = calloc(
+            size,
+            sizeof(RcnCountResultGroup)
+        );
+        if (!groups) {
             free(files);
             free(stats);
             return NULL;
         }
         stats->count.files = files;
-        stats->count.results = group;
+        stats->count.results = groups;
         stats->count.size = size;
     }
     return stats;
