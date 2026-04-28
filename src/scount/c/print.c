@@ -279,7 +279,20 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
     width -= COLUMN_PADDING;
     const char* string = text ? text : "n/a";
-    const int length = (int) strlen(string);
+    int length = (int) strlen(string);
+    RcnSourceText source = (RcnSourceText){
+        .text = (char*) string,
+        .size = strlen(string)
+    };
+    RcnCountResult len = rcnCountCharacters(source);
+    if (len.state.ok) {
+        length = (int) len.count;
+    } else {
+        // LCOV_EXCL_START
+        string = "ERROR";
+        length = (int) strlen(string);
+        // LCOV_EXCL_STOP
+    }
     if (length <= width) {
         prStr(buffer, string);
         prRpt(buffer, ' ', width - length);
