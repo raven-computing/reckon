@@ -907,7 +907,9 @@ RECKON_EXPORT RcnCountStatistics* rcnAllocCountStatistics(size_t size);
  * Frees a previously allocated `RcnCountStatistics` struct.
  * 
  * Must have been previously allocated using `rcnCreateCountStatistics()`
- * or `rcnAllocCountStatistics()`.
+ * or `rcnAllocCountStatistics()`. If you have allocated using
+ * `rcnAllocCountStatistics()` and are manually managing `RcnSourceFile` items
+ * yourself, then note that this function will deallocated them if non-NULL.
  *
  * @param stats The `RcnCountStatistics` struct to free. May be `NULL`.
  */
