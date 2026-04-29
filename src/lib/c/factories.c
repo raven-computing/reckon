@@ -142,6 +142,9 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "css") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_CSS;
+    } else if (strcmp(extension, "html") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_HTML;
     } else if (strcmp(extension, "R") == 0
         || strcmp(extension, "r") == 0) {
         // isProgrammingLanguage is false for R format due to missing

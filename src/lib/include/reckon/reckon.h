@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 12
+#define RECKON_NUM_SUPPORTED_FORMATS 13
 
 /**
  * Macro to create a format option bitmask.
@@ -159,6 +159,11 @@ typedef enum RcnTextFormat {
      * Text formatted in CSS, as found in files with a '.css' extension.
      */
     RCN_TEXT_CSS,
+
+    /**
+     * Text formatted in HTML, as found in files with a '.html' extension.
+     */
+    RCN_TEXT_HTML,
 
     /**
      * Source files for the C programming language.
@@ -745,6 +750,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for CSS text files.
      */
     RCN_OPT_TEXT_CSS = RECKON_MK_FRMT_OPT(RCN_TEXT_CSS),
+
+    /**
+     * Option to select statistics for HTML text files.
+     */
+    RCN_OPT_TEXT_HTML = RECKON_MK_FRMT_OPT(RCN_TEXT_HTML),
 
     /**
      * Option to select statistics for source code files written in
