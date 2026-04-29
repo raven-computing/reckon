@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 13
+#define RECKON_NUM_SUPPORTED_FORMATS 14
 
 /**
  * Macro to create a format option bitmask.
@@ -164,6 +164,11 @@ typedef enum RcnTextFormat {
      * Text formatted in HTML, as found in files with a '.html' extension.
      */
     RCN_TEXT_HTML,
+
+    /**
+     * Text formatted in SQL, as found in files with a '.sql' extension.
+     */
+    RCN_TEXT_SQL,
 
     /**
      * Source files for the C programming language.
@@ -756,6 +761,11 @@ typedef enum RcnFormatOption {
      */
     RCN_OPT_TEXT_HTML = RECKON_MK_FRMT_OPT(RCN_TEXT_HTML),
 
+    /**
+     * Option to select statistics for SQL text files.
+     */
+    RCN_OPT_TEXT_SQL = RECKON_MK_FRMT_OPT(RCN_TEXT_SQL),
+   
     /**
      * Option to select statistics for source code files written in
      * the C programming language.
