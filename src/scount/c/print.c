@@ -583,6 +583,9 @@ static void prSummaryRows(
             case RCN_TEXT_CMAKE:
                 label = "CMake";
                 break;
+            case RCN_TEXT_YAML:
+                label = "YAML";
+                break;
             case RCN_LANG_R:
                 label = "R";
                 break;

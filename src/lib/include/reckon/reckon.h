@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 15
+#define RECKON_NUM_SUPPORTED_FORMATS 16
 
 /**
  * Macro to create a format option bitmask.
@@ -175,6 +175,12 @@ typedef enum RcnTextFormat {
      * as found in files with a '.cmake' extension.
      */
     RCN_TEXT_CMAKE,
+
+    /**
+     * Text formatted in YAML, as found in files
+     * with a '.yaml' or '.yml' extension.
+     */
+    RCN_TEXT_YAML,
 
     /**
      * Source files for the C programming language.
@@ -776,6 +782,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for CMake source files.
      */
     RCN_OPT_TEXT_CMAKE = RECKON_MK_FRMT_OPT(RCN_TEXT_CMAKE),
+
+    /**
+     * Option to select statistics for YAML files.
+     */
+    RCN_OPT_TEXT_YAML = RECKON_MK_FRMT_OPT(RCN_TEXT_YAML),
 
     /**
      * Option to select statistics for source code files written in
