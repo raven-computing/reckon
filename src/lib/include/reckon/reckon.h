@@ -100,7 +100,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 14
+#define RECKON_NUM_SUPPORTED_FORMATS 15
 
 /**
  * Macro to create a format option bitmask.
@@ -169,6 +169,12 @@ typedef enum RcnTextFormat {
      * Text formatted in SQL, as found in files with a '.sql' extension.
      */
     RCN_TEXT_SQL,
+
+    /**
+     * Source files for the CMake script language,
+     * as found in files with a '.cmake' extension.
+     */
+    RCN_TEXT_CMAKE,
 
     /**
      * Source files for the C programming language.
@@ -766,6 +772,11 @@ typedef enum RcnFormatOption {
      */
     RCN_OPT_TEXT_SQL = RECKON_MK_FRMT_OPT(RCN_TEXT_SQL),
    
+    /**
+     * Option to select statistics for CMake source files.
+     */
+    RCN_OPT_TEXT_CMAKE = RECKON_MK_FRMT_OPT(RCN_TEXT_CMAKE),
+
     /**
      * Option to select statistics for source code files written in
      * the C programming language.

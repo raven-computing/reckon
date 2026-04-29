@@ -325,9 +325,9 @@ void testCountResultsHtml(void) {
     RcnStatOptions options = {
         .formats = RCN_OPT_TEXT_HTML
     };
-    
+
     rcnCount(stats, options);
-    
+
     TEST_ASSERT_EQUAL_INT(1, stats->count.size);
     RcnSourceFile* file = &stats->count.files[0];
     RcnCountResultGroup* result = &stats->count.results[0];
@@ -359,7 +359,6 @@ void testCountResultsSql(void) {
     TEST_ASSERT_TRUE(result->state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
     TEST_ASSERT_NULL(result->state.errorMessage);
-
     TEST_ASSERT_EQUAL_STRING("sample.sql", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
@@ -367,6 +366,31 @@ void testCountResultsSql(void) {
     TEST_ASSERT_EQUAL_INT(17, result->words);
     TEST_ASSERT_EQUAL_INT(93, result->characters);
     TEST_ASSERT_EQUAL_INT(93, result->sourceSize);
+    rcnFreeCountStatistics(stats);
+}
+
+void testCountResultsCmake(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc/Sample.cmake";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .formats = RCN_OPT_TEXT_CMAKE
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    RcnSourceFile* file = &stats->count.files[0];
+    RcnCountResultGroup* result = &stats->count.results[0];
+    TEST_ASSERT_TRUE(result->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+    TEST_ASSERT_NULL(result->state.errorMessage);
+    TEST_ASSERT_EQUAL_STRING("Sample.cmake", file->name);
+    TEST_ASSERT_TRUE(result->isProcessed);
+    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(8, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(20, result->words);
+    TEST_ASSERT_EQUAL_INT(255, result->characters);
+    TEST_ASSERT_EQUAL_INT(255, result->sourceSize);
     rcnFreeCountStatistics(stats);
 }
 
@@ -412,6 +436,7 @@ int main(void) {
     RUN_TEST(testCountResultsCss);
     RUN_TEST(testCountResultsHtml);
     RUN_TEST(testCountResultsSql);
+    RUN_TEST(testCountResultsCmake);
     RUN_TEST(testCountResultsR);
     return UNITY_END();
 }
