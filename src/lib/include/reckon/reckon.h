@@ -920,9 +920,38 @@ typedef struct RcnStatOptions {
 RECKON_EXPORT RcnCountStatistics* rcnCreateCountStatistics(const char* path);
 
 /**
+ * Allocates a new zero-initialized `RcnCountStatistics` struct.
+ * 
+ * The returned struct will have the given predefined size.
+ * The `RcnCountResultSet` member is preallocated to hold the specified number
+ * of entries. The `files` and `results` arrays of the contained
+ * `RcnCountResultSet` are each allocated with the given `size` and are
+ * zero-initialized. The `size` field of the `RcnCountResultSet` is set to
+ * the specified `size`. All other fields of the returned struct are
+ * zero-initialized.
+ *
+ * This function is intended for use cases where a user wants to manually
+ * populate the `files` and `results` members of a `RcnCountResultSet`
+ * without going through the file system via `rcnCreateCountStatistics()`.
+ * If `size` is zero, a zero-initialized `RcnCountStatistics` struct is
+ * returned with no arrays allocated.
+ *
+ * A user takes ownership of the returned struct and must free it with
+ * `rcnFreeCountStatistics()`.
+ *
+ * @param size The number of entries to preallocate in the `RcnCountResultSet`.
+ * @return A newly allocated `RcnCountStatistics` struct, or `NULL` on error.
+ * @since 1.5.0
+ */
+RECKON_EXPORT RcnCountStatistics* rcnAllocCountStatistics(size_t size);
+
+/**
  * Frees a previously allocated `RcnCountStatistics` struct.
  * 
- * Must have been previously allocated using `rcnCreateCountStatistics()`.
+ * Must have been previously allocated using `rcnCreateCountStatistics()`
+ * or `rcnAllocCountStatistics()`. If you have allocated using
+ * `rcnAllocCountStatistics()` and are manually managing `RcnSourceFile` items
+ * yourself, then note that this function will deallocated them if non-NULL.
  *
  * @param stats The `RcnCountStatistics` struct to free. May be `NULL`.
  */
