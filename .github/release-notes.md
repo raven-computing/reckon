@@ -1,7 +1,6 @@
 #### Release notes:
 
-* We added support for TypeScript and CSS source files.
-* scount can now also read source input from its standard input.
-* Performance improvements.
+* We added support for CMake, HTML, SQL and YAML source files.
+* The new rcnAllocCountStatistics() API function can be used to manually manage the setup of statistics.
 
-See [Changelog](https://github.com/raven-computing/reckon/blob/v1.4.0/CHANGELOG.md).
+See [Changelog](https://github.com/raven-computing/reckon/blob/v1.5.0/CHANGELOG.md).
