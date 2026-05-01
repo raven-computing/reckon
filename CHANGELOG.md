@@ -1,3 +1,11 @@
+#### 1.5.0
+* Added support for CMake format. [[Issue#49]](https://github.com/raven-computing/reckon/issues/49)
+* Added support for HTML format. [[Issue#46]](https://github.com/raven-computing/reckon/issues/46)
+* Added support for SQL format. [[Issue#45]](https://github.com/raven-computing/reckon/issues/45)
+* Added support for YAML format. [[Issue#47]](https://github.com/raven-computing/reckon/issues/47)
+* Added the rcnAllocCountStatistics() function. [[Issue#48]](https://github.com/raven-computing/reckon/issues/48)
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.4.0...v1.5.0)
+
 #### 1.4.0
 * Added support for CSS format. [[Issue#40]](https://github.com/raven-computing/reckon/issues/40)
 * Added support for TypeScript source format. [[Issue#39]](https://github.com/raven-computing/reckon/issues/39)
