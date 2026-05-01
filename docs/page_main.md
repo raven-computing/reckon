@@ -51,21 +51,21 @@ Since Reckon must be classified as a project-level dependency, as opposed to a s
 This version of the project supports processing the following file formats:
 
 - C
-- Java
-- Python
-- JavaScript
-- TypeScript
-- Shell
-- R
-- Markdown
-- XML
-- JSON
-- CSS
-- YAML
-- HTML
-- SQL
 - CMake
+- CSS
+- HTML
+- Java
+- JavaScript
+- JSON
+- Markdown
 - Plain text (`.txt`-style unformatted text)
+- Python
+- R
+- Shell
+- SQL
+- TypeScript
+- XML
+- YAML
 
 Support for more formats is under way.
 
