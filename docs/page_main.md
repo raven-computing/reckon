@@ -61,6 +61,10 @@ This version of the project supports processing the following file formats:
 - XML
 - JSON
 - CSS
+- YAML
+- HTML
+- SQL
+- CMake
 - Plain text (`.txt`-style unformatted text)
 
 Support for more formats is under way.
