@@ -2,8 +2,8 @@ Directory: special
 Scanned files: 2
 
   o---------- File ----------o--- LLC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
-  | mb_😀_char_🔥_n.txt      |    n/a    |     1     |     13    |     78    |    78     |
-  | placeholder.txt          |    n/a    |     1     |      6    |     33    |    33     |
+  | mb_😀_char_🔥_n.txt      |    n/a    |     1     |    13     |    78     |    78     |
+  | placeholder.txt          |    n/a    |     1     |     6     |    33     |    33     |
   o--------------------------o-----------o-----------o-----------o-----------o-----------o
 
 Summary:
