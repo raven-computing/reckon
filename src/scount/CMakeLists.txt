@@ -26,6 +26,7 @@ target_link_libraries(
     ${RECKON_TARGET_APPLICATION_CORE}
     PUBLIC
     ${RECKON_TARGET_LIB}
+    utf8proc
 )
 
 target_compile_definitions(
