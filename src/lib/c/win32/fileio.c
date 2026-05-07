@@ -44,6 +44,19 @@ static inline bool isRegularFileAttr(DWORD attributes) {
     );
 }
 
+static wchar_t* utf8ToWide(const char* str) {
+    const int wideLength = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+    if (wideLength <= 0) {
+        return NULL;
+    }
+    const wchar_t* wideStr = malloc((size_t) wideLength * sizeof(wchar_t));
+    if (!wideStr) {
+        return NULL;
+    }
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, wideStr, wideLength);
+    return wideStr;
+}
+
 char* findFilenameImpl(const char* path) {
     char* backSlash = strrchr(path, '\\');
     char* forwardSlash = strrchr(path, '/');
@@ -66,6 +79,22 @@ bool hasTrailingSeparatorImpl(const char* path, size_t length) {
     );
 }
 
+FILE* fopenImpl(const char* path, const char* mode) {
+    const wchar_t* wPath = utf8ToWide(path);
+    if (!wPath) {
+        return NULL;
+    }
+    wchar_t* wMode = utf8ToWide(mode);
+    if (!wMode) {
+        free(wPath);
+        return NULL;
+    }
+    FILE* handle = _wfopen(wPath, wMode);
+    free(wPath);
+    free(wMode);
+    return handle;
+}
+
 void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
     const size_t pathLength = strlen(dirPath);
     const bool trailingSep = hasTrailingSeparatorImpl(dirPath, pathLength);
@@ -81,19 +110,37 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         snprintf(searchPattern, patternLength, "%s\\*", dirPath);
     }
 
-    WIN32_FIND_DATAA findData;
-    HANDLE found = FindFirstFileA(searchPattern, &findData);
+    wchar_t* wSearchPattern = utf8ToWide(searchPattern);
     free(searchPattern);
+    if (!wSearchPattern) {
+        return;
+    }
+    WIN32_FIND_DATAW findData;
+    HANDLE found = FindFirstFileW(wSearchPattern, &findData);
+    free(wSearchPattern);
     if (found == INVALID_HANDLE_VALUE) {
         return;
     }
 
     do {
-        const char* name = findData.cFileName;
-        if (!name || name[0] == '.') {
+        const wchar_t* name = findData.cFileName;
+        if (!name || name[0] == L'.') {
             continue;
         }
-        const size_t nameLength = strlen(name);
+        const int nameUtf8Len = WideCharToMultiByte(
+            CP_UTF8, 0, name, -1, NULL, 0, NULL, NULL
+        );
+        if (nameUtf8Len <= 0) {
+            continue;
+        }
+        char* name = malloc((size_t) nameUtf8Len);
+        if (!name) {
+            continue;
+        }
+        WideCharToMultiByte(
+            CP_UTF8, 0, name, -1, name, nameUtf8Len, NULL, NULL
+        );
+        const size_t nameLength = (size_t) nameUtf8Len - 1;
         const size_t fullLength = (
             pathLength
             + (trailingSep ? 0 : 1)
@@ -102,6 +149,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         );
         char* fullPath = malloc(fullLength);
         if (!fullPath) {
+            free(name);
             continue;
         }
         if (trailingSep) {
@@ -117,6 +165,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
                 name
             );
         }
+        free(name);
 
         DWORD attributes = findData.dwFileAttributes;
         const bool isDirectory = (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
@@ -128,7 +177,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
             continue;
         }
         free(fullPath);
-    } while (FindNextFileA(found, &findData));
+    } while (FindNextFileW(found, &findData));
 
     FindClose(found);
 }
@@ -137,7 +186,12 @@ bool isDirectory(const char* path) {
     if (!path) {
         return false;
     }
-    DWORD attributes = GetFileAttributesA(path);
+    wchar_t* wPath = utf8ToWide(path);
+    if (!wPath) {
+        return false;
+    }
+    DWORD attributes = GetFileAttributesW(wPath);
+    free(wPath);
     if (attributes == INVALID_FILE_ATTRIBUTES) {
         return false;
     }
@@ -146,7 +200,12 @@ bool isDirectory(const char* path) {
 
 const char* isValidStatsInput(const char* path) {
     assert(path != NULL);
-    DWORD attributes = GetFileAttributesA(path);
+    wchar_t* wPath = utf8ToWide(path);
+    if (!wPath) {
+        return "Out of memory";
+    }
+    DWORD attributes = GetFileAttributesW(wPath);
+    free(wPath);
     if (attributes == INVALID_FILE_ATTRIBUTES) {
         DWORD error = GetLastError();
         switch (error) {

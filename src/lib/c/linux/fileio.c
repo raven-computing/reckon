@@ -107,6 +107,10 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
     closedir(directory);
 }
 
+FILE* fopenImpl(const char* path, const char* mode) {
+    return fopen(path, mode);
+}
+
 bool isDirectory(const char* path) {
     assert(path != NULL);
     struct stat attr;
