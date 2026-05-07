@@ -142,7 +142,7 @@ static int stringDisplayWidth(const char* string) {
     int width = 0;
     utf8proc_int32_t codepoint = 0;
     utf8proc_ssize_t nBytesRead = 0;
-    utf8proc_ssize_t length = strlen(string);
+    utf8proc_ssize_t length = (utf8proc_ssize_t) strlen(string);
     const utf8proc_uint8_t* ptr = (const utf8proc_uint8_t*) string;
     while (length > 0) {
         nBytesRead = utf8proc_iterate(ptr, length, &codepoint);
