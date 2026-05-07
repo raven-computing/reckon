@@ -49,7 +49,7 @@ static wchar_t* utf8ToWide(const char* str) {
     if (wideLength <= 0) {
         return NULL;
     }
-    const wchar_t* wideStr = malloc((size_t) wideLength * sizeof(wchar_t));
+    wchar_t* wideStr = malloc((size_t) wideLength * sizeof(wchar_t));
     if (!wideStr) {
         return NULL;
     }
@@ -86,11 +86,11 @@ FILE* fopenImpl(const char* path, const char* mode) {
     }
     wchar_t* wMode = utf8ToWide(mode);
     if (!wMode) {
-        free(wPath);
+        free((void*) wPath);
         return NULL;
     }
     FILE* handle = _wfopen(wPath, wMode);
-    free(wPath);
+    free((void*) wPath);
     free(wMode);
     return handle;
 }
@@ -123,12 +123,12 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
     }
 
     do {
-        const wchar_t* name = findData.cFileName;
-        if (!name || name[0] == L'.') {
+        const wchar_t* wName = findData.cFileName;
+        if (!wName || wName[0] == L'.') {
             continue;
         }
         const int nameUtf8Len = WideCharToMultiByte(
-            CP_UTF8, 0, name, -1, NULL, 0, NULL, NULL
+            CP_UTF8, 0, wName, -1, NULL, 0, NULL, NULL
         );
         if (nameUtf8Len <= 0) {
             continue;
@@ -138,7 +138,7 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
             continue;
         }
         WideCharToMultiByte(
-            CP_UTF8, 0, name, -1, name, nameUtf8Len, NULL, NULL
+            CP_UTF8, 0, wName, -1, name, nameUtf8Len, NULL, NULL
         );
         const size_t nameLength = (size_t) nameUtf8Len - 1;
         const size_t fullLength = (
