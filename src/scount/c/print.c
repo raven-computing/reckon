@@ -146,7 +146,7 @@ static int stringDisplayWidth(const char* string) {
     const utf8proc_uint8_t* ptr = (const utf8proc_uint8_t*) string;
     while (length > 0) {
         nBytesRead = utf8proc_iterate(ptr, length, &codepoint);
-        if (nBytesRead < 0) {
+        if (nBytesRead <= 0) {
             // Error
             return -1; // LCOV_EXCL_LINE
         }
