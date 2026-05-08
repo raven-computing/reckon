@@ -138,7 +138,7 @@ static bool hasAnyLogicalLines(const RcnCountStatistics* stats) {
  * cells it occupies when printed in a fixed-width terminal.
  * Returns -1 if an error occurs.
  */
-static int stringDisplayWidth(const char* string) {
+static int displayWidth(const char* string) {
     int width = 0;
     utf8proc_int32_t codepoint = 0;
     utf8proc_ssize_t nBytesRead = 0;
@@ -308,15 +308,15 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
     width -= COLUMN_PADDING;
     const char* string = text ? text : "n/a";
-    const int displayWidth = stringDisplayWidth(string);
+    const int strWidth = displayWidth(string);
     int length = 0;
-    if (displayWidth < 0) {
+    if (strWidth < 0) {
         // LCOV_EXCL_START
         string = "Internal error";
         length = (int) strlen(string);
         // LCOV_EXCL_STOP
     } else {
-        length = displayWidth;
+        length = strWidth;
     }
     if (length <= width) {
         prStr(buffer, string);
