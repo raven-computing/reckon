@@ -20,9 +20,11 @@
 
 int main(int argc, char** argv) {
     AppArgs args = parseArgs(argc, argv);
-    LOG_LEVEL = args.verbose ? LOG_LEVEL_VERBOSE : LOG_LEVEL_INFO;
-    LOG_STREAM_OUT = stdout;
-    LOG_STREAM_ERR = stderr;
+    initLogging(
+        stdout,
+        stderr,
+        args.verbose ? LOG_LEVEL_VERBOSE : LOG_LEVEL_INFO
+    );
     if (args.help) {
         showHelpText();
         return APP_EXIT_SUCCESS;

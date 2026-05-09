@@ -23,6 +23,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include "utf8proc.h"
+
 #include "scount.h"
 #include "reckon/reckon.h"
 
@@ -129,6 +131,33 @@ static bool hasAnyLogicalLines(const RcnCountStatistics* stats) {
         }
     }
     return false;
+}
+
+/**
+ * Computes the display width of a UTF-8 string, i.e. the number of character
+ * cells it occupies when printed in a fixed-width terminal.
+ * Returns -1 if an error occurs.
+ */
+static int displayWidth(const char* string) {
+    int width = 0;
+    utf8proc_int32_t codepoint = 0;
+    utf8proc_ssize_t nBytesRead = 0;
+    utf8proc_ssize_t length = (utf8proc_ssize_t) strlen(string);
+    const utf8proc_uint8_t* ptr = (const utf8proc_uint8_t*) string;
+    while (length > 0) {
+        nBytesRead = utf8proc_iterate(ptr, length, &codepoint);
+        if (nBytesRead <= 0) {
+            // Error
+            return -1; // LCOV_EXCL_LINE
+        }
+        const int charWidth = utf8proc_charwidth(codepoint);
+        if (charWidth > 0) {
+            width += charWidth;
+        }
+        ptr += nBytesRead;
+        length -= nBytesRead;
+    }
+    return width;
 }
 
 /**
@@ -279,7 +308,16 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
     width -= COLUMN_PADDING;
     const char* string = text ? text : "n/a";
-    const int length = (int) strlen(string);
+    const int strWidth = displayWidth(string);
+    int length = 0;
+    if (strWidth < 0) {
+        // LCOV_EXCL_START
+        string = "Internal error";
+        length = (int) strlen(string);
+        // LCOV_EXCL_STOP
+    } else {
+        length = strWidth;
+    }
     if (length <= width) {
         prStr(buffer, string);
         prRpt(buffer, ' ', width - length);

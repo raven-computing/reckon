@@ -54,6 +54,12 @@ dependency(
 )
 
 dependency(
+    DEPENDENCY_NAME         utf8proc
+    DEPENDENCY_RESOURCE     JuliaStrings/utf8proc
+    DEPENDENCY_VERSION      v2.11.3
+)
+
+dependency(
     DEPENDENCY_NAME         unity
     DEPENDENCY_RESOURCE     ThrowTheSwitch/Unity
     DEPENDENCY_VERSION      v2.6.1

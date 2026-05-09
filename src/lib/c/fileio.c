@@ -29,6 +29,7 @@
 
 char* findFilenameImpl(const char* path);
 bool hasTrailingSeparatorImpl(const char* path, size_t length);
+FILE* fopenImpl(const char* path, const char* mode);
 
 /**
  * Scans the given directory for regular files and appends them to the list.
@@ -308,7 +309,7 @@ bool readSourceFileContent(RcnSourceFile* file) {
         file->status = RCN_FILE_OP_INVALID_PATH;
         return false;
     }
-    FILE* handle = fopen(file->path, "rb");
+    FILE* handle = fopenImpl(file->path, "rb");
     if (!handle) {
         file->status = (
             errno == ENOENT

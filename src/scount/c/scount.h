@@ -120,6 +120,15 @@ typedef struct PrintBuffer {
 AppArgs parseArgs(int argc, char** argv);
 
 /**
+ * Initializes the logging system to use the given streams and log level.
+ * 
+ * @param out The output stream for non-error messages.
+ * @param err The output stream for error messages.
+ * @param level The initial log level.
+ */
+void initLogging(FILE* out, FILE* err, LogLevel level);
+
+/**
  * Displays usage information for the application on stdout.
  */
 void showUsage(void);

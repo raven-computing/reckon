@@ -17,6 +17,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "scount.h"
 
 LogLevel LOG_LEVEL = LOG_LEVEL_DISABLED;
@@ -24,6 +28,16 @@ LogLevel LOG_LEVEL = LOG_LEVEL_DISABLED;
 FILE* LOG_STREAM_OUT = NULL;
 FILE* LOG_STREAM_ERR = NULL;
 bool LOG_IO_ERROR_DETECTED = false;
+
+void initLogging(FILE* out, FILE* err, LogLevel level) {
+    LOG_STREAM_OUT = out;
+    LOG_STREAM_ERR = err;
+    LOG_LEVEL = level;
+
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+}
 
 void logStdout(const char* text) {
     if (LOG_LEVEL == LOG_LEVEL_DISABLED) {
