@@ -1,3 +1,9 @@
+#### 1.5.1
+* Added fopenImpl() platform-specific function.
+* Added initLogging() function.
+* Fixed incorrectly drawn file table when file name contains multi-byte chars. [[Issue#55]](https://github.com/raven-computing/reckon/issues/55)
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.5.0...v1.5.1)
+
 #### 1.5.0
 * Added support for CMake format. [[Issue#49]](https://github.com/raven-computing/reckon/issues/49)
 * Added support for HTML format. [[Issue#46]](https://github.com/raven-computing/reckon/issues/46)
