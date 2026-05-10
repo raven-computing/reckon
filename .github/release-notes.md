@@ -1,6 +1,5 @@
 #### Release notes:
 
-* We added support for CMake, HTML, SQL and YAML source files.
-* The new rcnAllocCountStatistics() API function can be used to manually manage the setup of statistics.
+* We fixed a bug where rows in the table of individual file results had wrong column alignment when a file name contained multi-byte characters.
 
-See [Changelog](https://github.com/raven-computing/reckon/blob/v1.5.0/CHANGELOG.md).
+See [Changelog](https://github.com/raven-computing/reckon/blob/v1.5.1/CHANGELOG.md).
