@@ -170,26 +170,18 @@ ExitStatus outputStatistics(AppArgs args);
 ExitStatus outputAnnotatedSource(AppArgs args);
 
 /**
- * Reads all content from stdin and writes it into a temporary file.
+ * Reads all content from stdin into a pre-allocated `RcnCountStatistics`
+ * struct containing a single source file entry.
  *
- * The path of the created file is returned as an allocated string owned by
- * the caller. Must be freed using `removeTempInputFile()`.
+ * The returned statistics struct is owned by the caller and must be
+ * freed with `rcnFreeCountStatistics()`.
  *
- * @param extension The file extension to use for the temporary file,
- *                  with a leading dot.
- * @return Allocated path string to the created temp file, or `NULL` on error.
+ * @param extension The file extension (with or without a leading dot)
+ *                  used to identify the source format of the stdin content.
+ * @return An allocated `RcnCountStatistics` with the stdin content loaded,
+ *         or `NULL` on error.
  */
-char* createTempInputFileFromStdin(const char* extension);
-
-/**
- * Removes a previously created temporary input file and frees its path.
- *
- * This function is best-effort for deletion and always frees the given path.
- *
- * @param path Allocated file path previously returned by
- *             `createTempInputFileFromStdin()`.
- */
-void removeTempInputFile(char* path);
+RcnCountStatistics* readStdinToCountStatistics(const char* extension);
 
 /**
  * Creates textual result output for processed statistics when the

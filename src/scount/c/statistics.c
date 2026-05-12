@@ -122,8 +122,16 @@ ExitStatus outputStatistics(AppArgs args) {
     if (!path) {
         return APP_EXIT_INVALID_INPUT;
     }
-    RcnCountStatistics* const stats = rcnCreateCountStatistics(path);
+    RcnCountStatistics* const stats = (
+        args.readFromStdin
+        ? readStdinToCountStatistics(path)
+        : rcnCreateCountStatistics(path)
+    );
     if(!stats) {
+        if (args.readFromStdin) {
+            logE("Failed to read source input from stdin.");
+            return APP_EXIT_PROG_IO_ERROR;
+        }
         // LCOV_EXCL_START
         logE("Failed to create count statistics for path: '%s'", path);
         return APP_EXIT_INVALID_INPUT;
