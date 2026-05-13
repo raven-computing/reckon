@@ -436,8 +436,8 @@ void testCountResultsR(void) {
     TEST_ASSERT_NULL(result->state.errorMessage);
     TEST_ASSERT_EQUAL_STRING("sample.R", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
-    TEST_ASSERT_FALSE(result->hasLogicalLines);
-    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_TRUE(result->hasLogicalLines);
+    TEST_ASSERT_EQUAL_INT(3, result->logicalLines);
     TEST_ASSERT_EQUAL_INT(4, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(9, result->words);
     TEST_ASSERT_EQUAL_INT(28, result->characters);

@@ -38,6 +38,7 @@ target_sources(
     "c/lang_python.c"
     "c/lang_javascript.c"
     "c/lang_typescript.c"
+    "c/lang_r.c"
     "c/lang_bash.c"
     "c/logical.c"
     "c/physical.c"
