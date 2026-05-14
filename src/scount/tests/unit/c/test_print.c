@@ -174,14 +174,14 @@ void testPrintMultiResultForDirectoryInputWithManyFiles(void) {
     );
     RcnCountStatistics* stats = mkStats(
         "SomeFile.java",
-        35, 1, 2, 3, 4, 5
+        45, 1, 2, 3, 4, 5
     );
     PrintBuffer buffer = mkBufferAllMetrics();
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(strlen(buffer.text) > 1);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
-    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 35\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 45\n"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedFileRow));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedEllipsisRow));
     free(buffer.text);

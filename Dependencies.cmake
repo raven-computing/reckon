@@ -54,6 +54,13 @@ dependency(
 )
 
 dependency(
+    DEPENDENCY_NAME         tree-sitter-cpp
+    DEPENDENCY_RESOURCE     kilo52/tree-sitter-cpp
+    DEPENDENCY_VERSION      v0.23.4-patch-cmakeliststxt
+    DEPENDENCY_LINK_TARGETS tree-sitter-cpp
+)
+
+dependency(
     DEPENDENCY_NAME         utf8proc
     DEPENDENCY_RESOURCE     JuliaStrings/utf8proc
     DEPENDENCY_VERSION      v2.11.3
