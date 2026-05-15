@@ -54,3 +54,11 @@ function test_multi_byte_chars_in_filenames_are_handled_correctly() {
   assert_stdout_equals_file "expected/output_multi_byte_char_in_filename.txt";
   assert_stderr_is_empty;
 }
+
+function test_scount_can_read_larger_source_content_from_stdin() {
+  run_app -.java < "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "File: -  (Data from standard input treated as a .java file)";
+  assert_stdout_contains "Logical Lines of Code (LLC):        104";
+  assert_stderr_is_empty;
+}
