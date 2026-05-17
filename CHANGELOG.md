@@ -1,3 +1,10 @@
+#### 1.5.2
+* Added readStdinToCountStatistics() function.
+* Improved scount input handling via standard input. Will now read input directly into memory instead of writing to a temporary file first.
+* Removed createTempInputFileFromStdin() function.
+* Removed removeTempInputFile() function.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.5.1...v1.5.2)
+
 #### 1.5.1
 * Added fopenImpl() platform-specific function.
 * Added initLogging() function.
