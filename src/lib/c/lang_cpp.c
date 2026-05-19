@@ -124,16 +124,15 @@ static RcnCount evaluateNodeWeightCppImpl(TSNode node, NodeEvalTrace* trace) {
             break;
         case sym_declaration:
             trace->lnLastDecl = currentLine(node);
+            // Do not count variable declarations inside for-statement
             // Check if the following is present:
             //   for_statement / for_range_loop
             //   for
             //   (
             //   declaration
-            if (trace->idxLastForSym == (trace->idx - 3)) {
-                // Do not count variable declarations inside for-statement
-                break;
+            if (trace->idxLastForSym != (trace->idx - 3)) {
+                weight += 1;
             }
-            weight += 1;
             break;
         case sym_do_statement:
             weight += 2;
