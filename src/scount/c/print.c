@@ -555,7 +555,8 @@ static size_t getIndexLastProcessedFile(const RcnCountStatistics* stats) {
 
 static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     const bool isLargeResult = (
-        stats->count.sizeProcessed > LARGE_RESULT_THRESHOLD
+        !buffer->showAllFileRows
+        && stats->count.sizeProcessed > LARGE_RESULT_THRESHOLD
     );
     bool ellipsisRowPrinted = false;
     const size_t nFiles = stats->count.size;
@@ -817,11 +818,12 @@ void printResultsMultiple(
         prFileWarnings(buffer, stats);
     }
 
-    prTableTop(buffer, "File");
-    prFileRows(buffer, stats);
-    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
-
-    prStr(buffer, "\nSummary:\n\n");
+    if (buffer->showFileTable) {
+        prTableTop(buffer, "File");
+        prFileRows(buffer, stats);
+        prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
+        prStr(buffer, "\nSummary:\n\n");
+    }
 
     prTableTop(buffer, "Language");
     prSummaryRows(buffer, stats);
