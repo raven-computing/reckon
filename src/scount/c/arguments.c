@@ -124,10 +124,10 @@ void showHelpText(void) {
     logI("                      This includes logical and physical lines.");
     logI(" ");
     logI("  [--show-files]      Show a table of individual files in the result.");
-    logI("                      For large results, a condensed view with an ellipsis is used.");
+    logI("                      For large results, a condensed view is shown.");
     logI(" ");
     logI("  [--show-all-files]  Show a table of all individual files in the result.");
-    logI("                      All files are listed regardless of how many there are.");
+    logI("                      All files are listed without any limitation.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");
