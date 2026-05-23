@@ -80,7 +80,7 @@ AppArgs parseArgs(int argc, char** argv) {
 }
 
 void showUsage(void) {
-    logI("Usage: scount [--verbose] [--annotate-counts] [-l|--lines] [--show-files|--show-all-files] [--stop-on-error] [--strict] <PATH>");
+    logI("Usage: scount [options] <PATH>");
 }
 
 void showVersion(AppArgs args) {
