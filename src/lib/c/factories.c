@@ -139,10 +139,12 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "cpp") == 0
         || strcmp(extension, "cc") == 0
         || strcmp(extension, "cxx") == 0
+        || strcmp(extension, "c++") == 0
         || strcmp(extension, "hpp") == 0
         || strcmp(extension, "hxx") == 0
         || strcmp(extension, "cppm") == 0
         || strcmp(extension, "cxxm") == 0
+        || strcmp(extension, "c++m") == 0
         || strcmp(extension, "ixx") == 0) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
