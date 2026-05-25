@@ -143,6 +143,7 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         || strcmp(extension, "hpp") == 0
         || strcmp(extension, "hxx") == 0
         || strcmp(extension, "cppm") == 0
+        || strcmp(extension, "ccm") == 0
         || strcmp(extension, "cxxm") == 0
         || strcmp(extension, "c++m") == 0
         || strcmp(extension, "ixx") == 0) {
