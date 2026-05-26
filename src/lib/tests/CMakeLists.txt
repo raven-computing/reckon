@@ -100,6 +100,13 @@ add_test_suite(
 )
 
 add_test_suite(
+    TEST_SUITE_NAME        CppLanguageUnitTest
+    TEST_SUITE_TARGET      test_lang_cpp
+    TEST_SUITE_SOURCE      unit/c/test_lang_cpp.c
+    TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
+)
+
+add_test_suite(
     TEST_SUITE_NAME        JavaScriptLanguageUnitTest
     TEST_SUITE_TARGET      test_lang_javascript
     TEST_SUITE_SOURCE      unit/c/test_lang_javascript.c

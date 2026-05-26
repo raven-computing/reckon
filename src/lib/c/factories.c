@@ -29,6 +29,7 @@ TSParser* createParserJavaScript(void);
 TSParser* createParserTypeScript(void);
 TSParser* createParserR(void);
 TSParser* createParserBash(void);
+TSParser* createParserCpp(void);
 
 void evaluateNodeC(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeJava(TSNode node, NodeEvalTrace* trace);
@@ -37,6 +38,7 @@ void evaluateNodeJavaScript(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeTypeScript(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeR(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeBash(TSNode node, NodeEvalTrace* trace);
+void evaluateNodeCpp(TSNode node, NodeEvalTrace* trace);
 
 TSParser* createParser(RcnTextFormat language) {
     switch (language) {
@@ -54,6 +56,8 @@ TSParser* createParser(RcnTextFormat language) {
             return createParserR();
         case RCN_LANG_BASH:
             return createParserBash();
+        case RCN_LANG_CPP:
+            return createParserCpp();
         default:
             return NULL;
     }
@@ -75,6 +79,8 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
             return evaluateNodeR;
         case RCN_LANG_BASH:
             return evaluateNodeBash;
+        case RCN_LANG_CPP:
+            return evaluateNodeCpp;
         default:
             return NULL;
     }
@@ -88,6 +94,7 @@ const char* getInlineSourceCommentString(RcnTextFormat language) {
             return "#";
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
+        case RCN_LANG_CPP:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
         default:
@@ -171,6 +178,20 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_UNFORMATTED;
+    } else if (strcmp(extension, "cpp") == 0
+        || strcmp(extension, "cc") == 0
+        || strcmp(extension, "cxx") == 0
+        || strcmp(extension, "c++") == 0
+        || strcmp(extension, "hpp") == 0
+        || strcmp(extension, "hxx") == 0
+        || strcmp(extension, "cppm") == 0
+        || strcmp(extension, "ccm") == 0
+        || strcmp(extension, "cxxm") == 0
+        || strcmp(extension, "c++m") == 0
+        || strcmp(extension, "ixx") == 0) {
+        detection.isSupportedFormat = true;
+        detection.isProgrammingLanguage = true;
+        detection.format = RCN_LANG_CPP;
     }
 
     return detection;

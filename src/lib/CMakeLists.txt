@@ -40,6 +40,7 @@ target_sources(
     "c/lang_typescript.c"
     "c/lang_r.c"
     "c/lang_bash.c"
+    "c/lang_cpp.c"
     "c/logical.c"
     "c/physical.c"
     "c/statistics.c"
