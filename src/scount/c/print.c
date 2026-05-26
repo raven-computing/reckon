@@ -626,6 +626,7 @@ static void prSummaryRows(
                 break;
             case RCN_LANG_R:
                 label = "R";
+                hasLogicalLines = true;
                 break;
             case RCN_LANG_C:
                 label = "C";

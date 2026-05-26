@@ -27,6 +27,7 @@ TSParser* createParserJava(void);
 TSParser* createParserPython(void);
 TSParser* createParserJavaScript(void);
 TSParser* createParserTypeScript(void);
+TSParser* createParserR(void);
 TSParser* createParserBash(void);
 
 void evaluateNodeC(TSNode node, NodeEvalTrace* trace);
@@ -34,6 +35,7 @@ void evaluateNodeJava(TSNode node, NodeEvalTrace* trace);
 void evaluateNodePython(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeJavaScript(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeTypeScript(TSNode node, NodeEvalTrace* trace);
+void evaluateNodeR(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeBash(TSNode node, NodeEvalTrace* trace);
 
 TSParser* createParser(RcnTextFormat language) {
@@ -48,6 +50,8 @@ TSParser* createParser(RcnTextFormat language) {
             return createParserJavaScript();
         case RCN_LANG_TYPESCRIPT:
             return createParserTypeScript();
+        case RCN_LANG_R:
+            return createParserR();
         case RCN_LANG_BASH:
             return createParserBash();
         default:
@@ -67,6 +71,8 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
             return evaluateNodeJavaScript;
         case RCN_LANG_TYPESCRIPT:
             return evaluateNodeTypeScript;
+        case RCN_LANG_R:
+            return evaluateNodeR;
         case RCN_LANG_BASH:
             return evaluateNodeBash;
         default:
@@ -77,6 +83,7 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
 const char* getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
         case RCN_LANG_PYTHON:
+        case RCN_LANG_R:
         case RCN_LANG_BASH:
             return "#";
         case RCN_LANG_C:
@@ -158,9 +165,8 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         detection.format = RCN_TEXT_YAML;
     } else if (strcmp(extension, "R") == 0
         || strcmp(extension, "r") == 0) {
-        // isProgrammingLanguage is false for R format due to missing
-        // support for logical line counting in R files
         detection.isSupportedFormat = true;
+        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_R;
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
