@@ -18,6 +18,7 @@ Options:
   [--bump-version] <IDENT> Bump the project version, where IDENT is either 'M' for major,
                            'm' for minor or 'p' for patch. This option will result in the
                            project version being incremented at the corresponding level.
+                           A Git commit for the version change is created.
 
   [-?|--help]              Show this help message.
 EOS
