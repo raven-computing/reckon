@@ -49,7 +49,7 @@ function test_exit_status_when_std_streams_are_closed() {
 }
 
 function test_multi_byte_chars_in_filenames_are_handled_correctly() {
-  run_app "${TEST_PROJECT_DIR}/src/scount/tests/functionality/res/special";
+  run_app --show-files "${TEST_PROJECT_DIR}/src/scount/tests/functionality/res/special";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multi_byte_char_in_filename.txt";
   assert_stderr_is_empty;

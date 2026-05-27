@@ -25,7 +25,7 @@ function test_scount_prints_correct_output_for_single_file_input() {
 }
 
 function test_scount_prints_correct_output_for_directory_input() {
-  run_app "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  run_app --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files.txt";
   assert_stderr_is_empty;
@@ -39,7 +39,7 @@ function test_scount_with_relative_file_path_input() {
 }
 
 function test_scount_with_relative_directory_input() {
-  run_app "src/lib/tests/res/java";
+  run_app --show-files "src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files.txt";
   assert_stderr_is_empty;
@@ -74,7 +74,7 @@ function test_scount_prints_only_line_metrics_with_long_option() {
 }
 
 function test_scount_prints_only_line_metrics_with_short_option() {
-  run_app -l "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  run_app -l --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files_lines_only.txt";
   assert_stderr_is_empty;
@@ -88,7 +88,7 @@ function test_scount_prints_correct_output_for_single_file_no_llc() {
 }
 
 function test_scount_prints_correct_output_for_multiple_files_no_llc() {
-  run_app "${TEST_PROJECT_DIR}/src/lib/tests/res/txt";
+  run_app --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/txt";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files_no_llc.txt";
   assert_stderr_is_empty;
@@ -153,6 +153,20 @@ function test_scount_directory_input_with_trailing_path_separator() {
   assert_stderr_is_empty;
 }
 
+function test_scount_with_show_files_option() {
+  run_app --show-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixedWithFiles.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_show_all_files_option() {
+  run_app --show-all-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixedWithAllFiles.txt";
+  assert_stderr_is_empty;
+}
+
 function test_scount_prints_verbose_output() {
   local test_path="${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   run_app --verbose "$test_path";
@@ -167,14 +181,14 @@ function test_scount_prints_verbose_output() {
 }
 
 function test_scount_with_directory_that_contains_file_with_syntax_error() {
-  run_app "${TEST_RES_DIR}/mixedWithSyntaxError";
+  run_app --show-files "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/mixedWithSyntaxErrorLenient.txt";
   assert_stderr_is_empty;
 }
 
 function test_scount_with_strict_option_directory_that_contains_file_with_syntax_error() {
-  run_app --strict "${TEST_RES_DIR}/mixedWithSyntaxError";
+  run_app --strict --show-files "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/mixedWithSyntaxErrorStrict.txt";
   assert_stderr_is_empty;
@@ -190,7 +204,7 @@ function test_scount_with_file_that_has_syntax_error() {
 
 function test_scount_with_strict_option_file_that_has_syntax_error() {
   local file="${TEST_RES_DIR}/mixedWithSyntaxError/02_has_syntax_error.c";
-  run_app --strict "$file";
+  run_app --strict --show-files "$file";
   assert_exit_status $EXIT_INVALID_INPUT;
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred for: ";
@@ -199,14 +213,14 @@ function test_scount_with_strict_option_file_that_has_syntax_error() {
 }
 
 function test_scount_with_stop_on_error_option() {
-  run_app --stop-on-error "${TEST_RES_DIR}/mixedWithSyntaxError";
+  run_app --stop-on-error --show-files "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/mixedWithSyntaxErrorLenient.txt";
   assert_stderr_is_empty;
 }
 
 function test_scount_with_strict_and_stop_on_error_option() {
-  run_app --strict --stop-on-error "${TEST_RES_DIR}/mixedWithSyntaxError";
+  run_app --strict --stop-on-error --show-files "${TEST_RES_DIR}/mixedWithSyntaxError";
   assert_exit_status $EXIT_INVALID_INPUT;
   assert_stdout_is_empty;
   assert_stderr_contains "An error has occurred";
@@ -216,7 +230,7 @@ function test_scount_with_strict_and_stop_on_error_option() {
 }
 
 function test_scount_with_valid_directory_input_and_stop_on_error_option() {
-  run_app --stop-on-error "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  run_app --stop-on-error --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files.txt";
   assert_stderr_is_empty;

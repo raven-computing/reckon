@@ -33,6 +33,10 @@ AppArgs parseArgs(int argc, char** argv) {
         } else if (strcmp(argv[i], "--lines") == 0
                 || strcmp(argv[i], "-l") == 0) {
             args.linesOnly = true;
+        } else if (strcmp(argv[i], "--show-files") == 0) {
+            args.showFiles = true;
+        } else if (strcmp(argv[i], "--show-all-files") == 0) {
+            args.showAllFiles = true;
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
         } else if (strcmp(argv[i], "--strict") == 0) {
@@ -76,7 +80,7 @@ AppArgs parseArgs(int argc, char** argv) {
 }
 
 void showUsage(void) {
-    logI("Usage: scount [--verbose] [--annotate-counts] [-l|--lines] [--stop-on-error] [--strict] <PATH>");
+    logI("Usage: scount [options] <PATH>");
 }
 
 void showVersion(AppArgs args) {
@@ -118,6 +122,12 @@ void showHelpText(void) {
     logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
     logI("                      This includes logical and physical lines.");
+    logI(" ");
+    logI("  [--show-files]      Show a table of individual files in the result.");
+    logI("                      For large results, a condensed view is shown.");
+    logI(" ");
+    logI("  [--show-all-files]  Show a table of all individual files in the result.");
+    logI("                      All files are listed without any limitation.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");

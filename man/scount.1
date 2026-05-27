@@ -6,6 +6,7 @@ scount \- A tool to count logical lines of code and other metrics
 [\fB\-\-verbose\fR]
 [\fB\-\-annotate\-counts\fR]
 [\fB\-l\fR|\fB\-\-lines\fR]
+[\fB\-\-show\-files\fR|\fB\-\-show\-all\-files\fR]
 [\fB\-\-stop\-on\-error\fR]
 [\fB\-\-strict\fR]
 .I <PATH>
@@ -60,6 +61,16 @@ This option can only be used on a single file input.
 Compute and display only line-specific metrics.
 .br
 This includes logical and physical lines.
+.TP
+.B \-\-show\-files
+Show a table of individual files in the result.
+.br
+For large results, a condensed view is shown.
+.TP
+.B \-\-show\-all\-files
+Show a table of all individual files in the result.
+.br
+All files are listed regardless of how many there are.
 .TP
 .B \-\-stop\-on\-error
 Stop the processing on the first encountered error,

@@ -34,7 +34,8 @@ static PrintBuffer mkBufferAllMetrics(void) {
         .showPhysicalLines = true,
         .showWords = true,
         .showCharacters = true,
-        .showSourceSize = true
+        .showSourceSize = true,
+        .showFileTable = true
     };
 }
 

@@ -31,7 +31,7 @@
 #define MAX_DIGITS_INT64 22ULL
 
 static const size_t BUFFER_CAPACITY_INIT = 1024;
-static const size_t LARGE_RESULT_THRESHOLD = 40;
+static const size_t LARGE_RESULT_THRESHOLD = 30;
 
 static const int WIDTH_COL0 = 26; // File
 static const int WIDTH_COL1 = 11; // LLC
@@ -557,6 +557,7 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     const bool isLargeResult = (
         stats->count.sizeProcessed > LARGE_RESULT_THRESHOLD
     );
+    const bool checkTableSize = !buffer->showAllFileRows;
     bool ellipsisRowPrinted = false;
     const size_t nFiles = stats->count.size;
     const size_t indexLastProcessed = getIndexLastProcessedFile(stats);
@@ -571,7 +572,7 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
             rowsPrinted >= LARGE_RESULT_THRESHOLD - 1
             && i != indexLastProcessed
         );
-        if (isLargeResult && isInSkipRange) {
+        if (checkTableSize && isLargeResult && isInSkipRange) {
             if (ellipsisRowPrinted) {
                 continue;
             }
@@ -822,11 +823,12 @@ void printResultsMultiple(
         prFileWarnings(buffer, stats);
     }
 
-    prTableTop(buffer, "File");
-    prFileRows(buffer, stats);
-    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
-
-    prStr(buffer, "\nSummary:\n\n");
+    if (buffer->showFileTable) {
+        prTableTop(buffer, "File");
+        prFileRows(buffer, stats);
+        prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
+        prStr(buffer, "\nSummary:\n\n");
+    }
 
     prTableTop(buffer, "Language");
     prSummaryRows(buffer, stats);
