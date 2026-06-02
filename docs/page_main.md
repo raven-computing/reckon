@@ -51,6 +51,7 @@ Since Reckon must be classified as a project-level dependency, as opposed to a s
 This version of the project supports processing the following file formats:
 
 - C
+- C++
 - CMake
 - CSS
 - HTML
