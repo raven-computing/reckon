@@ -1,3 +1,11 @@
+#### 1.6.0
+* Added scount CLI --show-all-files option to control file table display in output. [[Issue#59]](https://github.com/raven-computing/reckon/issues/59)
+* Added scount CLI --show-files option to control file table display in output. [[Issue#59]](https://github.com/raven-computing/reckon/issues/59)
+* Added support for C++ source format. [[Issue#4]](https://github.com/raven-computing/reckon/issues/4)
+* Added support for LLC metric in R source files. [[Issue#44]](https://github.com/raven-computing/reckon/issues/44)
+* Changed scount output behaviour to not show file table by default. [[Issue#59]](https://github.com/raven-computing/reckon/issues/59)
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.5.2...v1.6.0)
+
 #### 1.5.2
 * Added readStdinToCountStatistics() function.
 * Improved scount input handling via standard input. Will now read input directly into memory instead of writing to a temporary file first.
