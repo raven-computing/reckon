@@ -32,7 +32,7 @@ include(FetchContent)
 #
 function(configure_doxygen_build)
     set(THEME_DEPENDENCY "doxygen-theme")
-    set(THEME_VERSION "v2.4.1")
+    set(THEME_VERSION "v2.4.2")
     set(CACHE_PATH "$ENV{HOME}/.cache/cmake_deps_src")
     cmake_path(CONVERT "${CACHE_PATH}" TO_CMAKE_PATH_LIST CACHE_PATH NORMALIZE)
     set(THEME_CACHE_PATH "${CACHE_PATH}/${THEME_DEPENDENCY}/${THEME_VERSION}")
