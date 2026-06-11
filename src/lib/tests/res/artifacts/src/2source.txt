@@ -1,0 +1,1 @@
+Nested source file that should be counted.

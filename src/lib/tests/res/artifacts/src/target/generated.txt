@@ -1,0 +1,1 @@
+Generated file under nested target directory. Should be ignored.

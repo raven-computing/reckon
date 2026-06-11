@@ -39,6 +39,9 @@
 #define PATH_SAMPLE_DIR3_FILE1 PATH_DIR_RES3 "/3" FILE_SAMPLE1
 #define PATH_SAMPLE_JAVA_FILE RECKON_TEST_PATH_RES_BASE "/java/Sample.java"
 #define PATH_SAMPLE_R_FILE RECKON_TEST_PATH_RES_BASE "/misc/sample.R"
+#define PATH_ARTIFACTS_DIR RECKON_TEST_PATH_RES_BASE "/artifacts"
+#define PATH_ARTIFACTS_SRC1_FILE PATH_ARTIFACTS_DIR "/1source.txt"
+#define PATH_ARTIFACTS_SRC2_FILE PATH_ARTIFACTS_DIR "/src/2source.txt"
 
 void setUp(void) { }
 
@@ -328,6 +331,19 @@ void testCreateSourceFileListOfDirectoryWithTrailingSlashInPath(void) {
     freeSourceFileList(&fileList);
 }
 
+void testCreateSourceFileListIgnoresArtifactDirectories(void) {
+    char* dirPath = PATH_ARTIFACTS_DIR;
+    SourceFileList fileList = newSourceFileList(dirPath);
+    TEST_ASSERT_TRUE(fileList.ok);
+    TEST_ASSERT_EQUAL_INT(2, fileList.size);
+    TEST_ASSERT_NOT_NULL(fileList.files);
+    RcnSourceFile* file1 = &fileList.files[0];
+    assertValidFileListItem(file1, "1source.txt", PATH_ARTIFACTS_SRC1_FILE);
+    RcnSourceFile* file2 = &fileList.files[1];
+    assertValidFileListItem(file2, "2source.txt", PATH_ARTIFACTS_SRC2_FILE);
+    freeSourceFileList(&fileList);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -357,5 +373,6 @@ int main(void) {
     RUN_TEST(testCreateSourceFileListOfDirectoryContainingOnlyOneValidFile);
     RUN_TEST(testCreateSourceFileListOfDirectoryWithMoreSubdirectories);
     RUN_TEST(testCreateSourceFileListOfDirectoryWithTrailingSlashInPath);
+    RUN_TEST(testCreateSourceFileListIgnoresArtifactDirectories);
     return UNITY_END();
 }

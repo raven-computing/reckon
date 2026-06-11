@@ -27,6 +27,15 @@
 #include "reckon/reckon.h"
 #include "fileio.h"
 
+static bool shouldIgnoreDirectory(const char* name) {
+    return (
+        strcmp(name, "build") == 0
+        || strcmp(name, "bin") == 0
+        || strcmp(name, "target") == 0
+        || strcmp(name, "dist") == 0
+    );
+}
+
 static char getPathSeparatorToUse(const char* path, size_t length) {
     for (size_t i = 0; i < length; ++i) {
         if (path[i] == '\\') {
@@ -173,6 +182,10 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         if (isRegularFile) {
             appendFile(list, fullPath);
         } else if (isDirectory) {
+            if (shouldIgnoreDirectory(name)) {
+                free(fullPath);
+                continue;
+            }
             dirStackPush(stack, fullPath);
             continue;
         }

@@ -1,0 +1,1 @@
+Root source file that should be counted.
