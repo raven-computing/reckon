@@ -176,6 +176,12 @@ SourceFileList newSourceFileList(const char* path);
 void freeSourceFileList(SourceFileList* list);
 
 /**
+ * Determines whether a directory with the given name should be ignored
+ * during directory traversal. Name must not be `NULL`.
+ */
+bool shouldIgnoreDirectory(const char* name);
+
+/**
  * Performs lightweight text format detection for a file.
  *
  * Detection currently relies solely on the file extension.

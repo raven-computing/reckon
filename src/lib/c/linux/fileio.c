@@ -29,15 +29,6 @@
 #include "reckon/reckon.h"
 #include "fileio.h"
 
-static bool shouldIgnoreDirectory(const char* name) {
-    return (
-        strcmp(name, "build") == 0
-        || strcmp(name, "bin") == 0
-        || strcmp(name, "target") == 0
-        || strcmp(name, "dist") == 0
-    );
-}
-
 /**
  * Constructs the full file path for a given directory entry,
  * i.e. a child in the `base` directory.

@@ -27,15 +27,6 @@
 #include "reckon/reckon.h"
 #include "fileio.h"
 
-static bool shouldIgnoreDirectory(const char* name) {
-    return (
-        strcmp(name, "build") == 0
-        || strcmp(name, "bin") == 0
-        || strcmp(name, "target") == 0
-        || strcmp(name, "dist") == 0
-    );
-}
-
 static char getPathSeparatorToUse(const char* path, size_t length) {
     for (size_t i = 0; i < length; ++i) {
         if (path[i] == '\\') {

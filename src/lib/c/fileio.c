@@ -295,6 +295,13 @@ void freeSourceFileList(SourceFileList* list) {
     }
 }
 
+bool shouldIgnoreDirectory(const char* name) {
+    return strcmp(name, "build") == 0
+        || strcmp(name, "bin") == 0
+        || strcmp(name, "target") == 0
+        || strcmp(name, "dist") == 0;
+}
+
 bool readSourceFileContent(RcnSourceFile* file) {
     if (!file) {
         return false;
