@@ -165,7 +165,6 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
                 name
             );
         }
-        free(name);
 
         DWORD attributes = findData.dwFileAttributes;
         const bool isDirectory = (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
@@ -174,12 +173,15 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
             appendFile(list, fullPath);
         } else if (isDirectory) {
             if (shouldIgnoreDirectory(name)) {
+                free(name);
                 free(fullPath);
                 continue;
             }
             dirStackPush(stack, fullPath);
+            free(name);
             continue;
         }
+        free(name);
         free(fullPath);
     } while (FindNextFileW(found, &findData));
 
