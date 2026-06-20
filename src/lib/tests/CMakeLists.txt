@@ -37,6 +37,13 @@ add_test_suite(
 )
 
 add_test_suite(
+    TEST_SUITE_NAME        CodeLinesUnitTest
+    TEST_SUITE_TARGET      test_loc_lines
+    TEST_SUITE_SOURCE      unit/c/test_loc_lines.c
+    TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
+)
+
+add_test_suite(
     TEST_SUITE_NAME        LogicalLinesUnitTest
     TEST_SUITE_TARGET      test_logical_lines
     TEST_SUITE_SOURCE      unit/c/test_logical_lines.c

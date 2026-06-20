@@ -1,6 +1,7 @@
 File: Sample.java
 
   Logical Lines of Code (LLC):        104
+  Lines of Code         (LOC):        142
   Physical Lines        (PHL):        188
   Words                 (WRD):        494
   Characters            (CHR):       4709

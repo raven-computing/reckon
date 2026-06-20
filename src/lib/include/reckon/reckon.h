@@ -58,6 +58,16 @@
  * multiple LLCs. One statement spanning multiple physical lines counts
  * as one LLC.
  * 
+ * * Physical Lines of Code (LOC):  
+ * The number of physical source lines that contain actual code. A physical
+ * line contributes to the LOC count if it is not blank (i.e. it contains at
+ * least one non-whitespace character) and not a comment line (i.e. its
+ * non-whitespace content is not entirely within a comment). This metric is
+ * only applicable to files containing source code written in a supported
+ * programming language. A line that contains both code and a comment (e.g.
+ * a trailing inline comment) is counted as LOC. Lines that are entirely
+ * within a block comment are not counted.
+ * 
  * * Physical Lines (PHL):  
  * The number of hard physical lines in the source text, including blank lines
  * and comments.
@@ -377,6 +387,16 @@ typedef struct RcnCountResultGroup {
     RcnCount logicalLines;
 
     /**
+     * The counted physical lines of code (LOC).
+     *
+     * This is the number of physical lines that contain actual source code,
+     * excluding blank lines and comment-only lines.
+     *
+     * @since 1.7.0
+     */
+    RcnCount codeLines;
+
+    /**
      * The counted hard physical lines.
      */
     RcnCount physicalLines;
@@ -426,6 +446,20 @@ typedef struct RcnCountResultGroup {
      * @since 1.1.0
      */
     bool hasLogicalLines;
+
+    /**
+     * Indicates whether physical lines of code (LOC) can be computed for
+     * the source entity.
+     *
+     * If `true`, the `codeLines` field contains a valid count. If `false`,
+     * then LOC is not applicable for the source entity's format,
+     * e.g. for plain text files, and the `codeLines` field is zero.
+     * This field is only set by a counting operation and remains initialized
+     * as `false` if no such operation was performed.
+     *
+     * @since 1.7.0
+     */
+    bool hasLocLines;
 
 } RcnCountResultGroup;
 
@@ -624,6 +658,14 @@ typedef struct RcnCountStatistics {
     RcnCount totalLogicalLines;
 
     /**
+     * The total number of physical lines of code (LOC), across all files
+     * and programming languages.
+     *
+     * @since 1.7.0
+     */
+    RcnCount totalCodeLines;
+
+    /**
      * The total number of hard physical lines, across all files and formats.
      */
     RcnCount totalPhysicalLines;
@@ -651,6 +693,16 @@ typedef struct RcnCountStatistics {
      * The index corresponds to the `RcnTextFormat` enumerator values.
      */
     RcnCount logicalLines[RECKON_NUM_SUPPORTED_FORMATS];
+
+    /**
+     * The number of physical lines of code (LOC) per supported programming
+     * language.
+     *
+     * The index corresponds to the `RcnTextFormat` enumerator values.
+     *
+     * @since 1.7.0
+     */
+    RcnCount codeLines[RECKON_NUM_SUPPORTED_FORMATS];
 
     /**
      * The number of hard physical lines per supported programming language.
@@ -734,7 +786,19 @@ typedef enum RcnCountOption {
      * includes files containing source code written in a programming language
      * but not, for example, plain text files (.txt).
      */
-    RCN_OPT_COUNT_LOGICAL_LINES = 0x08
+    RCN_OPT_COUNT_LOGICAL_LINES = 0x08,
+
+    /**
+     * Count physical lines of code (LOC).
+     * 
+     * A physical line is counted as LOC if it contains at least one
+     * non-whitespace character that is not part of a comment. Blank lines
+     * and comment-only lines are excluded. This option is only applicable
+     * to source files containing text in a supported programming language.
+     * 
+     * @since 1.7.0
+     */
+    RCN_OPT_COUNT_CODE_LINES = 0x10,
 
 } RcnCountOption;
 
@@ -1096,6 +1160,33 @@ RECKON_EXPORT RcnSourceText rcnMarkLogicalLinesInSourceText(
  *               and the `text` field may be `NULL`.
  */
 RECKON_EXPORT void rcnFreeSourceText(RcnSourceText* source);
+
+/**
+ * Counts the number of physical lines of code (LOC) in the specified source.
+ *
+ * A physical line is counted as LOC if it is not blank and its
+ * non-whitespace content is not entirely within a comment. Lines that
+ * contain both code and an inline comment are counted as LOC. Lines that
+ * consist only of a comment, or that are entirely inside a block comment,
+ * are not counted.
+ *
+ * Counting LOC is only meaningful for source files containing code in a
+ * supported programming language. For non-programming-language formats
+ * (e.g. plain text, Markdown), the function returns an error with
+ * `RCN_ERR_UNSUPPORTED_FORMAT`.
+ *
+ * See header documentation for details on supported encodings.
+ *
+ * @param language The format of the specified source text. Must denote a
+ *                 supported programming language.
+ * @param sourceCode The source text to count lines of code in.
+ * @return A `RcnCountResult` struct containing the LOC count.
+ * @since 1.7.0
+ */
+RECKON_EXPORT RcnCountResult rcnCountLinesOfCode(
+    RcnTextFormat language,
+    RcnSourceText sourceCode
+);
 
 /**
  * Counts the number of hard physical lines in the specified source text.

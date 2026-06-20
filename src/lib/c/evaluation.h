@@ -149,6 +149,28 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language);
 const char* getInlineSourceCommentString(RcnTextFormat language);
 
 /**
+ * Returns the opening marker for block comments in the specified programming
+ * language (e.g. slash-star for C-family languages), or NULL if the language
+ * does not support block comments. The caller does not own the returned string
+ * and must not attempt to free it.
+ */
+const char* getBlockCommentStartString(RcnTextFormat language);
+
+/**
+ * Returns the closing marker for block comments in the specified programming
+ * language (e.g. star-slash for C-family languages), or NULL if the language
+ * does not support block comments. The caller does not own the returned string
+ * and must not attempt to free it.
+ */
+const char* getBlockCommentEndString(RcnTextFormat language);
+
+/**
+ * Returns true if the specified format denotes a supported programming
+ * language for LOC counting, false otherwise (e.g. for plain-text).
+ */
+bool isLocEnabled(RcnTextFormat language);
+
+/**
  * Allocates a new node evaluation context for an annotation operation.
  * Ownership of the returned context is transferred to the caller. It must be
  * freed with `freeNodeEvalContextAnnotation()`.

@@ -102,6 +102,54 @@ const char* getInlineSourceCommentString(RcnTextFormat language) {
     }
 }
 
+const char* getBlockCommentStartString(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+            return "/*";
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+        default:
+            return NULL;
+    }
+}
+
+const char* getBlockCommentEndString(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+            return "*/";
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+        default:
+            return NULL;
+    }
+}
+
+bool isLocEnabled(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+            return true;
+        default:
+            return false;
+    }
+}
+
 SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     SourceFormatDetection detection = {
         .isSupportedFormat = false,
