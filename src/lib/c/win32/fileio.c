@@ -169,17 +169,20 @@ void scanDirectory(char* dirPath, DirStack* stack, SourceFileList* list) {
         DWORD attributes = findData.dwFileAttributes;
         const bool isDirectory = (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
         const bool isRegularFile = isRegularFileAttr(attributes);
-        if (isRegularFile) {
-            appendFile(list, fullPath);
-        } else if (isDirectory) {
-            if (shouldIgnoreDirectory(name)) {
+        const bool isHidden = (attributes & FILE_ATTRIBUTE_HIDDEN) != 0;
+        if (!isHidden) {
+            if (isRegularFile) {
+                appendFile(list, fullPath);
+            } else if (isDirectory) {
+                if (shouldIgnoreDirectory(name)) {
+                    free(name);
+                    free(fullPath);
+                    continue;
+                }
+                dirStackPush(stack, fullPath);
                 free(name);
-                free(fullPath);
                 continue;
             }
-            dirStackPush(stack, fullPath);
-            free(name);
-            continue;
         }
         free(name);
         free(fullPath);
