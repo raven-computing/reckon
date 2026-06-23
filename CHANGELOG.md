@@ -1,3 +1,8 @@
+#### 1.6.1
+* Changed scanDirectory() to ignore directory entries with known names. [[Issue#61]](https://github.com/raven-computing/reckon/issues/61)
+* Improved handling of hidden files on Windows. [[Issue#63]](https://github.com/raven-computing/reckon/issues/63)
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.6.0...v1.6.1)
+
 #### 1.6.0
 * Added scount CLI --show-all-files option to control file table display in output. [[Issue#59]](https://github.com/raven-computing/reckon/issues/59)
 * Added scount CLI --show-files option to control file table display in output. [[Issue#59]](https://github.com/raven-computing/reckon/issues/59)
