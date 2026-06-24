@@ -68,8 +68,6 @@ This version of the project supports processing the following file formats:
 - XML
 - YAML
 
-Support for more formats is under way.
-
 ### Supported Encodings
 
 Reckon supports processing text encoded as:
