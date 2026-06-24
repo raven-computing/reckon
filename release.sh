@@ -235,7 +235,7 @@ function commit_release_candidate() {
   echo -e "Check the ${workflow_link}.";
   echo "";
   echo "To CANCEL the release, delete the staging branch.";
-  echo "To CONFIRM the release, run the release.sh again while on the staging branch.";
+  echo "To CONFIRM the release, run the release.sh script again while on the staging branch.";
   echo "";
 }
 
