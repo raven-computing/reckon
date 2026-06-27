@@ -465,6 +465,19 @@ static void prTableBottom(PrintBuffer* buffer, char border) {
     prChr(buffer, '\n');
 }
 
+static inline void prFileRowSkippedItem(PrintBuffer* buffer, int width) {
+    const char* ellipsisOdd = "...";
+    const char* ellipsisEven = "..";
+    const int ellOddLen = (int) strlen(ellipsisOdd);
+    const int ellEvenLen = (int) strlen(ellipsisEven);
+    prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
+    const bool even = width % 2 == 0;
+    const int correction = even ? ellEvenLen : ellOddLen;
+    prRpt(buffer, ' ', (width - correction) / 2);
+    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+    prRpt(buffer, ' ', (width - correction) / 2);
+}
+
 static void prFileRowSkipped(PrintBuffer* buffer) {
     const char* ellipsisOdd = "...";
     const char* ellipsisEven = "..";
@@ -478,52 +491,22 @@ static void prFileRowSkipped(PrintBuffer* buffer) {
     prStr(buffer, even ? ellipsisEven : ellipsisOdd);
     prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
     if (buffer->showLogicalLines) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL1 % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL1 - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL1);
     }
     if (buffer->showLinesOfCode) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL_LOC % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL_LOC - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL_LOC - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL_LOC);
     }
     if (buffer->showPhysicalLines) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL2 % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL2 - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL2);
     }
     if (buffer->showWords) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL3 % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL3 - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL3);
     }
     if (buffer->showCharacters) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL4 % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL4 - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL4);
     }
     if (buffer->showSourceSize) {
-        prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
-        even = WIDTH_COL5 % 2 == 0;
-        correction = even ? ellEvenLen : ellOddLen;
-        prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
-        prStr(buffer, even ? ellipsisEven : ellipsisOdd);
-        prRpt(buffer, ' ', (WIDTH_COL5 - correction) / 2);
+        prFileRowSkippedItem(buffer, WIDTH_COL5);
     }
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     prChr(buffer, '\n');
