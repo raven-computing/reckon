@@ -48,6 +48,10 @@ static const char TABLE_BORDER_VERTICAL_EMPHASIS = '|';
 static const char TABLE_BORDER_CORNER = 'o';
 static const char* TABLE_PADDING_LEFT = "  ";
 static const char* LABEL_NOT_APPLICABLE = "n/a";
+static const char ELLIPSIS_ODD[] = "...";
+static const char ELLIPSIS_EVEN[] = "..";
+static const int ELLIPSIS_ODD_LEN = sizeof(ELLIPSIS_ODD) - 1;
+static const int ELLIPSIS_EVEN_LEN = sizeof(ELLIPSIS_EVEN) - 1;
 static const char errorMessage[] = "Error";
 
 #ifdef _WIN32
@@ -466,29 +470,21 @@ static void prTableBottom(PrintBuffer* buffer, char border) {
 }
 
 static inline void prFileRowSkippedItem(PrintBuffer* buffer, int width) {
-    const char* ellipsisOdd = "...";
-    const char* ellipsisEven = "..";
-    const int ellOddLen = (int) strlen(ellipsisOdd);
-    const int ellEvenLen = (int) strlen(ellipsisEven);
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     const bool even = width % 2 == 0;
-    const int correction = even ? ellEvenLen : ellOddLen;
+    const int correction = even ? ELLIPSIS_EVEN_LEN : ELLIPSIS_ODD_LEN;
     prRpt(buffer, ' ', (width - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+    prStr(buffer, even ? ELLIPSIS_EVEN : ELLIPSIS_ODD);
     prRpt(buffer, ' ', (width - correction) / 2);
 }
 
 static void prFileRowSkipped(PrintBuffer* buffer) {
-    const char* ellipsisOdd = "...";
-    const char* ellipsisEven = "..";
-    const int ellOddLen = (int) strlen(ellipsisOdd);
-    const int ellEvenLen = (int) strlen(ellipsisEven);
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     bool even = WIDTH_COL0 % 2 == 0;
-    int correction = even ? ellEvenLen : ellOddLen;
+    int correction = even ? ELLIPSIS_EVEN_LEN : ELLIPSIS_ODD_LEN;
     prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
-    prStr(buffer, even ? ellipsisEven : ellipsisOdd);
+    prStr(buffer, even ? ELLIPSIS_EVEN : ELLIPSIS_ODD);
     prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
     if (buffer->showLogicalLines) {
         prFileRowSkippedItem(buffer, WIDTH_COL1);
