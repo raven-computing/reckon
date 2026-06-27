@@ -316,7 +316,7 @@ static RcnCount countLocUTF16(
                 continue;
             }
 
-            unsigned char character = utf16AsciiAt(text, scan, isLittleEndian);
+            char character = (char) utf16AsciiAt(text, scan, isLittleEndian);
 
             if (isAsciiSpace(character)) {
                 scan += 2;
