@@ -27,8 +27,12 @@
  * Returns true if the given byte is an ASCII whitespace character
  * (space, tab, carriage return, form feed, or vertical tab).
  */
-static inline bool isAsciiSpace(char c) {
-    return c == ' ' || c == '\t' || c == '\r' || c == '\f' || c == '\v';
+static inline bool isAsciiSpace(char character) {
+    return character == ' '
+        || character == '\t'
+        || character == '\r'
+        || character == '\f'
+        || character == '\v';
 }
 
 /**
@@ -227,8 +231,12 @@ static size_t utf16FindAscii(
     for (size_t i = 0; i + targetBytes <= length; i += 2) {
         bool match = true;
         for (size_t j = 0; j < targetLength; ++j) {
-            unsigned char c = utf16AsciiAt(text, i + j * 2, isLittleEndian);
-            if (c != (unsigned char) target[j]) {
+            unsigned char character = utf16AsciiAt(
+                text,
+                i + j * 2,
+                isLittleEndian
+            );
+            if (character != (unsigned char) target[j]) {
                 match = false;
                 break;
             }
@@ -264,8 +272,12 @@ static RcnCount countLocUTF16(
         // Find the end of the current line
         size_t lineEndOffset = offset;
         while ((lineEndOffset + 1) < size) {
-            unsigned char c = utf16AsciiAt(text, lineEndOffset, isLittleEndian);
-            if (c == '\n') {
+            unsigned char character = utf16AsciiAt(
+                text,
+                lineEndOffset,
+                isLittleEndian
+            );
+            if (character == '\n') {
                 break;
             }
             lineEndOffset += 2;
