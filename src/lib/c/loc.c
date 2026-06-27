@@ -35,6 +35,30 @@ static inline bool isAsciiSpace(char character) {
         || character == '\v';
 }
 
+static const char* searchBlockClosingMarker(
+    const char* ptr,
+    const char* end,
+    const char* lineComment,
+    size_t lineComLen,
+    const char* blockStart,
+    size_t blockStartLen,
+    const char* blockEnd,
+    size_t blockEndLen
+) {
+    size_t searchLen = (size_t) (end - ptr);
+    const char* closingFound = NULL;
+    if (blockEndLen > 0 && searchLen >= blockEndLen) {
+        const size_t maxOffset = searchLen - blockEndLen;
+        for (size_t offset = 0; offset <= maxOffset; ++offset) {
+            if (memcmp(ptr + offset, blockEnd, blockEndLen) == 0) {
+                closingFound = ptr + offset;
+                break;
+            }
+        }
+    }
+    return closingFound;
+}
+
 /**
  * Scans the byte range [ptr, end) to determine whether it contains actual
  * source code, updating the block-comment tracking state as boundaries
@@ -70,17 +94,12 @@ static bool segmentHasCode(
     while (ptr < end) {
         if (*inBlockComment) {
             // Look for the end of the block comment in this segment
-            const size_t remaining = (size_t) (end - ptr);
-            const char* found = NULL;
-            if (blockEndLen > 0 && remaining >= blockEndLen) {
-                const size_t maxOffset = remaining - blockEndLen;
-                for (size_t offset = 0; offset <= maxOffset; ++offset) {
-                    if (memcmp(ptr + offset, blockEnd, blockEndLen) == 0) {
-                        found = ptr + offset;
-                        break;
-                    }
-                }
-            }
+            const char* found = searchBlockClosingMarker(
+                ptr, end,
+                lineComment, lineComLen,
+                blockStart, blockStartLen,
+                blockEnd, blockEndLen
+            );
             if (!found) {
                 return false; // Entire segment is within a block comment
             }
@@ -110,18 +129,12 @@ static bool segmentHasCode(
             && memcmp(ptr, blockStart, blockStartLen) == 0) {
 
             // Search for the matching closing marker on the same line
-            const char* start = ptr + blockStartLen;
-            size_t searchLen = (size_t) (end - start);
-            const char* closingFound = NULL;
-            if (blockEndLen > 0 && searchLen >= blockEndLen) {
-                const size_t maxOffset = searchLen - blockEndLen;
-                for (size_t offset = 0; offset <= maxOffset; ++offset) {
-                    if (memcmp(start + offset, blockEnd, blockEndLen) == 0) {
-                        closingFound = start + offset;
-                        break;
-                    }
-                }
-            }
+            const char* closingFound = searchBlockClosingMarker(
+                ptr + blockStartLen, end,
+                lineComment, lineComLen,
+                blockStart, blockStartLen,
+                blockEnd, blockEndLen
+            );
             if (!closingFound) {
                 *inBlockComment = true;
                 return false; // Block comment continues on the next line
