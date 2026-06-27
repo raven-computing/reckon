@@ -201,13 +201,13 @@ static inline unsigned char utf16AsciiAt(
     size_t offset,
     bool isLittleEndian
 ) {
-    unsigned char lo = (unsigned char)(
+    unsigned char low = (unsigned char)(
         isLittleEndian ? text[offset] : text[offset + 1]
     );
-    unsigned char hi = (unsigned char)(
+    unsigned char high = (unsigned char)(
         isLittleEndian ? text[offset + 1] : text[offset]
     );
-    return (hi == 0 && lo > 0 && lo < 128) ? lo : 0;
+    return (high == 0 && low > 0 && low < 128) ? low : 0;
 }
 
 /**
