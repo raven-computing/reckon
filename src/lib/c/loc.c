@@ -262,6 +262,186 @@ static size_t utf16FindAscii(
 }
 
 /**
+ * Returns the byte offset of the current UTF-16 line ending (`\n`) or the
+ * first byte past the end of available input if the line has no terminator.
+ */
+static size_t utf16LineEndOffset(
+    const char* text,
+    size_t size,
+    size_t offset,
+    bool isLittleEndian
+) {
+    size_t lineEndOffset = offset;
+    while ((lineEndOffset + 1) < size) {
+        unsigned char character = utf16AsciiAt(
+            text,
+            lineEndOffset,
+            isLittleEndian
+        );
+        if (character == '\n') {
+            break;
+        }
+        lineEndOffset += 2;
+    }
+    return lineEndOffset;
+}
+
+static bool utf16AdvanceOverBlockComment(
+    const char* text,
+    size_t lineEndOffset,
+    bool isLittleEndian,
+    const char* blockEnd,
+    size_t blockEndLen,
+    size_t* scan,
+    bool* inBlockComment
+) {
+    const size_t remaining = lineEndOffset - *scan;
+    const size_t found = utf16FindAscii(
+        text + *scan,
+        remaining,
+        blockEnd, blockEndLen,
+        isLittleEndian
+    );
+    if (found == SIZE_MAX) {
+        return false;
+    }
+    *scan += found + (blockEndLen * 2);
+    *inBlockComment = false;
+    return true;
+}
+
+static bool utf16StartsWithAsciiAt(
+    const char* text,
+    size_t scan,
+    bool isLittleEndian,
+    const char* marker,
+    size_t markerLen
+) {
+    return (
+        markerLen > 0
+        && utf16FindAscii(
+            text + scan,
+            markerLen * 2,
+            marker,
+            markerLen,
+            isLittleEndian
+        ) == 0
+    );
+}
+
+static bool utf16ConsumeInlineBlockComment(
+    const char* text,
+    size_t lineEndOffset,
+    bool isLittleEndian,
+    const char* blockEnd,
+    size_t blockEndLen,
+    size_t* scan,
+    bool* inBlockComment,
+    size_t blockStartLen
+) {
+    const size_t afterStart = *scan + (blockStartLen * 2);
+    const size_t searchLen = lineEndOffset - afterStart;
+    size_t closingFound = SIZE_MAX;
+
+    if (blockEndLen > 0) {
+        closingFound = utf16FindAscii(
+            text + afterStart,
+            searchLen,
+            blockEnd,
+            blockEndLen,
+            isLittleEndian
+        );
+    }
+    if (closingFound == SIZE_MAX) {
+        *inBlockComment = true;
+        return false;
+    }
+
+    *scan = afterStart + closingFound + (blockEndLen * 2);
+    return true;
+}
+
+static bool utf16LineHasCode(
+    const char* text,
+    bool isLittleEndian,
+    const char* lineComment,
+    size_t lineComLen,
+    const char* blockStart,
+    size_t blockStartLen,
+    const char* blockEnd,
+    size_t blockEndLen,
+    size_t offset,
+    size_t lineEndOffset,
+    bool* inBlockComment
+) {
+    size_t scan = offset;
+
+    while ((scan + 1) <= lineEndOffset) {
+        if (*inBlockComment) {
+            if (!utf16AdvanceOverBlockComment(
+                text,
+                lineEndOffset,
+                isLittleEndian,
+                blockEnd,
+                blockEndLen,
+                &scan,
+                inBlockComment)
+            ) {
+                return false;
+            }
+            continue;
+        }
+
+        char character = (char) utf16AsciiAt(text, scan, isLittleEndian);
+        if (isAsciiSpace(character)) {
+            scan += 2;
+            continue;
+        }
+
+        const size_t remaining = lineEndOffset - scan;
+
+        if (lineComLen > 0 && remaining >= (lineComLen * 2)
+            && utf16StartsWithAsciiAt(
+                text,
+                scan,
+                isLittleEndian,
+                lineComment,
+                lineComLen
+            )
+        ) {
+            return false;
+        }
+
+        if (blockStartLen > 0 && remaining >= (blockStartLen * 2)
+            && utf16StartsWithAsciiAt(
+                text,
+                scan,
+                isLittleEndian,
+                blockStart,
+                blockStartLen)) {
+
+            if (!utf16ConsumeInlineBlockComment(
+                text,
+                lineEndOffset,
+                isLittleEndian,
+                blockEnd,
+                blockEndLen,
+                &scan,
+                inBlockComment,
+                blockStartLen
+            )) {
+                return false;
+            }
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Counts LOC in UTF-16 encoded text (LE or BE).
  * `text` points to the first byte after the BOM.
  * `size` is the number of remaining bytes.
@@ -282,94 +462,26 @@ static RcnCount countLocUTF16(
     size_t offset = 0; // Current byte position (always even)
 
     while (offset + 1 < size) {
-        // Find the end of the current line
-        size_t lineEndOffset = offset;
-        while ((lineEndOffset + 1) < size) {
-            unsigned char character = utf16AsciiAt(
-                text,
-                lineEndOffset,
-                isLittleEndian
-            );
-            if (character == '\n') {
-                break;
-            }
-            lineEndOffset += 2;
-        }
+        const size_t lineEndOffset = utf16LineEndOffset(
+            text,
+            size,
+            offset,
+            isLittleEndian
+        );
 
-        size_t scan = offset;
-        bool lineHasSourceCode = false;
-
-        while ((scan + 1) <= lineEndOffset) {
-            if (inBlockComment) {
-                size_t remaining = lineEndOffset - scan;
-                size_t found = utf16FindAscii(
-                    text + scan,
-                    remaining,
-                    blockEnd, blockEndLen,
-                    isLittleEndian
-                );
-                if (found == SIZE_MAX) {
-                    break; // Entire rest of line is within block comment
-                }
-                scan += found + blockEndLen * 2;
-                inBlockComment = false;
-                continue;
-            }
-
-            char character = (char) utf16AsciiAt(text, scan, isLittleEndian);
-
-            if (isAsciiSpace(character)) {
-                scan += 2;
-                continue;
-            }
-
-            size_t remaining = lineEndOffset - scan;
-
-            // Check for line-comment marker
-            if (lineComLen > 0 && remaining >= (lineComLen * 2)) {
-                size_t found = utf16FindAscii(
-                    text + scan,
-                    lineComLen * 2,
-                    lineComment, lineComLen,
-                    isLittleEndian
-                );
-                if (found == 0) {
-                    break;
-                }
-            }
-
-            // Check for block-comment start marker
-            if (blockStartLen > 0 && remaining >= (blockStartLen * 2)) {
-                size_t found = utf16FindAscii(
-                    text + scan,
-                    blockStartLen * 2,
-                    blockStart, blockStartLen,
-                    isLittleEndian
-                );
-                if (found == 0) {
-                    const size_t afterStart = scan + (blockStartLen * 2);
-                    const size_t searchLen = lineEndOffset - afterStart;
-                    size_t closingFound = SIZE_MAX;
-                    if (blockEndLen > 0) {
-                        closingFound = utf16FindAscii(
-                            text + afterStart,
-                            searchLen,
-                            blockEnd, blockEndLen,
-                            isLittleEndian
-                        );
-                    }
-                    if (closingFound == SIZE_MAX) {
-                        inBlockComment = true;
-                        break;
-                    }
-                    scan = afterStart + closingFound + (blockEndLen * 2);
-                    continue;
-                }
-            }
-
-            lineHasSourceCode = true;
-            break;
-        }
+        const bool lineHasSourceCode = utf16LineHasCode(
+            text,
+            isLittleEndian,
+            lineComment,
+            lineComLen,
+            blockStart,
+            blockStartLen,
+            blockEnd,
+            blockEndLen,
+            offset,
+            lineEndOffset,
+            &inBlockComment
+        );
 
         if (lineHasSourceCode) {
             ++count;
