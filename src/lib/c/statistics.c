@@ -133,7 +133,7 @@ static inline bool countLogicalLines(
     return true;
 }
 
-static inline bool countLoc(
+static inline bool countCodeLines(
     RcnCountStatistics* stats,
     RcnSourceFile* file,
     RcnTextFormat language,
@@ -278,7 +278,7 @@ static inline bool count(
     }
     if (ok && options.operations & RCN_OPT_COUNT_CODE_LINES) {
         if (result->hasLocLines) {
-            ok = countLoc(stats, file, sourceFormat, result);
+            ok = countCodeLines(stats, file, sourceFormat, result);
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_PHYSICAL_LINES) {
