@@ -387,7 +387,7 @@ typedef struct RcnCountResultGroup {
     RcnCount logicalLines;
 
     /**
-     * The counted physical lines of code (LOC).
+     * The counted lines of code (LOC).
      *
      * This is the number of physical lines that contain actual source code,
      * excluding blank lines and comment-only lines.
