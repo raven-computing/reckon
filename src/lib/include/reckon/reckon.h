@@ -448,8 +448,8 @@ typedef struct RcnCountResultGroup {
     bool hasLogicalLines;
 
     /**
-     * Indicates whether physical lines of code (LOC) can be computed for
-     * the source entity.
+     * Indicates whether lines of code (LOC) can be computed
+     * for the source entity.
      *
      * If `true`, the `codeLines` field contains a valid count. If `false`,
      * then LOC is not applicable for the source entity's format,
@@ -459,7 +459,7 @@ typedef struct RcnCountResultGroup {
      *
      * @since 1.7.0
      */
-    bool hasLocLines;
+    bool hasCodeLines;
 
 } RcnCountResultGroup;
 

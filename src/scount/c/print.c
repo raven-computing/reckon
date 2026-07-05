@@ -527,7 +527,7 @@ static void prFileRowData(
     if (buffer->showLinesOfCode) {
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
-        prLocLineCount(buffer, res->hasLocLines, res->codeLines);
+        prLocLineCount(buffer, res->hasCodeLines, res->codeLines);
         prChr(buffer, ' ');
     }
     if (buffer->showPhysicalLines) {
@@ -820,7 +820,7 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
     }
     if (buffer->showLinesOfCode) {
         prStr(buffer, "  Lines of Code         (LOC):   ");
-        if (result->hasLocLines) {
+        if (result->hasCodeLines) {
             pr8ld(buffer, result->codeLines);
         } else {
             prRpt(buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));

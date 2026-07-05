@@ -268,7 +268,7 @@ static inline bool count(
 
     bool ok = false;
     result->hasLogicalLines = detected.isProgrammingLanguage;
-    result->hasLocLines = detected.isProgrammingLanguage;
+    result->hasCodeLines = detected.isProgrammingLanguage;
     RcnTextFormat sourceFormat = detected.format;
     ok = ensureFileContent(stats, options, file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
@@ -277,7 +277,7 @@ static inline bool count(
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_CODE_LINES) {
-        if (result->hasLocLines) {
+        if (result->hasCodeLines) {
             ok = countCodeLines(stats, file, sourceFormat, result);
         }
     }
