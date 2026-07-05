@@ -413,7 +413,7 @@ static void prTableTop(PrintBuffer* buffer, const char* title) {
         prChr(buffer, TABLE_BORDER_CORNER);
         prHeaderCell(buffer, "LLC", WIDTH_COL1);
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prChr(buffer, TABLE_BORDER_CORNER);
         prHeaderCell(buffer, "LOC", WIDTH_COL_LOC);
     }
@@ -445,7 +445,7 @@ static void prTableBottom(PrintBuffer* buffer, char border) {
         prChr(buffer, TABLE_BORDER_CORNER);
         prRpt(buffer, border, WIDTH_COL1);
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prChr(buffer, TABLE_BORDER_CORNER);
         prRpt(buffer, border, WIDTH_COL_LOC);
     }
@@ -489,7 +489,7 @@ static void prFileRowSkipped(PrintBuffer* buffer) {
     if (buffer->showLogicalLines) {
         prFileRowSkippedItem(buffer, WIDTH_COL1);
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prFileRowSkippedItem(buffer, WIDTH_COL_LOC);
     }
     if (buffer->showPhysicalLines) {
@@ -524,7 +524,7 @@ static void prFileRowData(
         prLogicalLineCount(buffer, res->hasLogicalLines, res->logicalLines);
         prChr(buffer, ' ');
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
         prLocLineCount(buffer, res->hasCodeLines, res->codeLines);
@@ -698,7 +698,7 @@ static void prSummaryRows(
             );
             prChr(buffer, ' ');
         }
-        if (buffer->showLinesOfCode) {
+        if (buffer->showCodeLines) {
             prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
             prChr(buffer, ' ');
             prLocLineCount(
@@ -753,7 +753,7 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
         );
         prChr(buffer, ' ');
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
         prChr(buffer, ' ');
         prLocLineCount(
@@ -818,7 +818,7 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
         }
         prChr(buffer, '\n');
     }
-    if (buffer->showLinesOfCode) {
+    if (buffer->showCodeLines) {
         prStr(buffer, "  Lines of Code         (LOC):   ");
         if (result->hasCodeLines) {
             pr8ld(buffer, result->codeLines);

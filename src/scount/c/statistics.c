@@ -179,7 +179,7 @@ ExitStatus outputStatistics(AppArgs args) {
 
     PrintBuffer buffer = {
         .showLogicalLines = true,
-        .showLinesOfCode = true,
+        .showCodeLines = true,
         .showPhysicalLines = true,
         .showWords = !args.linesOnly,
         .showCharacters = !args.linesOnly,
