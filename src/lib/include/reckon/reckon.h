@@ -658,7 +658,7 @@ typedef struct RcnCountStatistics {
     RcnCount totalLogicalLines;
 
     /**
-     * The total number of physical lines of code (LOC), across all files
+     * The total number of lines of code (LOC), across all files
      * and programming languages.
      *
      * @since 1.7.0
@@ -695,8 +695,7 @@ typedef struct RcnCountStatistics {
     RcnCount logicalLines[RECKON_NUM_SUPPORTED_FORMATS];
 
     /**
-     * The number of physical lines of code (LOC) per supported programming
-     * language.
+     * The number of lines of code (LOC) per supported programming language.
      *
      * The index corresponds to the `RcnTextFormat` enumerator values.
      *
