@@ -58,7 +58,7 @@
  * multiple LLCs. One statement spanning multiple physical lines counts
  * as one LLC.
  * 
- * * Physical Lines of Code (LOC):  
+ * * Lines of Code (LOC):  
  * The number of physical source lines that contain actual code. A physical
  * line contributes to the LOC count if it is not blank (i.e. it contains at
  * least one non-whitespace character) and not a comment line (i.e. its
