@@ -788,7 +788,7 @@ typedef enum RcnCountOption {
     RCN_OPT_COUNT_LOGICAL_LINES = 0x08,
 
     /**
-     * Count physical lines of code (LOC).
+     * Count lines of code (LOC).
      * 
      * A physical line is counted as LOC if it contains at least one
      * non-whitespace character that is not part of a comment. Blank lines
@@ -1161,7 +1161,7 @@ RECKON_EXPORT RcnSourceText rcnMarkLogicalLinesInSourceText(
 RECKON_EXPORT void rcnFreeSourceText(RcnSourceText* source);
 
 /**
- * Counts the number of physical lines of code (LOC) in the specified source.
+ * Counts the number of lines of code (LOC) in the specified source.
  *
  * A physical line is counted as LOC if it is not blank and its
  * non-whitespace content is not entirely within a comment. Lines that
