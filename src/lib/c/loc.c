@@ -23,6 +23,11 @@
 #include "reckon/reckon.h"
 #include "evaluation.h"
 
+typedef struct {
+    const char* ptr;
+    size_t length;
+} Span;
+
 /**
  * Returns true if the given byte is an ASCII whitespace character
  * (space, tab, carriage return, form feed, or vertical tab).
@@ -38,19 +43,14 @@ static inline bool isAsciiSpace(char character) {
 static const char* searchBlockClosingMarker(
     const char* ptr,
     const char* end,
-    const char* lineComment,
-    size_t lineComLen,
-    const char* blockStart,
-    size_t blockStartLen,
-    const char* blockEnd,
-    size_t blockEndLen
+    Span blockEnd
 ) {
     size_t searchLen = (size_t) (end - ptr);
     const char* closingFound = NULL;
-    if (blockEndLen > 0 && searchLen >= blockEndLen) {
-        const size_t maxOffset = searchLen - blockEndLen;
+    if (blockEnd.length > 0 && searchLen >= blockEnd.length) {
+        const size_t maxOffset = searchLen - blockEnd.length;
         for (size_t offset = 0; offset <= maxOffset; ++offset) {
-            if (memcmp(ptr + offset, blockEnd, blockEndLen) == 0) {
+            if (memcmp(ptr + offset, blockEnd.ptr, blockEnd.length) == 0) {
                 closingFound = ptr + offset;
                 break;
             }
@@ -71,11 +71,8 @@ static const char* searchBlockClosingMarker(
  * @param end End of the line segment (exclusive). Should point at the NL byte
  *            or one past the last byte of text.
  * @param lineComment Null-terminated line-comment start marker, or NULL.
- * @param lineComLen strlen(lineComment), or 0 if lineComment is NULL.
  * @param blockStart Null-terminated block-comment start marker, or NULL.
- * @param blockStartLen strlen(blockStart), or 0 if blockStart is NULL.
  * @param blockEnd Null-terminated block-comment end marker, or NULL.
- * @param blockEndLen strlen(blockEnd), or 0 if blockEnd is NULL.
  * @param inBlockComment Out param: whether currently inside a block
  *                       comment when entering the segment.
  * @return True if the line segment contains source code.
@@ -83,12 +80,9 @@ static const char* searchBlockClosingMarker(
 static bool segmentHasCode(
     const char* ptr,
     const char* end,
-    const char* lineComment,
-    size_t lineComLen,
-    const char* blockStart,
-    size_t blockStartLen,
-    const char* blockEnd,
-    size_t blockEndLen,
+    Span lineComment,
+    Span blockStart,
+    Span blockEnd,
     bool* inBlockComment
 ) {
     while (ptr < end) {
@@ -96,14 +90,12 @@ static bool segmentHasCode(
             // Look for the end of the block comment in this segment
             const char* found = searchBlockClosingMarker(
                 ptr, end,
-                lineComment, lineComLen,
-                blockStart, blockStartLen,
-                blockEnd, blockEndLen
+                blockEnd
             );
             if (!found) {
                 return false; // Entire segment is within a block comment
             }
-            ptr = found + blockEndLen;
+            ptr = found + blockEnd.length;
             *inBlockComment = false;
             continue;
         }
@@ -116,31 +108,29 @@ static bool segmentHasCode(
         const size_t remaining = (size_t) (end - ptr);
 
         // Check for line-comment marker
-        if (lineComLen > 0
-            && remaining >= lineComLen
-            && memcmp(ptr, lineComment, lineComLen) == 0) {
+        if (lineComment.length > 0
+            && remaining >= lineComment.length
+            && memcmp(ptr, lineComment.ptr, lineComment.length) == 0) {
 
             return false;
         }
 
         // Check for block-comment start marker
-        if (blockStartLen > 0
-            && remaining >= blockStartLen
-            && memcmp(ptr, blockStart, blockStartLen) == 0) {
+        if (blockStart.length > 0
+            && remaining >= blockStart.length
+            && memcmp(ptr, blockStart.ptr, blockStart.length) == 0) {
 
             // Search for the matching closing marker on the same line
             const char* closingFound = searchBlockClosingMarker(
-                ptr + blockStartLen, end,
-                lineComment, lineComLen,
-                blockStart, blockStartLen,
-                blockEnd, blockEndLen
+                ptr + blockStart.length, end,
+                blockEnd
             );
             if (!closingFound) {
                 *inBlockComment = true;
                 return false; // Block comment continues on the next line
             }
             // Is inline block comment. Skip over it and continue scanning
-            ptr = closingFound + blockEndLen;
+            ptr = closingFound + blockEnd.length;
             continue;
         }
 
@@ -155,12 +145,9 @@ static bool segmentHasCode(
  */
 static RcnCount countLocUTF8(
     RcnSourceText source,
-    const char* lineComment,
-    size_t lineComLen,
-    const char* blockStart,
-    size_t blockStartLen,
-    const char* blockEnd,
-    size_t blockEndLen
+    Span lineComment,
+    Span blockStart,
+    Span blockEnd
 ) {
     RcnCount count = 0;
     const char* text = source.text;
@@ -185,9 +172,9 @@ static RcnCount countLocUTF8(
 
         const bool lineHasSourceCode = segmentHasCode(
             pos, lineEnd,
-            lineComment, lineComLen,
-            blockStart, blockStartLen,
-            blockEnd, blockEndLen,
+            lineComment,
+            blockStart,
+            blockEnd,
             &inBlockComment
         );
         if (lineHasSourceCode) {
@@ -290,8 +277,7 @@ static bool utf16AdvanceOverBlockComment(
     const char* text,
     size_t lineEndOffset,
     bool isLittleEndian,
-    const char* blockEnd,
-    size_t blockEndLen,
+    Span blockEnd,
     size_t* scan,
     bool* inBlockComment
 ) {
@@ -299,13 +285,13 @@ static bool utf16AdvanceOverBlockComment(
     const size_t found = utf16FindAscii(
         text + *scan,
         remaining,
-        blockEnd, blockEndLen,
+        blockEnd.ptr, blockEnd.length,
         isLittleEndian
     );
     if (found == SIZE_MAX) {
         return false;
     }
-    *scan += found + (blockEndLen * 2);
+    *scan += found + (blockEnd.length * 2);
     *inBlockComment = false;
     return true;
 }
@@ -333,8 +319,7 @@ static bool utf16ConsumeInlineBlockComment(
     const char* text,
     size_t lineEndOffset,
     bool isLittleEndian,
-    const char* blockEnd,
-    size_t blockEndLen,
+    Span blockEnd,
     size_t* scan,
     bool* inBlockComment,
     size_t blockStartLen
@@ -343,12 +328,12 @@ static bool utf16ConsumeInlineBlockComment(
     const size_t searchLen = lineEndOffset - afterStart;
     size_t closingFound = SIZE_MAX;
 
-    if (blockEndLen > 0) {
+    if (blockEnd.length > 0) {
         closingFound = utf16FindAscii(
             text + afterStart,
             searchLen,
-            blockEnd,
-            blockEndLen,
+            blockEnd.ptr,
+            blockEnd.length,
             isLittleEndian
         );
     }
@@ -357,19 +342,16 @@ static bool utf16ConsumeInlineBlockComment(
         return false;
     }
 
-    *scan = afterStart + closingFound + (blockEndLen * 2);
+    *scan = afterStart + closingFound + (blockEnd.length * 2);
     return true;
 }
 
 static bool utf16LineHasCode(
     const char* text,
     bool isLittleEndian,
-    const char* lineComment,
-    size_t lineComLen,
-    const char* blockStart,
-    size_t blockStartLen,
-    const char* blockEnd,
-    size_t blockEndLen,
+    Span lineComment,
+    Span blockStart,
+    Span blockEnd,
     size_t offset,
     size_t lineEndOffset,
     bool* inBlockComment
@@ -383,7 +365,6 @@ static bool utf16LineHasCode(
                 lineEndOffset,
                 isLittleEndian,
                 blockEnd,
-                blockEndLen,
                 &scan,
                 inBlockComment)
             ) {
@@ -400,35 +381,34 @@ static bool utf16LineHasCode(
 
         const size_t remaining = lineEndOffset - scan;
 
-        if (lineComLen > 0 && remaining >= (lineComLen * 2)
+        if (lineComment.length > 0 && remaining >= (lineComment.length * 2)
             && utf16StartsWithAsciiAt(
                 text,
                 scan,
                 isLittleEndian,
-                lineComment,
-                lineComLen
+                lineComment.ptr,
+                lineComment.length
             )
         ) {
             return false;
         }
 
-        if (blockStartLen > 0 && remaining >= (blockStartLen * 2)
+        if (blockStart.length > 0 && remaining >= (blockStart.length * 2)
             && utf16StartsWithAsciiAt(
                 text,
                 scan,
                 isLittleEndian,
-                blockStart,
-                blockStartLen)) {
+                blockStart.ptr,
+                blockStart.length)) {
 
             if (!utf16ConsumeInlineBlockComment(
                 text,
                 lineEndOffset,
                 isLittleEndian,
                 blockEnd,
-                blockEndLen,
                 &scan,
                 inBlockComment,
-                blockStartLen
+                blockStart.length
             )) {
                 return false;
             }
@@ -450,12 +430,9 @@ static RcnCount countLocUTF16(
     const char* text,
     size_t size,
     bool isLittleEndian,
-    const char* lineComment,
-    size_t lineComLen,
-    const char* blockStart,
-    size_t blockStartLen,
-    const char* blockEnd,
-    size_t blockEndLen
+    Span lineComment,
+    Span blockStart,
+    Span blockEnd
 ) {
     RcnCount count = 0;
     bool inBlockComment = false;
@@ -473,11 +450,8 @@ static RcnCount countLocUTF16(
             text,
             isLittleEndian,
             lineComment,
-            lineComLen,
             blockStart,
-            blockStartLen,
             blockEnd,
-            blockEndLen,
             offset,
             lineEndOffset,
             &inBlockComment
@@ -528,21 +502,30 @@ RcnCountResult rcnCountLinesOfCode(
         return result;
     }
 
-    const char* lineComment = getInlineSourceCommentString(language);
-    const char* blockStart = getBlockCommentStartString(language);
-    const char* blockEnd = getBlockCommentEndString(language);
+    const char* lineCommentStr = getInlineSourceCommentString(language);
+    const char* blockStartStr = getBlockCommentStartString(language);
+    const char* blockEndStr = getBlockCommentEndString(language);
 
-    const size_t lineComLength = lineComment ? strlen(lineComment) : 0;
-    const size_t blockStartLength = blockStart ? strlen(blockStart) : 0;
-    const size_t blockEndLength = blockEnd ? strlen(blockEnd) : 0;
+    const Span lineComment = {
+        lineCommentStr,
+        lineCommentStr ? strlen(lineCommentStr) : 0
+    };
+    const Span blockStart = {
+        blockStartStr,
+        blockStartStr ? strlen(blockStartStr) : 0
+    };
+    const Span blockEnd = {
+        blockEndStr,
+        blockEndStr ? strlen(blockEndStr) : 0
+    };
 
     TextEncoding encoding = detectEncoding(sourceCode);
     if (encoding == TextEncodingUTF8) {
         result.count = countLocUTF8(
             sourceCode,
-            lineComment, lineComLength,
-            blockStart, blockStartLength,
-            blockEnd, blockEndLength
+            lineComment,
+            blockStart,
+            blockEnd
         );
     } else {
         assert(
@@ -555,9 +538,9 @@ RcnCountResult rcnCountLinesOfCode(
         result.count = countLocUTF16(
             text, size,
             isLittleEndian,
-            lineComment, lineComLength,
-            blockStart, blockStartLength,
-            blockEnd, blockEndLength
+            lineComment,
+            blockStart,
+            blockEnd
         );
     }
 
