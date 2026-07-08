@@ -23,11 +23,6 @@
 #include "reckon/reckon.h"
 #include "evaluation.h"
 
-typedef struct {
-    const char* ptr;
-    size_t length;
-} Span;
-
 /**
  * Returns true if the given byte is an ASCII whitespace character
  * (space, tab, carriage return, form feed, or vertical tab).
@@ -503,20 +498,12 @@ RcnCountResult rcnCountLinesOfCode(
     }
 
     const char* lineCommentStr = getInlineSourceCommentString(language);
-    const char* blockStartStr = getBlockCommentStartString(language);
-    const char* blockEndStr = getBlockCommentEndString(language);
+    const Span blockStart = getBlockCommentStartString(language);
+    const Span blockEnd = getBlockCommentEndString(language);
 
     const Span lineComment = {
         lineCommentStr,
         lineCommentStr ? strlen(lineCommentStr) : 0
-    };
-    const Span blockStart = {
-        blockStartStr,
-        blockStartStr ? strlen(blockStartStr) : 0
-    };
-    const Span blockEnd = {
-        blockEndStr,
-        blockEndStr ? strlen(blockEndStr) : 0
     };
 
     TextEncoding encoding = detectEncoding(sourceCode);
