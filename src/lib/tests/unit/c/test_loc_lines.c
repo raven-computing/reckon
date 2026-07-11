@@ -28,6 +28,7 @@
 #define TEST_FILE_SOURCE_UTF_8_BOM TEST_DIR_ENC "/Source_UTF_8_with_BOM.java"
 #define TEST_FILE_SOURCE_UTF_16_LE TEST_DIR_ENC "/Source_UTF_16LE.java"
 #define TEST_FILE_SOURCE_UTF_16_BE TEST_DIR_ENC "/Source_UTF_16BE.java"
+#define TEST_FILE_SOURCE_UTF_16_LE_BC TEST_DIR_ENC "/MiscSource_UTF_16LE_WithBlockComments.java"
 
 void setUp(void) { }
 
@@ -161,6 +162,59 @@ void testCodeLineCountWithOnlyInputUTF16LEBOM(void) {
     TEST_ASSERT_EQUAL_INT(0, result.count);
 }
 
+void testCodeLineCountWithNonProgrammingLanguageReturnsError(void) {
+    char *markDown =
+        "# A Big Title\n"
+        "\n"
+        "### A smaller title\n"
+        "\n"
+        "* Something\n"
+        "* Some **Text**\n"
+        "* Other\n"
+        "\n"
+        "\n";
+
+    RcnSourceText source = {
+        .text = markDown,
+        .size = strlen(markDown)
+    };
+
+    RcnCountResult result = rcnCountLinesOfCode(RCN_TEXT_MARKDOWN, source);
+    TEST_ASSERT_FALSE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_UNSUPPORTED_FORMAT, result.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "The input format or programming language is not supported",
+        result.state.errorMessage)
+    ;
+    TEST_ASSERT_EQUAL_INT(0, result.count);
+}
+
+void testCodeLineCountWithTooLargeTextInputFails(void) {
+    RcnSourceText source = {
+        .text = "AAAAAA....AAAA",
+        .size = 0x000000FFFFFFFFFF
+    };
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_FALSE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_INPUT_TOO_LARGE, result.state.errorCode);
+    TEST_ASSERT_EQUAL_STRING(
+        "Input exceeds maximum supported size",
+        result.state.errorMessage
+    );
+    TEST_ASSERT_EQUAL_INT(0, result.count);
+}
+
+void testCodeLineCountWithBlockCommentsEncodedinUTF16LE(void) {
+    RcnSourceFile* file = newSourceFile(TEST_FILE_SOURCE_UTF_16_LE_BC);
+    readSourceFileContent(file);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, file->content);
+    freeSourceFile(file);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(19, result.count);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(testCodeLineCountIsCorrect);
@@ -172,5 +226,8 @@ int main(void) {
     RUN_TEST(testCodeLineCountWithEncodedSourceUTF16BE);
     RUN_TEST(testCodeLineCountWithLastLineNotEndingWithNewline);
     RUN_TEST(testCodeLineCountWithOnlyInputUTF16LEBOM);
+    RUN_TEST(testCodeLineCountWithNonProgrammingLanguageReturnsError);
+    RUN_TEST(testCodeLineCountWithTooLargeTextInputFails);
+    RUN_TEST(testCodeLineCountWithBlockCommentsEncodedinUTF16LE);
     return UNITY_END();
 }
