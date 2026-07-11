@@ -15,6 +15,7 @@
  */
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 
 #include "unity.h"
