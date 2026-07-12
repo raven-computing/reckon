@@ -34,6 +34,8 @@ void setUp(void) { }
 
 void tearDown(void) { }
 
+// NOLINTBEGIN(readability-magic-numbers)
+
 void testCodeLineCountIsCorrect(void) {
     char *text =
         "public class Test {\n"
@@ -214,6 +216,8 @@ void testCodeLineCountWithBlockCommentsEncodedinUTF16LE(void) {
     TEST_ASSERT_NULL(result.state.errorMessage);
     TEST_ASSERT_EQUAL_INT(19, result.count);
 }
+
+// NOLINTEND(readability-magic-numbers)
 
 int main(void) {
     UNITY_BEGIN();
