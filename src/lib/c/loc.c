@@ -55,16 +55,16 @@ static const char* searchBlockClosingMarker(
 }
 
 /**
- * Scans the byte range [ptr, end) to determine whether it contains actual
- * source code, updating the block-comment tracking state as boundaries
- * are crossed.
+ * Scans the span to determine whether it contains actual source code,
+ * updating the block-comment tracking state as boundaries are crossed.
  *
  * A line segment is counted as source code if it contains at least one
  * character that is not whitespace and not part of a comment.
  *
- * @param ptr Start of the line segment (inclusive).
- * @param end End of the line segment (exclusive). Should point at the NL byte
- *            or one past the last byte of text.
+ * @param segment A span that indicates the start of the line segment
+ *                (inclusive) and the length of the line segment (exclusive).
+ *                The span's ptr + length should point at the NL byte or one
+ *                past the last byte of text.
  * @param lineComment Line-comment start marker span.
  * @param blockStart Block-comment start marker span.
  * @param blockEnd Block-comment end marker span.
@@ -73,13 +73,14 @@ static const char* searchBlockClosingMarker(
  * @return True if the line segment contains source code.
  */
 static bool segmentHasCode(
-    const char* ptr,
-    const char* end,
+    Span segment,
     Span lineComment,
     Span blockStart,
     Span blockEnd,
     bool* inBlockComment
 ) {
+    const char* ptr = segment.ptr;
+    const char* end = segment.ptr + segment.length;
     while (ptr < end) {
         if (*inBlockComment) {
             // Look for the end of the block comment in this segment
@@ -166,7 +167,7 @@ static RcnCount countLocUTF8(
         }
 
         const bool lineHasSourceCode = segmentHasCode(
-            pos, lineEnd,
+            (Span){pos, lineEnd - pos},
             lineComment,
             blockStart,
             blockEnd,
