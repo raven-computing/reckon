@@ -65,9 +65,9 @@ static const char* searchBlockClosingMarker(
  * @param ptr Start of the line segment (inclusive).
  * @param end End of the line segment (exclusive). Should point at the NL byte
  *            or one past the last byte of text.
- * @param lineComment Null-terminated line-comment start marker, or NULL.
- * @param blockStart Null-terminated block-comment start marker, or NULL.
- * @param blockEnd Null-terminated block-comment end marker, or NULL.
+ * @param lineComment Line-comment start marker span.
+ * @param blockStart Block-comment start marker span.
+ * @param blockEnd Block-comment end marker span.
  * @param inBlockComment Out param: whether currently inside a block
  *                       comment when entering the segment.
  * @return True if the line segment contains source code.
