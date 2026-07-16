@@ -35,18 +35,14 @@ static inline bool isAsciiSpace(char character) {
         || character == '\v';
 }
 
-static const char* searchBlockClosingMarker(
-    const char* ptr,
-    const char* end,
-    Span blockEnd
-) {
-    size_t searchLen = (size_t) (end - ptr);
+static const char* searchBlockClosingMarker(Span span, Span blockEnd) {
     const char* closingFound = NULL;
-    if (blockEnd.length > 0 && searchLen >= blockEnd.length) {
-        const size_t maxOffset = searchLen - blockEnd.length;
+    if (blockEnd.length > 0 && span.length >= blockEnd.length) {
+        const size_t maxOffset = span.length - blockEnd.length;
         for (size_t offset = 0; offset <= maxOffset; ++offset) {
-            if (memcmp(ptr + offset, blockEnd.ptr, blockEnd.length) == 0) {
-                closingFound = ptr + offset;
+            const char* const position = span.ptr + offset;
+            if (memcmp(position, blockEnd.ptr, blockEnd.length) == 0) {
+                closingFound = position;
                 break;
             }
         }
@@ -85,7 +81,7 @@ static bool segmentHasCode(
         if (*inBlockComment) {
             // Look for the end of the block comment in this segment
             const char* found = searchBlockClosingMarker(
-                ptr, end,
+                (Span){ptr, end - ptr},
                 blockEnd
             );
             if (!found) {
@@ -117,8 +113,9 @@ static bool segmentHasCode(
             && memcmp(ptr, blockStart.ptr, blockStart.length) == 0) {
 
             // Search for the matching closing marker on the same line
-            const char* closingFound = searchBlockClosingMarker(
-                ptr + blockStart.length, end,
+            const char* const searchStart = ptr + blockStart.length;
+            const char* const closingFound = searchBlockClosingMarker(
+                (Span){searchStart, end - searchStart},
                 blockEnd
             );
             if (!closingFound) {
