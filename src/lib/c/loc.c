@@ -50,6 +50,14 @@ static const char* searchBlockClosingMarker(Span span, Span blockEnd) {
     return closingFound;
 }
 
+static bool hasCommentMarker(Span segment, Span commentType) {
+    return (
+        commentType.length > 0
+        && segment.length >= commentType.length
+        && memcmp(segment.ptr, commentType.ptr, commentType.length) == 0
+    );
+}
+
 /**
  * Scans the span to determine whether it contains actual source code,
  * updating the block-comment tracking state as boundaries are crossed.
@@ -99,19 +107,11 @@ static bool segmentHasCode(
 
         const size_t remaining = (size_t) (end - ptr);
 
-        // Check for line-comment marker
-        if (lineComment.length > 0
-            && remaining >= lineComment.length
-            && memcmp(ptr, lineComment.ptr, lineComment.length) == 0) {
-
+        if (hasCommentMarker((Span){ptr, remaining}, lineComment)) {
             return false;
         }
 
-        // Check for block-comment start marker
-        if (blockStart.length > 0
-            && remaining >= blockStart.length
-            && memcmp(ptr, blockStart.ptr, blockStart.length) == 0) {
-
+        if (hasCommentMarker((Span){ptr, remaining}, blockStart)) {
             // Search for the matching closing marker on the same line
             const char* const searchStart = ptr + blockStart.length;
             const char* const closingFound = searchBlockClosingMarker(
