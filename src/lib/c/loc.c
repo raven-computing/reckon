@@ -83,39 +83,38 @@ static bool segmentHasCode(
     Span blockEnd,
     bool* inBlockComment
 ) {
-    const char* ptr = segment.ptr;
-    const char* end = segment.ptr + segment.length;
-    while (ptr < end) {
+    const char* const segmentEnd = segment.ptr + segment.length;
+    while (segment.ptr < segmentEnd) {
         if (*inBlockComment) {
             // Look for the end of the block comment in this segment
             const char* found = searchBlockClosingMarker(
-                (Span){ptr, end - ptr},
+                segment,
                 blockEnd
             );
             if (!found) {
                 return false; // Entire segment is within a block comment
             }
-            ptr = found + blockEnd.length;
+            segment.ptr = found + blockEnd.length;
+            segment.length = segmentEnd - segment.ptr;
             *inBlockComment = false;
             continue;
         }
 
-        if (isAsciiSpace(*ptr)) {
-            ++ptr;
+        if (isAsciiSpace(*segment.ptr)) {
+            segment.ptr += 1;
+            segment.length -= 1;
             continue;
         }
 
-        const size_t remaining = (size_t) (end - ptr);
-
-        if (hasCommentMarker((Span){ptr, remaining}, lineComment)) {
+        if (hasCommentMarker(segment, lineComment)) {
             return false;
         }
 
-        if (hasCommentMarker((Span){ptr, remaining}, blockStart)) {
+        if (hasCommentMarker(segment, blockStart)) {
             // Search for the matching closing marker on the same line
-            const char* const searchStart = ptr + blockStart.length;
+            const char* const searchStart = segment.ptr + blockStart.length;
             const char* const closingFound = searchBlockClosingMarker(
-                (Span){searchStart, end - searchStart},
+                (Span){searchStart, segmentEnd - searchStart},
                 blockEnd
             );
             if (!closingFound) {
@@ -123,7 +122,8 @@ static bool segmentHasCode(
                 return false; // Block comment continues on the next line
             }
             // Is inline block comment. Skip over it and continue scanning
-            ptr = closingFound + blockEnd.length;
+            segment.ptr = closingFound + blockEnd.length;
+            segment.length = segmentEnd - segment.ptr;
             continue;
         }
 
