@@ -35,6 +35,14 @@ static inline bool isAsciiSpace(char character) {
         || character == '\v';
 }
 
+static void skipSpaceCharacters(Span* segment) {
+    while (isAsciiSpace(*segment->ptr)) {
+        assert(segment->length > 0);
+        segment->ptr += 1;
+        segment->length -= 1;
+    }
+}
+
 static const char* searchBlockClosingMarker(Span span, Span blockEnd) {
     const char* closingFound = NULL;
     if (blockEnd.length > 0 && span.length >= blockEnd.length) {
@@ -94,11 +102,7 @@ static bool segmentHasCode(
             return false; // Entire segment is within a block comment
         }
 
-        if (isAsciiSpace(*segment.ptr)) {
-            segment.ptr += 1;
-            segment.length -= 1;
-            continue;
-        }
+        skipSpaceCharacters(&segment);
 
         if (hasCommentMarker(segment, lineComment)) {
             return false;
