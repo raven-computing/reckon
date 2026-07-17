@@ -51,11 +51,9 @@ static const char* searchBlockClosingMarker(Span span, Span blockEnd) {
 }
 
 static bool hasCommentMarker(Span segment, Span commentType) {
-    return (
-        commentType.length > 0
+    return commentType.length > 0
         && segment.length >= commentType.length
-        && memcmp(segment.ptr, commentType.ptr, commentType.length) == 0
-    );
+        && memcmp(segment.ptr, commentType.ptr, commentType.length) == 0;
 }
 
 /**
