@@ -84,18 +84,14 @@ static bool segmentHasCode(
     const char* const segmentEnd = segment.ptr + segment.length;
     while (segment.ptr < segmentEnd) {
         if (*inBlockComment) {
-            // Look for the end of the block comment in this segment
-            const char* found = searchBlockClosingMarker(
-                segment,
-                blockEnd
-            );
-            if (!found) {
-                return false; // Entire segment is within a block comment
+            const char* found = searchBlockClosingMarker(segment, blockEnd);
+            if (found) {
+                segment.ptr = found + blockEnd.length;
+                segment.length = segmentEnd - segment.ptr;
+                *inBlockComment = false;
+                continue;
             }
-            segment.ptr = found + blockEnd.length;
-            segment.length = segmentEnd - segment.ptr;
-            *inBlockComment = false;
-            continue;
+            return false; // Entire segment is within a block comment
         }
 
         if (isAsciiSpace(*segment.ptr)) {
