@@ -141,28 +141,26 @@ static RcnCount countLocUTF8(
     Span blockEnd
 ) {
     RcnCount count = 0;
-    const char* text = source.text;
-    size_t size = source.size;
 
     // Skip UTF-8 BOM if present
     if (hasUTF8BOM(source)) {
-        text += 3;
-        size -= 3;
+        source.text += 3;
+        source.size -= 3;
     }
 
     bool inBlockComment = false;
-    const char* pos = text;
-    const char* const textEnd = text + size;
+    const char* position = source.text;
+    const char* const textEnd = source.text + source.size;
 
-    while (pos < textEnd) {
+    while (position < textEnd) {
         // Locate the end of the current line
-        const char* lineEnd = pos;
+        const char* lineEnd = position;
         while (lineEnd < textEnd && *lineEnd != '\n') {
             ++lineEnd;
         }
 
         const bool lineHasSourceCode = segmentHasCode(
-            (Span){pos, lineEnd - pos},
+            (Span){position, lineEnd - position},
             lineComment,
             blockStart,
             blockEnd,
@@ -173,7 +171,7 @@ static RcnCount countLocUTF8(
         }
 
         // Advance past the NL, or stop if at end of text
-        pos = (lineEnd < textEnd) ? lineEnd + 1 : textEnd;
+        position = (lineEnd < textEnd) ? lineEnd + 1 : textEnd;
     }
 
     return count;
