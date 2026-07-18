@@ -496,8 +496,8 @@ RcnCountResult rcnCountLinesOfCode(
     const Span blockEnd = getBlockCommentEndString(language);
 
     const Span lineComment = {
-        lineCommentStr,
-        lineCommentStr ? strlen(lineCommentStr) : 0
+        .ptr=lineCommentStr,
+        .length=lineCommentStr ? strlen(lineCommentStr) : 0
     };
 
     TextEncoding encoding = detectEncoding(sourceCode);
