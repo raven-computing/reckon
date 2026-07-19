@@ -405,8 +405,7 @@ static bool utf16LineHasCode(
  * `size` is the number of remaining bytes.
  */
 static RcnCount countLocUTF16(
-    const char* text,
-    size_t size,
+    Span text,
     bool isLittleEndian,
     Span lineComment,
     Span blockStart,
@@ -416,16 +415,16 @@ static RcnCount countLocUTF16(
     bool inBlockComment = false;
     size_t offset = 0; // Current byte position (always even)
 
-    while (offset + 1 < size) {
+    while (offset + 1 < text.length) {
         const size_t lineEndOffset = utf16LineEndOffset(
-            text,
-            size,
+            text.ptr,
+            text.length,
             offset,
             isLittleEndian
         );
 
         const bool lineHasSourceCode = utf16LineHasCode(
-            text,
+            text.ptr,
             isLittleEndian,
             lineComment,
             blockStart,
@@ -439,11 +438,11 @@ static RcnCount countLocUTF16(
             ++count;
         }
 
-        if ((lineEndOffset + 1) < size
-            && utf16AsciiAt(text, lineEndOffset, isLittleEndian) == '\n') {
+        if ((lineEndOffset + 1) < text.length
+            && utf16AsciiAt(text.ptr, lineEndOffset, isLittleEndian) == '\n') {
             offset = lineEndOffset + 2;
         } else {
-            offset = size;
+            offset = text.length;
         }
     }
 
@@ -506,7 +505,7 @@ RcnCountResult rcnCountLinesOfCode(
         const char* text = sourceCode.text + 2;
         const size_t size = sourceCode.size >= 2 ? sourceCode.size - 2 : 0;
         result.count = countLocUTF16(
-            text, size,
+            (Span){text, size},
             isLittleEndian,
             lineComment,
             blockStart,
