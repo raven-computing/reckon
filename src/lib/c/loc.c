@@ -201,31 +201,25 @@ static inline unsigned char utf16AsciiAt(
 
 /**
  * Searches for the first occurrence of the ASCII string `target` encoded
- * as UTF-16 code units within the byte range [text, text+length).
+ * as UTF-16 code units within the byte range of span `text`.
  * The search advances in 2-byte steps.
  *
  * Returns the byte offset of the first match, or `SIZE_MAX` if not found.
  */
-static size_t utf16FindAscii(
-    const char* text,
-    size_t length,
-    const char* target,
-    size_t targetLength,
-    bool isLittleEndian
-) {
-    const size_t targetBytes = targetLength * 2;
-    if (targetBytes == 0 || targetBytes > length) {
+static size_t utf16FindAscii(Span text, Span target, bool isLittleEndian) {
+    const size_t targetBytes = target.length * 2;
+    if (targetBytes == 0 || targetBytes > text.length) {
         return SIZE_MAX;
     }
-    for (size_t i = 0; i + targetBytes <= length; i += 2) {
+    for (size_t i = 0; i + targetBytes <= text.length; i += 2) {
         bool match = true;
-        for (size_t j = 0; j < targetLength; ++j) {
+        for (size_t j = 0; j < target.length; ++j) {
             unsigned char character = utf16AsciiAt(
-                text,
+                text.ptr,
                 i + j * 2,
                 isLittleEndian
             );
-            if (character != (unsigned char) target[j]) {
+            if (character != (unsigned char) target.ptr[j]) {
                 match = false;
                 break;
             }
@@ -272,9 +266,8 @@ static bool utf16AdvanceOverBlockComment(
 ) {
     const size_t remaining = lineEndOffset - *scan;
     const size_t found = utf16FindAscii(
-        text + *scan,
-        remaining,
-        blockEnd.ptr, blockEnd.length,
+        (Span){text + *scan, remaining},
+        blockEnd,
         isLittleEndian
     );
     if (found == SIZE_MAX) {
@@ -295,10 +288,8 @@ static bool utf16StartsWithAsciiAt(
     return (
         markerLen > 0
         && utf16FindAscii(
-            text + scan,
-            markerLen * 2,
-            marker,
-            markerLen,
+            (Span){text + scan, markerLen * 2},
+            (Span){marker, markerLen},
             isLittleEndian
         ) == 0
     );
@@ -319,10 +310,8 @@ static bool utf16ConsumeInlineBlockComment(
 
     if (blockEnd.length > 0) {
         closingFound = utf16FindAscii(
-            text + afterStart,
-            searchLen,
-            blockEnd.ptr,
-            blockEnd.length,
+            (Span){text + afterStart, searchLen},
+            blockEnd,
             isLittleEndian
         );
     }
