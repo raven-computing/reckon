@@ -281,14 +281,13 @@ static bool utf16StartsWithAsciiAt(
     const char* text,
     size_t scan,
     bool isLittleEndian,
-    const char* marker,
-    size_t markerLen
+    Span marker
 ) {
     return (
-        markerLen > 0
+        marker.length > 0
         && utf16FindAscii(
-            (Span){text + scan, markerLen * 2},
-            (Span){marker, markerLen},
+            (Span){text + scan, marker.length * 2},
+            marker,
             isLittleEndian
         ) == 0
     );
@@ -363,8 +362,7 @@ static bool utf16LineHasCode(
                 text,
                 scan,
                 isLittleEndian,
-                lineComment.ptr,
-                lineComment.length
+                lineComment
             )
         ) {
             return false;
@@ -375,8 +373,7 @@ static bool utf16LineHasCode(
                 text,
                 scan,
                 isLittleEndian,
-                blockStart.ptr,
-                blockStart.length)) {
+                blockStart)) {
 
             if (!utf16ConsumeInlineBlockComment(
                 text,
