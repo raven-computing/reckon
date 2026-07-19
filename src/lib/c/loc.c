@@ -236,15 +236,14 @@ static size_t utf16FindAscii(Span text, Span target, bool isLittleEndian) {
  * first byte past the end of available input if the line has no terminator.
  */
 static size_t utf16LineEndOffset(
-    const char* text,
-    size_t size,
+    Span text,
     size_t offset,
     bool isLittleEndian
 ) {
     size_t lineEndOffset = offset;
-    while ((lineEndOffset + 1) < size) {
+    while ((lineEndOffset + 1) < text.length) {
         unsigned char character = utf16AsciiAt(
-            text,
+            text.ptr,
             lineEndOffset,
             isLittleEndian
         );
@@ -417,8 +416,7 @@ static RcnCount countLocUTF16(
 
     while (offset + 1 < text.length) {
         const size_t lineEndOffset = utf16LineEndOffset(
-            text.ptr,
-            text.length,
+            text,
             offset,
             isLittleEndian
         );
