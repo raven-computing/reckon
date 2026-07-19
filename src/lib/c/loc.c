@@ -82,7 +82,7 @@ static bool hasCommentMarker(Span segment, Span commentType) {
  *                       comment when entering the segment.
  * @return True if the line segment contains source code.
  */
-static bool segmentHasCode(
+static bool lineHasCode(
     Span segment,
     Span lineComment,
     Span blockStart,
@@ -159,7 +159,7 @@ static RcnCount countLocUTF8(
             ++lineEnd;
         }
 
-        const bool lineHasSourceCode = segmentHasCode(
+        const bool lineHasSourceCode = lineHasCode(
             (Span){position, lineEnd - position},
             lineComment,
             blockStart,
