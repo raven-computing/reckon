@@ -293,6 +293,21 @@ static bool utf16StartsWithAsciiAt(
     );
 }
 
+static bool utf16HasCommentMarker(
+    Span segment,
+    Span commentType,
+    bool isLittleEndian
+) {
+    return commentType.length > 0
+        && segment.length >= (commentType.length * 2)
+        && utf16StartsWithAsciiAt(
+            segment.ptr,
+            0,
+            isLittleEndian,
+            commentType
+        );
+}
+
 static bool utf16ConsumeInlineBlockComment(
     const char* text,
     size_t lineEndOffset,
@@ -357,25 +372,22 @@ static bool utf16LineHasCode(
 
         const size_t remaining = lineEndOffset - position;
 
-        if (lineComment.length > 0 && remaining >= (lineComment.length * 2)
-            && utf16StartsWithAsciiAt(
-                text,
-                position,
-                isLittleEndian,
-                lineComment
-            )
-        ) {
+        const bool hasLineComment = utf16HasCommentMarker(
+            (Span){text + position, remaining},
+            lineComment,
+            isLittleEndian
+        );
+        if (hasLineComment) {
             return false;
         }
 
-        if (blockStart.length > 0 && remaining >= (blockStart.length * 2)
-            && utf16StartsWithAsciiAt(
-                text,
-                position,
-                isLittleEndian,
-                blockStart)) {
-
-            if (!utf16ConsumeInlineBlockComment(
+        const bool hasBlockComment = utf16HasCommentMarker(
+            (Span){text + position, remaining},
+            blockStart,
+            isLittleEndian
+        );
+        if (hasBlockComment) {
+            bool isMultiLineBlockComment = !utf16ConsumeInlineBlockComment(
                 text,
                 lineEndOffset,
                 isLittleEndian,
@@ -383,7 +395,8 @@ static bool utf16LineHasCode(
                 &position,
                 inBlockComment,
                 blockStart.length
-            )) {
+            );
+            if (isMultiLineBlockComment) {
                 return false;
             }
             continue;
