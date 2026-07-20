@@ -231,6 +231,11 @@ static size_t utf16FindAscii(Span text, Span target, bool isLittleEndian) {
     return SIZE_MAX;
 }
 
+static bool utf16HasNewlineAt(Span text, size_t offset, bool isLittleEndian) {
+    return (offset + 1) < text.length
+        && utf16AsciiAt(text.ptr, offset, isLittleEndian) == '\n';
+}
+
 /**
  * Returns the byte offset of the current UTF-16 line ending (`\n`) or the
  * first byte past the end of available input if the line has no terminator.
@@ -242,12 +247,7 @@ static size_t utf16LineEndOffset(
 ) {
     size_t lineEndOffset = offset;
     while ((lineEndOffset + 1) < text.length) {
-        unsigned char character = utf16AsciiAt(
-            text.ptr,
-            lineEndOffset,
-            isLittleEndian
-        );
-        if (character == '\n') {
+        if(utf16HasNewlineAt(text, lineEndOffset, isLittleEndian)){
             break;
         }
         lineEndOffset += 2;
@@ -433,8 +433,7 @@ static RcnCount countLocUTF16(
             ++count;
         }
 
-        if ((lineEndOffset + 1) < text.length
-            && utf16AsciiAt(text.ptr, lineEndOffset, isLittleEndian) == '\n') {
+        if (utf16HasNewlineAt(text, lineEndOffset, isLittleEndian)) {
             offset = lineEndOffset + 2;
         } else {
             offset = text.length;
