@@ -332,16 +332,16 @@ static bool utf16LineHasCode(
     Span blockEnd,
     bool* inBlockComment
 ) {
-    size_t scan = offset;
+    size_t position = offset;
 
-    while ((scan + 1) <= lineEndOffset) {
+    while ((position + 1) <= lineEndOffset) {
         if (*inBlockComment) {
             if (!utf16AdvanceOverBlockComment(
                 text,
                 lineEndOffset,
                 isLittleEndian,
                 blockEnd,
-                &scan,
+                &position,
                 inBlockComment)
             ) {
                 return false;
@@ -349,18 +349,18 @@ static bool utf16LineHasCode(
             continue;
         }
 
-        char character = (char) utf16AsciiAt(text, scan, isLittleEndian);
+        char character = (char) utf16AsciiAt(text, position, isLittleEndian);
         if (isAsciiSpace(character)) {
-            scan += 2;
+            position += 2;
             continue;
         }
 
-        const size_t remaining = lineEndOffset - scan;
+        const size_t remaining = lineEndOffset - position;
 
         if (lineComment.length > 0 && remaining >= (lineComment.length * 2)
             && utf16StartsWithAsciiAt(
                 text,
-                scan,
+                position,
                 isLittleEndian,
                 lineComment
             )
@@ -371,7 +371,7 @@ static bool utf16LineHasCode(
         if (blockStart.length > 0 && remaining >= (blockStart.length * 2)
             && utf16StartsWithAsciiAt(
                 text,
-                scan,
+                position,
                 isLittleEndian,
                 blockStart)) {
 
@@ -380,7 +380,7 @@ static bool utf16LineHasCode(
                 lineEndOffset,
                 isLittleEndian,
                 blockEnd,
-                &scan,
+                &position,
                 inBlockComment,
                 blockStart.length
             )) {
