@@ -324,12 +324,12 @@ static bool utf16ConsumeInlineBlockComment(
 
 static bool utf16LineHasCode(
     const char* text,
+    size_t offset,
+    size_t lineEndOffset,
     bool isLittleEndian,
     Span lineComment,
     Span blockStart,
     Span blockEnd,
-    size_t offset,
-    size_t lineEndOffset,
     bool* inBlockComment
 ) {
     size_t scan = offset;
@@ -420,12 +420,12 @@ static RcnCount countLocUTF16(
 
         const bool lineHasSourceCode = utf16LineHasCode(
             text.ptr,
+            offset,
+            lineEndOffset,
             isLittleEndian,
             lineComment,
             blockStart,
             blockEnd,
-            offset,
-            lineEndOffset,
             &inBlockComment
         );
 
