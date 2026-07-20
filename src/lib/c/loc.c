@@ -397,8 +397,8 @@ static bool utf16LineHasCode(
 
 /**
  * Counts LOC in UTF-16 encoded text (LE or BE).
- * `text` points to the first byte after the BOM.
- * `size` is the number of remaining bytes.
+ * `text.ptr` points to the first byte after the BOM.
+ * `text.length` is the number of remaining bytes.
  */
 static RcnCount countLocUTF16(
     Span text,
