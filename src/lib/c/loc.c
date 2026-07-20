@@ -312,12 +312,12 @@ static bool utf16ConsumeInlineBlockComment(
     const char* text,
     size_t lineEndOffset,
     bool isLittleEndian,
+    Span blockStart,
     Span blockEnd,
     size_t* scan,
-    bool* inBlockComment,
-    size_t blockStartLen
+    bool* inBlockComment
 ) {
-    const size_t afterStart = *scan + (blockStartLen * 2);
+    const size_t afterStart = *scan + (blockStart.length * 2);
     const size_t searchLen = lineEndOffset - afterStart;
     size_t closingFound = SIZE_MAX;
 
@@ -391,10 +391,10 @@ static bool utf16LineHasCode(
                 text,
                 lineEndOffset,
                 isLittleEndian,
+                blockStart,
                 blockEnd,
                 &position,
-                inBlockComment,
-                blockStart.length
+                inBlockComment
             );
             if (isMultiLineBlockComment) {
                 return false;
