@@ -104,6 +104,10 @@ static bool lineHasCode(
 
         skipSpaceCharacters(&segment);
 
+        if (segment.length == 0) {
+            return false; // Has only whitespace, no code
+        }
+
         if (hasCommentMarker(segment, lineComment)) {
             return false;
         }
