@@ -36,8 +36,8 @@ static inline bool isAsciiSpace(char character) {
 }
 
 static void skipSpaceCharacters(Span* segment) {
-    while (isAsciiSpace(*segment->ptr)) {
-        assert(segment->length > 0);
+    assert(segment != NULL);
+    while (segment->length > 0 && isAsciiSpace(*segment->ptr)) {
         segment->ptr += 1;
         segment->length -= 1;
     }
