@@ -211,6 +211,9 @@ static inline unsigned char utf16AsciiAt(
  * Returns the byte offset of the first match, or `SIZE_MAX` if not found.
  */
 static size_t utf16FindAscii(Span text, Span target, bool isLittleEndian) {
+    if (target.length > SIZE_MAX / 2) {
+        return SIZE_MAX; // LCOV_EXCL_LINE
+    }
     const size_t targetBytes = target.length * 2;
     if (targetBytes == 0 || targetBytes > text.length) {
         return SIZE_MAX;
