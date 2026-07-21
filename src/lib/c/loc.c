@@ -481,7 +481,8 @@ RcnCountResult rcnCountLinesOfCode(
     if (!isLocEnabled(language)) {
         result.state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
         result.state.errorMessage = (
-            "The input format or programming language is not supported"
+            "The LOC count input format or programming language "
+            "is not supported"
         );
         return result;
     }

@@ -185,7 +185,7 @@ void testCodeLineCountWithNonProgrammingLanguageReturnsError(void) {
     TEST_ASSERT_FALSE(result.state.ok);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_UNSUPPORTED_FORMAT, result.state.errorCode);
     TEST_ASSERT_EQUAL_STRING(
-        "The input format or programming language is not supported",
+        "The LOC count input format or programming language is not supported",
         result.state.errorMessage)
     ;
     TEST_ASSERT_EQUAL_INT(0, result.count);
