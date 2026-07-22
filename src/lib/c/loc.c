@@ -431,7 +431,7 @@ static RcnCount countLocUTF16(
     bool inBlockComment = false;
     size_t offset = 0; // Current byte position (always even)
 
-    while (offset + 1 < text.length) {
+    while ((offset + 1) < text.length) {
         const size_t lineEndOffset = utf16LineEndOffset(
             text,
             offset,
