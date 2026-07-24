@@ -254,7 +254,7 @@ static size_t utf16LineEndOffset(
 ) {
     size_t lineEndOffset = offset;
     while ((lineEndOffset + 1) < text.length) {
-        if(utf16HasNewlineAt(text, lineEndOffset, isLittleEndian)){
+        if (utf16HasNewlineAt(text, lineEndOffset, isLittleEndian)) {
             break;
         }
         lineEndOffset += 2;
