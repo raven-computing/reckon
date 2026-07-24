@@ -36,8 +36,31 @@ void tearDown(void) { }
 
 // NOLINTBEGIN(readability-magic-numbers)
 
+/**
+ * Helper function to convert ASCII text to UTF-16LE encoded bytes.
+ * Adds a UTF-16LE BOM at the beginning and zero bytes after each character.
+ * The caller is responsible for freeing the returned RcnSourceText.text.
+ */
+static RcnSourceText convertToUTF16LE(const char* text) {
+    const size_t length = strlen(text);
+    const size_t utf16Size = 2 + (length * 2);
+    char* buffer = (char*) malloc(utf16Size);
+
+    buffer[0] = (char) 0xff;
+    buffer[1] = (char) 0xfe;
+
+    for (size_t i = 0; i < length; ++i) {
+        buffer[2 + (i * 2)] = text[i];
+        buffer[2 + (i * 2) + 1] = 0x00;
+    }
+    return (RcnSourceText){
+        .text = buffer,
+        .size = utf16Size
+    };
+}
+
 void testCodeLineCountIsCorrect(void) {
-    char *text =
+    char* text =
         "public class Test {\n"
         "    public static void main(String[] args) {\n"
         "        // This is a comment\n"
@@ -98,7 +121,7 @@ void testCodeLineCountWithEncodedSourceUTF8(void) {
 }
 
 void testCodeLineCountWithEncodedSourceUTF8WithBOM(void) {
-    RcnSourceFile *file = newSourceFile(TEST_FILE_SOURCE_UTF_8_BOM);
+    RcnSourceFile* file = newSourceFile(TEST_FILE_SOURCE_UTF_8_BOM);
     readSourceFileContent(file);
     RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, file->content);
     freeSourceFile(file);
@@ -131,7 +154,7 @@ void testCodeLineCountWithEncodedSourceUTF16BE(void) {
 }
 
 void testCodeLineCountWithLastLineNotEndingWithNewline(void) {
-    char *text =
+    char* text =
         "public class Test {\n"
         "    public static void main(String[] args) {\n"
         "        // This is a comment\n"
@@ -218,7 +241,7 @@ void testCodeLineCountWithBlockCommentsEncodedinUTF16LE(void) {
 }
 
 void testCodeLineCountWithOnlyCommentsReturnsZero(void) {
-    char *text =
+    char* text =
         "// This is a comment\n"
         "// Another comment\n"
         "/* Block comment line 1\n"
@@ -238,7 +261,7 @@ void testCodeLineCountWithOnlyCommentsReturnsZero(void) {
 }
 
 void testCodeLineCountWithOnlyWhitespaceReturnsZero(void) {
-    char *text =
+    char* text =
         "   \n"
         "\t\t\n"
         "  \t  \n"
@@ -257,7 +280,7 @@ void testCodeLineCountWithOnlyWhitespaceReturnsZero(void) {
 }
 
 void testCodeLineCountWithCodeFollowedByLineComment(void) {
-    char *text =
+    char* text =
         "int x = 5;// Initialize variable\n"
         "int y = 10; // Another variable\n"
         "return x + y;    // Return sum\n  ";
@@ -274,7 +297,7 @@ void testCodeLineCountWithCodeFollowedByLineComment(void) {
 }
 
 void testCodeLineCountWithBlockCommentOnSameLineAsCode(void) {
-    char *text =
+    char* text =
         "int x; /* comment */ int y;\n"
         "x=5;/*initialize*/y=10;\n"
         "return /* inline */ x + y;\n";
@@ -291,7 +314,7 @@ void testCodeLineCountWithBlockCommentOnSameLineAsCode(void) {
 }
 
 void testCodeLineCountWithUnclosedBlockComment(void) {
-    char *text =
+    char* text =
         "int x = 5;\n"
         "int y = 10;\n"
         "/* This block comment is never closed\n"
@@ -310,7 +333,7 @@ void testCodeLineCountWithUnclosedBlockComment(void) {
 }
 
 void testCodeLineCountWithMultipleBlockCommentsOnOneLine(void) {
-    char *text =
+    char* text =
         "/* comment a */ int x = 5; /* comment b */\n"
         "/* c */ int y /*d*/ = /*   e   */ 10;\n"
         "return x + y;\n";
@@ -327,7 +350,7 @@ void testCodeLineCountWithMultipleBlockCommentsOnOneLine(void) {
 }
 
 void testCodeLineCountWithOnlyBlockCommentReturnsZero(void) {
-    char *text =
+    char* text =
         "/* This is a single-line block comment */\n"
         "   /* Another one with leading spaces */  \n"
         "int x = 5;\n"
@@ -342,6 +365,119 @@ void testCodeLineCountWithOnlyBlockCommentReturnsZero(void) {
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
     TEST_ASSERT_NULL(result.state.errorMessage);
     TEST_ASSERT_EQUAL_INT(1, result.count);
+}
+
+void testCodeLineCountWithOnlyCommentsReturnsZeroUTF16LE(void) {
+    char* text =
+        "// This is a comment\n"
+        "// Another comment\n"
+        "/* Block comment line 1\n"
+        "   Block comment line 2\n"
+        "   Block comment line 3 */\n"
+        "// Final comment\n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithOnlyWhitespaceReturnsZeroUTF16LE(void) {
+    char* text =
+        "   \n"
+        "\t\t\n"
+        "  \t  \n"
+        "\n"
+        "     \n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithCodeFollowedByLineCommentUTF16LE(void) {
+    char* text =
+        "int x = 5;// Initialize variable\n"
+        "int y = 10; // Another variable\n"
+        "return x + y;    // Return sum\n  ";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(3, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithBlockCommentOnSameLineAsCodeUTF16LE(void) {
+    char* text =
+        "int x; /* comment */ int y;\n"
+        "x=5;/*initialize*/y=10;\n"
+        "return /* inline */ x + y;\n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(3, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithUnclosedBlockCommentUTF16LE(void) {
+    char* text =
+        "int x = 5;\n"
+        "int y = 10;\n"
+        "/* This block comment is never closed\n"
+        "int z = 15;\n"
+        "return x + y + z;\n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(2, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithMultipleBlockCommentsOnOneLineUTF16LE(void) {
+    char* text =
+        "/* comment a */ int x = 5; /* comment b */\n"
+        "/* c */ int y /*d*/ = /*   e   */ 10;\n"
+        "return x + y;\n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(3, result.count);
+    rcnFreeSourceText(&source);
+}
+
+void testCodeLineCountWithOnlyBlockCommentReturnsZeroUTF16LE(void) {
+    char* text =
+        "/* This is a single-line block comment */\n"
+        "   /* Another one with leading spaces */  \n"
+        "int x = 5;\n"
+        "\t/* And one with a tab */\n";
+
+    RcnSourceText source = convertToUTF16LE(text);
+    RcnCountResult result = rcnCountLinesOfCode(RCN_LANG_JAVA, source);
+    TEST_ASSERT_TRUE(result.state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result.state.errorCode);
+    TEST_ASSERT_NULL(result.state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(1, result.count);
+    rcnFreeSourceText(&source);
 }
 
 // NOLINTEND(readability-magic-numbers)
@@ -367,5 +503,12 @@ int main(void) {
     RUN_TEST(testCodeLineCountWithUnclosedBlockComment);
     RUN_TEST(testCodeLineCountWithMultipleBlockCommentsOnOneLine);
     RUN_TEST(testCodeLineCountWithOnlyBlockCommentReturnsZero);
+    RUN_TEST(testCodeLineCountWithOnlyCommentsReturnsZeroUTF16LE);
+    RUN_TEST(testCodeLineCountWithOnlyWhitespaceReturnsZeroUTF16LE);
+    RUN_TEST(testCodeLineCountWithCodeFollowedByLineCommentUTF16LE);
+    RUN_TEST(testCodeLineCountWithBlockCommentOnSameLineAsCodeUTF16LE);
+    RUN_TEST(testCodeLineCountWithUnclosedBlockCommentUTF16LE);
+    RUN_TEST(testCodeLineCountWithMultipleBlockCommentsOnOneLineUTF16LE);
+    RUN_TEST(testCodeLineCountWithOnlyBlockCommentReturnsZeroUTF16LE);
     return UNITY_END();
 }
