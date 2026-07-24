@@ -358,14 +358,15 @@ static bool utf16LineHasCode(
 
     while ((position + 1) <= lineEndOffset) {
         if (*inBlockComment) {
-            if (!utf16AdvanceOverBlockComment(
+            bool hasMultiLineBlockComment = !utf16AdvanceOverBlockComment(
                 text,
                 lineEndOffset,
                 isLittleEndian,
                 blockEnd,
                 &position,
-                inBlockComment)
-            ) {
+                inBlockComment
+            );
+            if (hasMultiLineBlockComment) {
                 return false;
             }
             continue;
