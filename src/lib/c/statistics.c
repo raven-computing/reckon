@@ -49,6 +49,7 @@ static bool isFormatSelected(RcnStatOptions options, RcnTextFormat srcFormat) {
 
 static inline void resetResultGroup(RcnCountResultGroup* resultGroup) {
     resultGroup->logicalLines = 0;
+    resultGroup->codeLines = 0;
     resultGroup->physicalLines = 0;
     resultGroup->words = 0;
     resultGroup->characters = 0;
@@ -129,6 +130,24 @@ static inline bool countLogicalLines(
     resultGroup->state.errorCode = RCN_ERR_NONE;
     stats->totalLogicalLines += resultGroup->logicalLines;
     stats->logicalLines[language] += resultGroup->logicalLines;
+    return true;
+}
+
+static inline bool countCodeLines(
+    RcnCountStatistics* stats,
+    RcnSourceFile* file,
+    RcnTextFormat language,
+    RcnCountResultGroup* resultGroup
+) {
+    RcnCountResult result = rcnCountLinesOfCode(language, file->content);
+    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+        return false;
+    }
+    resultGroup->codeLines = result.count;
+    resultGroup->state.ok = true;
+    resultGroup->state.errorCode = RCN_ERR_NONE;
+    stats->totalCodeLines += resultGroup->codeLines;
+    stats->codeLines[language] += resultGroup->codeLines;
     return true;
 }
 
@@ -249,11 +268,17 @@ static inline bool count(
 
     bool ok = false;
     result->hasLogicalLines = detected.isProgrammingLanguage;
+    result->hasCodeLines = detected.isProgrammingLanguage;
     RcnTextFormat sourceFormat = detected.format;
     ok = ensureFileContent(stats, options, file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
         if (result->hasLogicalLines) {
             ok = countLogicalLines(stats, options, file, sourceFormat, result);
+        }
+    }
+    if (ok && options.operations & RCN_OPT_COUNT_CODE_LINES) {
+        if (result->hasCodeLines) {
+            ok = countCodeLines(stats, file, sourceFormat, result);
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_PHYSICAL_LINES) {

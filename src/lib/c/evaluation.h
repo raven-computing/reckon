@@ -52,6 +52,14 @@ void logDebugMessage(const char* message);
 #endif
 
 /**
+ * A span of text with a given length.
+ */
+typedef struct Span {
+    const char* ptr;
+    size_t length;
+} Span;
+
+/**
  * Opaque context type used during node evaluation.
  * Can be used by concrete `NodeVisitor` implementations to store
  * language-specific processing state.
@@ -147,6 +155,28 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language);
  * and must not attempt to free it.
  */
 const char* getInlineSourceCommentString(RcnTextFormat language);
+
+/**
+ * Returns the opening marker for block comments in the specified programming
+ * language (e.g. slash-star for C-family languages), or a span of NULL if the
+ * language does not support block comments. The caller does not own the string
+ * in the returned span and must not attempt to free it.
+ */
+Span getBlockCommentStartString(RcnTextFormat language);
+
+/**
+ * Returns the closing marker for block comments in the specified programming
+ * language (e.g. star-slash for C-family languages), or a span of NULL if the
+ * language does not support block comments. The caller does not own the string
+ * in the returned span and must not attempt to free it.
+ */
+Span getBlockCommentEndString(RcnTextFormat language);
+
+/**
+ * Returns true if the specified format denotes a supported programming
+ * language for LOC counting, false otherwise (e.g. for plain-text).
+ */
+bool isLocEnabled(RcnTextFormat language);
 
 /**
  * Allocates a new node evaluation context for an annotation operation.

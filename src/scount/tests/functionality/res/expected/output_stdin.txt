@@ -1,6 +1,7 @@
 File: -  (Data from standard input treated as a .txt file)
 
   Logical Lines of Code (LLC):        n/a
+  Lines of Code         (LOC):        n/a
   Physical Lines        (PHL):          2
   Words                 (WRD):          2
   Characters            (CHR):          8

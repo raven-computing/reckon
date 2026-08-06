@@ -1,6 +1,7 @@
 File: -  (Data from standard input treated as a .java file)
 
   Logical Lines of Code (LLC):          3
+  Lines of Code         (LOC):          5
   Physical Lines        (PHL):         12
   Words                 (WRD):         34
   Characters            (CHR):        233

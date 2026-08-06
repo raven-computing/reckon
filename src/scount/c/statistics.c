@@ -152,7 +152,9 @@ ExitStatus outputStatistics(AppArgs args) {
     };
     if (args.linesOnly) {
         options.operations = (
-            RCN_OPT_COUNT_LOGICAL_LINES | RCN_OPT_COUNT_PHYSICAL_LINES
+            RCN_OPT_COUNT_LOGICAL_LINES
+            | RCN_OPT_COUNT_CODE_LINES
+            | RCN_OPT_COUNT_PHYSICAL_LINES
         );
     }
 
@@ -177,6 +179,7 @@ ExitStatus outputStatistics(AppArgs args) {
 
     PrintBuffer buffer = {
         .showLogicalLines = true,
+        .showCodeLines = true,
         .showPhysicalLines = true,
         .showWords = !args.linesOnly,
         .showCharacters = !args.linesOnly,

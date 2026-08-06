@@ -43,6 +43,7 @@ target_sources(
     "c/lang_cpp.c"
     "c/logical.c"
     "c/physical.c"
+    "c/loc.c"
     "c/statistics.c"
     "c/tree.c"
     "c/words.c"

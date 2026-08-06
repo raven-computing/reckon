@@ -104,6 +104,7 @@ typedef struct PrintBuffer {
     size_t size;
     size_t capacity;
     bool showLogicalLines;
+    bool showCodeLines;
     bool showPhysicalLines;
     bool showWords;
     bool showCharacters;

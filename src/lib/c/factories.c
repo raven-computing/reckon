@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
 #include <string.h>
 
 #include "tree_sitter/api.h"
@@ -99,6 +100,66 @@ const char* getInlineSourceCommentString(RcnTextFormat language) {
         case RCN_LANG_TYPESCRIPT:
         default:
             return "//";
+    }
+}
+
+Span getBlockCommentStartString(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+            return (Span){
+                .ptr="/*",
+                .length=strlen("/*")
+            };
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+        default:
+            return (Span){
+                .ptr=NULL,
+                .length=0
+            };
+    }
+}
+
+Span getBlockCommentEndString(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+            return (Span){
+                .ptr="*/",
+                .length=strlen("*/")
+            };
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+        default:
+            return (Span){
+                .ptr=NULL,
+                .length=0
+            };
+    }
+}
+
+bool isLocEnabled(RcnTextFormat language) {
+    switch (language) {
+        case RCN_LANG_C:
+        case RCN_LANG_JAVA:
+        case RCN_LANG_PYTHON:
+        case RCN_LANG_CPP:
+        case RCN_LANG_JAVASCRIPT:
+        case RCN_LANG_TYPESCRIPT:
+        case RCN_LANG_R:
+        case RCN_LANG_BASH:
+            return true;
+        default:
+            return false;
     }
 }
 
