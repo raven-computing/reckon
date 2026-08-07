@@ -25,6 +25,8 @@ Reckon computes the following metrics:
 
 - **LLC - Logical Lines of Code**:  
 Language-aware count of top-level statement/declaration units.
+- **LOC - Lines of Code**:  
+Physical lines that contain code, excluding blank lines and comment lines.
 - **PHL - Physical Lines**:  
 Hard physical lines, including blank lines and comments.
 - **WRD - Words**:  
