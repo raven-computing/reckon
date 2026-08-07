@@ -149,12 +149,12 @@ TSParser* createParser(RcnTextFormat language);
 NodeVisitor createEvaluationFunction(RcnTextFormat language);
 
 /**
- * Returns a string that contains the characters that are used when writing an
- * inline comment in source code that is written in the
- * specified programming language. The caller does not own the returned string
- * and must not attempt to free it.
+ * Returns the characters that are used when writing an inline comment
+ * in source code that is written in the specified programming language.
+ * The caller does not own the string in the returned span and
+ * must not attempt to free it.
  */
-const char* getInlineSourceCommentString(RcnTextFormat language);
+Span getInlineSourceCommentString(RcnTextFormat language);
 
 /**
  * Returns the opening marker for block comments in the specified programming

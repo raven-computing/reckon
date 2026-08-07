@@ -42,9 +42,9 @@ void testCreateEvaluationFunctionForJava(void) {
 
 void testGetInlineSourceCommentStringForJava(void) {
     RcnTextFormat language = RCN_LANG_JAVA;
-    const char* string = getInlineSourceCommentString(language);
-    TEST_ASSERT_NOT_NULL(string);
-    TEST_ASSERT_EQUAL_STRING("//", string);
+    Span string = getInlineSourceCommentString(language);
+    TEST_ASSERT_NOT_NULL(string.ptr);
+    TEST_ASSERT_EQUAL_STRING("//", string.ptr);
 }
 
 void testCreateParserForUnknownLanguageReturnsNull(void) {
@@ -58,9 +58,9 @@ void testCreateEvaluationFunctionForUnknownLanguageReturnsNull(void) {
 }
 
 void testGetInlineSourceCommentStrForUnknownLangReturnsDefaultValue(void) {
-    const char* string = getInlineSourceCommentString(12345); // NOLINT
-    TEST_ASSERT_NOT_NULL(string);
-    TEST_ASSERT_EQUAL_STRING("//", string);
+    Span string = getInlineSourceCommentString(12345); // NOLINT
+    TEST_ASSERT_NOT_NULL(string.ptr);
+    TEST_ASSERT_EQUAL_STRING("//", string.ptr);
 }
 
 // NOLINTEND(readability-magic-numbers)

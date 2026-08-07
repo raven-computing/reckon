@@ -174,7 +174,7 @@ static void finalizeLineComments(AnnotationContext* ctx) {
     const char* symbolNameSeparator = ", ";
     const size_t symbolNameSeparatorLength = strlen(symbolNameSeparator);
     const char* space = " ";
-    const char* commentText = getInlineSourceCommentString(ctx->language);
+    Span commentText = getInlineSourceCommentString(ctx->language);
     const char* prefix = " +";
     const char* open = " (";
     const char* close = ")";
@@ -200,7 +200,7 @@ static void finalizeLineComments(AnnotationContext* ctx) {
 
         size_t commentStringLength = (
             strlen(space)
-            + strlen(commentText)
+            + commentText.length
             + strlen(prefix)
             + strlen(weightBuffer)
             + strlen(open)
@@ -213,7 +213,7 @@ static void finalizeLineComments(AnnotationContext* ctx) {
             continue;
         }
         linebufferAppend(buffer, space);
-        linebufferAppend(buffer, commentText);
+        linebufferAppend(buffer, commentText.ptr);
         linebufferAppend(buffer, prefix);
         linebufferAppend(buffer, weightBuffer);
         linebufferAppend(buffer, open);

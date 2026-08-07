@@ -495,14 +495,9 @@ RcnCountResult rcnCountLinesOfCode(
         return result;
     }
 
-    const char* lineCommentStr = getInlineSourceCommentString(language);
+    const Span lineComment = getInlineSourceCommentString(language);
     const Span blockStart = getBlockCommentStartString(language);
     const Span blockEnd = getBlockCommentEndString(language);
-
-    const Span lineComment = {
-        .ptr=lineCommentStr,
-        .length=lineCommentStr ? strlen(lineCommentStr) : 0
-    };
 
     TextEncoding encoding = detectEncoding(sourceCode);
     if (encoding == TextEncodingUTF8) {

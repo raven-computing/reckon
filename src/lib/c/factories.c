@@ -87,19 +87,25 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
     }
 }
 
-const char* getInlineSourceCommentString(RcnTextFormat language) {
+Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
         case RCN_LANG_BASH:
-            return "#";
+            return (Span){
+                .ptr="#",
+                .length=strlen("#")
+            };
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
         default:
-            return "//";
+            return (Span){
+                .ptr="//",
+                .length=strlen("//")
+            };
     }
 }
 
