@@ -182,6 +182,7 @@ function(add_test_suite)
         add_executable(
             ${TEST_SUITE_ARGS_TEST_SUITE_TARGET}
             ${TEST_SUITE_ARGS_TEST_SUITE_SOURCE}
+            "${CMAKE_SOURCE_DIR}/src/lib/tests/c/unity_config.c"
         )
 
         # Include source header files
