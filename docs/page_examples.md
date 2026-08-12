@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
     }
 
     printf("Total LLC: %lu\n", stats->totalLogicalLines);
+    printf("Total LOC: %lu\n", stats->totalCodeLines);
     printf("Total PHL: %lu\n", stats->totalPhysicalLines);
     printf("Total WRD: %lu\n", stats->totalWords);
     printf("Total CHR: %lu\n", stats->totalCharacters);
