@@ -1,6 +1,6 @@
 #### Release notes:
 
-* When scanning directories under a given path, subdirectories that are known to contain build-related files are now ignored so any build artifacts do not affect the line count metrics.
-* All files with the hidden-attribute set on Windows are now ignored when scanning directories under a given path, similarly to how dotfiles are handled.
+* The classic physical lines of code (LOC) metric is now available.
+* Improved the set of names that are ignored when scanning directory trees.
 
-See [Changelog](https://github.com/raven-computing/reckon/blob/v1.6.1/CHANGELOG.md).
+See [Changelog](https://github.com/raven-computing/reckon/blob/v1.7.0/CHANGELOG.md).
