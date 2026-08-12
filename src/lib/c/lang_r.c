@@ -67,7 +67,7 @@ TSParser* createParserR(void) {
 static bool isAtStatementLevel(TSNode node) {
     TSNode parent = ts_node_parent(node);
     if (ts_node_is_null(parent)) {
-        return false;
+        return false; // LCOV_EXCL_LINE
     }
     TSSymbol sym = ts_node_grammar_symbol(parent);
     return sym == sym_program || sym == sym_braced_expression;
