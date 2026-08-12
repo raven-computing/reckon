@@ -1,3 +1,10 @@
+#### 1.7.0
+* Added operation support for physical lines of code (LOC). [[Issue#10]](https://github.com/raven-computing/reckon/issues/10)
+* Added 'node_modules' to the set of directories to be ignored.
+* Improved test suite assertion failure handling when using sanitizers. [[Issue#67]](https://github.com/raven-computing/reckon/issues/67)
+* Updated Unity test dependency version from v2.6.1 to 2.7.0.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.6.1...v1.7.0)
+
 #### 1.6.1
 * Changed scanDirectory() to ignore directory entries with known names. [[Issue#61]](https://github.com/raven-computing/reckon/issues/61)
 * Improved handling of hidden files on Windows. [[Issue#63]](https://github.com/raven-computing/reckon/issues/63)
