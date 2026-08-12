@@ -33,8 +33,9 @@ static RcnTextFormat formatFromExtension(const char* ext) {
         return RCN_LANG_PYTHON;
     }
     if (strcmp(ext, "js") == 0
-            || strcmp(ext, "mjs") == 0
-            || strcmp(ext, "cjs") == 0) {
+        || strcmp(ext, "mjs") == 0
+        || strcmp(ext, "cjs") == 0) {
+
         return RCN_LANG_JAVASCRIPT;
     }
     if (strcmp(ext, "ts") == 0) {
