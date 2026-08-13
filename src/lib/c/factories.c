@@ -169,6 +169,7 @@ bool isLocEnabled(RcnTextFormat language) {
     }
 }
 
+// NOLINTBEGIN(readability-function-cognitive-complexity)
 SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     SourceFormatDetection detection = {
         .isSupportedFormat = false,
@@ -176,11 +177,11 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         .format = RCN_TEXT_UNFORMATTED // undefined placeholder
     };
 
-    if (!file || !file->extension) {
+    if (!file || !file->name) {
         return detection;
     }
 
-    const char* extension = file->extension;
+    const char* extension = file->extension ? file->extension : "";
     if (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
         detection.isSupportedFormat = true;
         detection.isProgrammingLanguage = true;
@@ -233,6 +234,13 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         || strcmp(file->name, "CMakeLists.txt") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_CMAKE;
+    } else if (strcmp(extension, "mk") == 0
+        || strcmp(file->name, "Makefile") == 0
+        || strcmp(file->name, "makefile") == 0
+        || strcmp(file->name, "GNUmakefile") == 0
+        || strcmp(file->name, "GNUMakefile") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_MAKE;
     } else if (strcmp(extension, "yaml") == 0
         || strcmp(extension, "yml") == 0) {
         detection.isSupportedFormat = true;
@@ -263,3 +271,4 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
 
     return detection;
 }
+// NOLINTEND(readability-function-cognitive-complexity)

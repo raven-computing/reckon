@@ -60,6 +60,7 @@ This version of the project supports processing the following file formats:
 - Java
 - JavaScript
 - JSON
+- Make
 - Markdown
 - Plain text (`.txt`-style unformatted text)
 - Python
