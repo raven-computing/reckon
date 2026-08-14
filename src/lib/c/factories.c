@@ -248,7 +248,7 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "bat") == 0
         || strcmp(extension, "cmd") == 0) {
         detection.isSupportedFormat = true;
-        detection.format = RCN_TEXT_BATCH;
+        detection.format = RCN_LANG_BATCH;
     } else if (strcmp(extension, "R") == 0
         || strcmp(extension, "r") == 0) {
         detection.isSupportedFormat = true;

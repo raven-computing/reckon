@@ -199,12 +199,6 @@ typedef enum RcnTextFormat {
     RCN_TEXT_YAML,
 
     /**
-     * Source files for Windows batch scripts,
-     * as found in files with a '.bat' or '.cmd' extension.
-     */
-    RCN_TEXT_BATCH,
-
-    /**
      * Source files for the C programming language.
      */
     RCN_LANG_C,
@@ -238,6 +232,12 @@ typedef enum RcnTextFormat {
      * Source files for the R programming language.
      */
     RCN_LANG_R,
+
+    /**
+     * Source files for Windows batch scripts,
+     * as found in files with a '.bat' or '.cmd' extension.
+     */
+    RCN_LANG_BATCH,
 
     /**
      * Source files for Bash shell scripts.
@@ -874,11 +874,6 @@ typedef enum RcnFormatOption {
     RCN_OPT_TEXT_YAML = RECKON_MK_FRMT_OPT(RCN_TEXT_YAML),
 
     /**
-     * Option to select statistics for Windows batch files.
-     */
-    RCN_OPT_TEXT_BATCH = RECKON_MK_FRMT_OPT(RCN_TEXT_BATCH),
-
-    /**
      * Option to select statistics for source code files written in
      * the C programming language.
      */
@@ -919,6 +914,11 @@ typedef enum RcnFormatOption {
      * the R programming language.
      */
     RCN_OPT_LANG_R = RECKON_MK_FRMT_OPT(RCN_LANG_R),
+
+    /**
+     * Option to select statistics for Windows batch files.
+     */
+    RCN_OPT_LANG_BATCH = RECKON_MK_FRMT_OPT(RCN_LANG_BATCH),
 
     /**
      * Option to select statistics for source files containing Bash shell code.

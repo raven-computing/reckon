@@ -448,7 +448,7 @@ void testCountResultsBatch(void) {
     char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.bat";
     RcnCountStatistics* stats = rcnCreateCountStatistics(path);
     RcnStatOptions options = {
-        .formats = RCN_OPT_TEXT_BATCH
+        .formats = RCN_OPT_LANG_BATCH
     };
 
     rcnCount(stats, options);
