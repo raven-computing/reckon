@@ -642,6 +642,9 @@ static void prSummaryRows(
             case RCN_TEXT_YAML:
                 label = "YAML";
                 break;
+            case RCN_TEXT_BATCH:
+                label = "Batch";
+                break;
             case RCN_LANG_R:
                 label = "R";
                 hasLogicalLines = true;
