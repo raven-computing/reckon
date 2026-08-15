@@ -671,7 +671,7 @@ static void prSummaryRows(
                 hasLogicalLines = true;
                 break;
             case RCN_LANG_BATCH:
-                label = "Batch";
+                label = "DOS Batch";
                 break;
             case RCN_LANG_BASH:
                 label = "Shell";

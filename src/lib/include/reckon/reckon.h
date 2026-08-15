@@ -234,7 +234,7 @@ typedef enum RcnTextFormat {
     RCN_LANG_R,
 
     /**
-     * Source files for Windows batch scripts,
+     * Source files for Windows DOS batch scripts,
      * as found in files with a '.bat' or '.cmd' extension.
      */
     RCN_LANG_BATCH,
@@ -916,7 +916,7 @@ typedef enum RcnFormatOption {
     RCN_OPT_LANG_R = RECKON_MK_FRMT_OPT(RCN_LANG_R),
 
     /**
-     * Option to select statistics for Windows batch files.
+     * Option to select statistics for Windows DOS batch files.
      */
     RCN_OPT_LANG_BATCH = RECKON_MK_FRMT_OPT(RCN_LANG_BATCH),
 
