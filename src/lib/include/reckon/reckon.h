@@ -110,7 +110,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 19
+#define RECKON_NUM_SUPPORTED_FORMATS 20
 
 /**
  * Macro to create a format option bitmask.
@@ -197,6 +197,12 @@ typedef enum RcnTextFormat {
      * with a '.yaml' or '.yml' extension.
      */
     RCN_TEXT_YAML,
+
+    /**
+     * Source files written in assembly, as found in files
+     * with a '.s', '.S' or '.asm' extension.
+     */
+    RCN_LANG_ASSEMBLY,
 
     /**
      * Source files for the C programming language.
@@ -872,6 +878,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for YAML files.
      */
     RCN_OPT_TEXT_YAML = RECKON_MK_FRMT_OPT(RCN_TEXT_YAML),
+
+    /**
+     * Option to select statistics for assembly source files.
+     */
+    RCN_OPT_LANG_ASSEMBLY = RECKON_MK_FRMT_OPT(RCN_LANG_ASSEMBLY),
 
     /**
      * Option to select statistics for source code files written in

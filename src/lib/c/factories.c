@@ -245,6 +245,11 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         || strcmp(extension, "yml") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_YAML;
+    } else if (strcmp(extension, "s") == 0
+        || strcmp(extension, "S") == 0
+        || strcmp(extension, "asm") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_LANG_ASSEMBLY;
     } else if (strcmp(extension, "bat") == 0
         || strcmp(extension, "cmd") == 0) {
         detection.isSupportedFormat = true;
