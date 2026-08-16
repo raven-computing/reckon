@@ -72,6 +72,8 @@ This version of the project supports processing the following file formats:
 - XML
 - YAML
 
+We mainly support programming languages and text formats that are part of our tech stack. The list may be extended in future releases. If you want to see a specific format supported, please open a feature request in the [issue tracker](https://github.com/raven-computing/reckon/issues).
+
 ### Supported Encodings
 
 Reckon supports processing text encoded as:
