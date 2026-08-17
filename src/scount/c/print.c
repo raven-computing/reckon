@@ -611,6 +611,7 @@ static void prSummaryRows(
     for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
         const char* label = NULL;
         bool hasLogicalLines = false;
+        bool hasCodeLines = false;
         switch (frmt) {
             case RCN_TEXT_UNFORMATTED:
                 label = "Plain Text";
@@ -635,6 +636,7 @@ static void prSummaryRows(
                 break;
             case RCN_TEXT_CMAKE:
                 label = "CMake";
+                hasCodeLines = true;
                 break;
             case RCN_TEXT_MAKE:
                 label = "Make";
@@ -712,7 +714,7 @@ static void prSummaryRows(
             prChr(buffer, ' ');
             prLocLineCount(
                 buffer,
-                hasLogicalLines,
+                hasCodeLines || hasLogicalLines,
                 stats->codeLines[frmt]
             );
             prChr(buffer, ' ');

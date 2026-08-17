@@ -89,6 +89,7 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
 
 Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_CMAKE:
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
         case RCN_LANG_BASH:
@@ -155,6 +156,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
 
 bool isLocEnabled(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_CMAKE:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_PYTHON:

@@ -387,6 +387,7 @@ void testCountResultsCmake(void) {
     TEST_ASSERT_EQUAL_STRING("Sample.cmake", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(7, result->codeLines);
     TEST_ASSERT_EQUAL_INT(8, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(20, result->words);
     TEST_ASSERT_EQUAL_INT(255, result->characters);

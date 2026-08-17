@@ -268,7 +268,7 @@ static inline bool count(
 
     bool ok = false;
     result->hasLogicalLines = detected.isProgrammingLanguage;
-    result->hasCodeLines = detected.isProgrammingLanguage;
+    result->hasCodeLines = isLocEnabled(detected.format);
     RcnTextFormat sourceFormat = detected.format;
     ok = ensureFileContent(stats, options, file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
