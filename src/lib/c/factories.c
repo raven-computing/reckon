@@ -15,6 +15,7 @@
  */
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "tree_sitter/api.h"
@@ -40,6 +41,61 @@ void evaluateNodeTypeScript(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeR(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeBash(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeCpp(TSNode node, NodeEvalTrace* trace);
+
+typedef struct FormatFeatures {
+    const char* label;
+    bool hasLogicalLines;
+    bool hasCodeLines;
+} FormatFeatures;
+
+static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
+    [RCN_TEXT_UNFORMATTED] = {"Plain Text", false, false},
+    [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
+    [RCN_TEXT_XML] = {"XML", false, false},
+    [RCN_TEXT_JSON] = {"JSON", false, false},
+    [RCN_TEXT_CSS] = {"CSS", false, false},
+    [RCN_TEXT_HTML] = {"HTML", false, false},
+    [RCN_TEXT_SQL] = {"SQL", false, false},
+    [RCN_TEXT_CMAKE] = {"CMake", false, true},
+    [RCN_TEXT_MAKE] = {"Make", false, false},
+    [RCN_TEXT_YAML] = {"YAML", false, false},
+    [RCN_LANG_ASSEMBLY] = {"Assembly", false, false},
+    [RCN_LANG_C] = {"C", true, true},
+    [RCN_LANG_JAVA] = {"Java", true, true},
+    [RCN_LANG_PYTHON] = {"Python", true, true},
+    [RCN_LANG_CPP] = {"C++", true, true},
+    [RCN_LANG_JAVASCRIPT] = {"JavaScript", true, true},
+    [RCN_LANG_TYPESCRIPT] = {"TypeScript", true, true},
+    [RCN_LANG_R] = {"R", true, true},
+    [RCN_LANG_BATCH] = {"DOS Batch", false, false},
+    [RCN_LANG_BASH] = {"Shell", true, true},
+};
+
+static bool isTextFormatInRange(RcnTextFormat format) {
+    return format >= 0 && format < RECKON_NUM_SUPPORTED_FORMATS;
+}
+
+static const FormatFeatures* getFeaturesOf(RcnTextFormat format) {
+    if (!isTextFormatInRange(format)) {
+        return NULL;
+    }
+    return &FORMAT_FEATURES[format];
+}
+
+const char* rcnGetTextFormatLabel(RcnTextFormat format) {
+    const FormatFeatures* features = getFeaturesOf(format);
+    return features ? features->label : NULL;
+}
+
+bool rcnIsLogicalLineCountingSupported(RcnTextFormat format) {
+    const FormatFeatures* features = getFeaturesOf(format);
+    return features ? features->hasLogicalLines : false;
+}
+
+bool rcnIsLocCountingSupported(RcnTextFormat format) {
+    const FormatFeatures* features = getFeaturesOf(format);
+    return features ? features->hasCodeLines : false;
+}
 
 TSParser* createParser(RcnTextFormat language) {
     switch (language) {
