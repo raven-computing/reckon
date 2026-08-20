@@ -39,7 +39,7 @@ typedef enum ExitStatus {
     APP_EXIT_INVALID_INPUT = 2,
     APP_EXIT_NOTHING_PROCESSED = 3,
     APP_EXIT_PROG_IO_ERROR = 4,
-    APP_EXIT_UNSPECIFIED_ERROR = 126
+    APP_EXIT_UNSPECIFIED_ERROR = 126,
 } ExitStatus;
 
 /**
@@ -70,7 +70,7 @@ typedef enum LogLevel {
     LOG_LEVEL_ERROR,
     LOG_LEVEL_WARNING,
     LOG_LEVEL_INFO,
-    LOG_LEVEL_VERBOSE
+    LOG_LEVEL_VERBOSE,
 } LogLevel;
 
 /**
