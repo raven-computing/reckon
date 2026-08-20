@@ -87,7 +87,7 @@ const char* rcnGetTextFormatLabel(RcnTextFormat format) {
     return features ? features->label : NULL;
 }
 
-bool rcnIsLogicalLineCountingSupported(RcnTextFormat format) {
+bool rcnIsLlcCountingSupported(RcnTextFormat format) {
     const FormatFeatures* features = getFeaturesOf(format);
     return features ? features->hasLogicalLines : false;
 }

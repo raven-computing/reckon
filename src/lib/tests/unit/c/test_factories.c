@@ -56,14 +56,14 @@ void testGetTextFormatLabelForJava(void) {
 }
 
 void testFormatCapabilityQueriesForCMake(void) {
-    bool hasLlc = rcnIsLogicalLineCountingSupported(RCN_TEXT_CMAKE);
+    bool hasLlc = rcnIsLlcCountingSupported(RCN_TEXT_CMAKE);
     bool hasLoc = rcnIsLocCountingSupported(RCN_TEXT_CMAKE);
     TEST_ASSERT_FALSE(hasLlc);
     TEST_ASSERT_TRUE(hasLoc);
 }
 
 void testFormatCapabilityQueriesForJava(void) {
-    bool hasLlc = rcnIsLogicalLineCountingSupported(RCN_LANG_JAVA);
+    bool hasLlc = rcnIsLlcCountingSupported(RCN_LANG_JAVA);
     bool hasLoc = rcnIsLocCountingSupported(RCN_LANG_JAVA);
     TEST_ASSERT_TRUE(hasLlc);
     TEST_ASSERT_TRUE(hasLoc);
@@ -98,7 +98,7 @@ void testGetTextFormatLabelForUnknownFormatReturnsNull(void) {
 }
 
 void testFormatCapabilityQueriesForUnknownFormatReturnFalse(void) {
-    bool hasLlc = rcnIsLogicalLineCountingSupported(12345); // NOLINT
+    bool hasLlc = rcnIsLlcCountingSupported(12345); // NOLINT
     bool hasLoc = rcnIsLocCountingSupported(12345); // NOLINT
     TEST_ASSERT_FALSE(hasLlc);
     TEST_ASSERT_FALSE(hasLoc);

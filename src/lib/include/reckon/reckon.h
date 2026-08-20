@@ -1277,17 +1277,17 @@ RECKON_EXPORT const char* rcnGetTextFormatLabel(RcnTextFormat format);
  * Indicates whether the LLC metric is supported for the specified format.
  * 
  * @param format The format enumerator to check.
- * @return `true` if logical line counting is supported for the given format,
- *         `false` if it is not supported.
+ * @return `true` if counting of logical lines of code (LLC) is supported for
+ *         the given format, `false` if it is not supported.
  * @since 1.8.0
  */
-RECKON_EXPORT bool rcnIsLogicalLineCountingSupported(RcnTextFormat format);
+RECKON_EXPORT bool rcnIsLlcCountingSupported(RcnTextFormat format);
 
 /**
  * Indicates whether the LOC metric is supported for the specified format.
  * 
  * @param format The format enumerator to check.
- * @return `true` if (physical) code line counting is supported for the
+ * @return `true` if counting of lines of code (LOC) is supported for the
  *          given format, `false` if it is not supported.
  * @since 1.8.0
  */
