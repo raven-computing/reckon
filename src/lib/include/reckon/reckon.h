@@ -1260,6 +1260,39 @@ RECKON_EXPORT RcnCountResult rcnCountWords(RcnSourceText source);
  */
 RECKON_EXPORT RcnCountResult rcnCountCharacters(RcnSourceText source);
 
+/**
+ * Returns a human-readable label for the given text format.
+ * 
+ * A user does not take ownership of the returned string and
+ * must not attempt to free it.
+ *
+ * @param format The format enumerator to get a label for.
+ * @return A text label representing the specified format.
+ *         Returns `NULL` for unsupported enumerator values.
+ * @since 1.8.0
+ */
+RECKON_EXPORT const char* rcnGetTextFormatLabel(RcnTextFormat format);
+
+/**
+ * Indicates whether the LLC metric is supported for the specified format.
+ * 
+ * @param format The format enumerator to check.
+ * @return `true` if counting of logical lines of code (LLC) is supported for
+ *         the given format, `false` if it is not supported.
+ * @since 1.8.0
+ */
+RECKON_EXPORT bool rcnIsLlcCountingSupported(RcnTextFormat format);
+
+/**
+ * Indicates whether the LOC metric is supported for the specified format.
+ * 
+ * @param format The format enumerator to check.
+ * @return `true` if counting of lines of code (LOC) is supported for the
+ *          given format, `false` if it is not supported.
+ * @since 1.8.0
+ */
+RECKON_EXPORT bool rcnIsLocCountingSupported(RcnTextFormat format);
+
 #ifdef __cplusplus
 }
 #endif

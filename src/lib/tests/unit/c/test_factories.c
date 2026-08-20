@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <stdbool.h>
+
 #include "unity.h"
 
 #include "tree_sitter/api.h"
@@ -47,6 +49,33 @@ void testGetInlineSourceCommentStringForJava(void) {
     TEST_ASSERT_EQUAL_STRING("//", string.ptr);
 }
 
+void testGetTextFormatLabelForJava(void) {
+    const char* label = rcnGetTextFormatLabel(RCN_LANG_JAVA);
+    TEST_ASSERT_NOT_NULL(label);
+    TEST_ASSERT_EQUAL_STRING("Java", label);
+}
+
+void testFormatCapabilityQueriesForCMake(void) {
+    bool hasLlc = rcnIsLlcCountingSupported(RCN_TEXT_CMAKE);
+    bool hasLoc = rcnIsLocCountingSupported(RCN_TEXT_CMAKE);
+    TEST_ASSERT_FALSE(hasLlc);
+    TEST_ASSERT_TRUE(hasLoc);
+}
+
+void testFormatCapabilityQueriesForJava(void) {
+    bool hasLlc = rcnIsLlcCountingSupported(RCN_LANG_JAVA);
+    bool hasLoc = rcnIsLocCountingSupported(RCN_LANG_JAVA);
+    TEST_ASSERT_TRUE(hasLlc);
+    TEST_ASSERT_TRUE(hasLoc);
+}
+
+void testAllFormatEnumeratorsHaveLabels(void) {
+    for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
+        const char* label = rcnGetTextFormatLabel(frmt);
+        TEST_ASSERT_NOT_NULL(label);
+    }
+}
+
 void testCreateParserForUnknownLanguageReturnsNull(void) {
     TSParser* parser = createParser(12345); // NOLINT
     TEST_ASSERT_NULL(parser);
@@ -63,6 +92,18 @@ void testGetInlineSourceCommentStrForUnknownLangReturnsDefaultValue(void) {
     TEST_ASSERT_EQUAL_STRING("//", string.ptr);
 }
 
+void testGetTextFormatLabelForUnknownFormatReturnsNull(void) {
+    const char* label = rcnGetTextFormatLabel(12345); // NOLINT
+    TEST_ASSERT_NULL(label);
+}
+
+void testFormatCapabilityQueriesForUnknownFormatReturnFalse(void) {
+    bool hasLlc = rcnIsLlcCountingSupported(12345); // NOLINT
+    bool hasLoc = rcnIsLocCountingSupported(12345); // NOLINT
+    TEST_ASSERT_FALSE(hasLlc);
+    TEST_ASSERT_FALSE(hasLoc);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -70,8 +111,14 @@ int main(void) {
     RUN_TEST(testCreateParserForJava);
     RUN_TEST(testCreateEvaluationFunctionForJava);
     RUN_TEST(testGetInlineSourceCommentStringForJava);
+    RUN_TEST(testGetTextFormatLabelForJava);
+    RUN_TEST(testFormatCapabilityQueriesForCMake);
+    RUN_TEST(testFormatCapabilityQueriesForJava);
+    RUN_TEST(testAllFormatEnumeratorsHaveLabels);
     RUN_TEST(testCreateParserForUnknownLanguageReturnsNull);
     RUN_TEST(testCreateEvaluationFunctionForUnknownLanguageReturnsNull);
     RUN_TEST(testGetInlineSourceCommentStrForUnknownLangReturnsDefaultValue);
+    RUN_TEST(testGetTextFormatLabelForUnknownFormatReturnsNull);
+    RUN_TEST(testFormatCapabilityQueriesForUnknownFormatReturnFalse);
     return UNITY_END();
 }
