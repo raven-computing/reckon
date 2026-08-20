@@ -69,6 +69,13 @@ void testFormatCapabilityQueriesForJava(void) {
     TEST_ASSERT_TRUE(hasLoc);
 }
 
+void testAllFormatEnumeratorsHaveLabels(void) {
+    for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
+        const char* label = rcnGetTextFormatLabel(frmt);
+        TEST_ASSERT_NOT_NULL(label);
+    }
+}
+
 void testCreateParserForUnknownLanguageReturnsNull(void) {
     TSParser* parser = createParser(12345); // NOLINT
     TEST_ASSERT_NULL(parser);
@@ -107,6 +114,7 @@ int main(void) {
     RUN_TEST(testGetTextFormatLabelForJava);
     RUN_TEST(testFormatCapabilityQueriesForCMake);
     RUN_TEST(testFormatCapabilityQueriesForJava);
+    RUN_TEST(testAllFormatEnumeratorsHaveLabels);
     RUN_TEST(testCreateParserForUnknownLanguageReturnsNull);
     RUN_TEST(testCreateEvaluationFunctionForUnknownLanguageReturnsNull);
     RUN_TEST(testGetInlineSourceCommentStrForUnknownLangReturnsDefaultValue);
