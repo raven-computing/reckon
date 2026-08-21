@@ -57,7 +57,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_HTML] = {"HTML", false, false},
     [RCN_TEXT_SQL] = {"SQL", false, false},
     [RCN_TEXT_CMAKE] = {"CMake", false, true},
-    [RCN_TEXT_MAKE] = {"Make", false, false},
+    [RCN_TEXT_MAKE] = {"Make", false, true},
     [RCN_TEXT_YAML] = {"YAML", false, false},
     [RCN_LANG_ASSEMBLY] = {"Assembly", false, false},
     [RCN_LANG_C] = {"C", true, true},
@@ -146,6 +146,7 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
 Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_CMAKE:
+        case RCN_TEXT_MAKE:
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
         case RCN_LANG_BASH:
@@ -213,6 +214,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
 bool isLocEnabled(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_CMAKE:
+        case RCN_TEXT_MAKE:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_PYTHON:

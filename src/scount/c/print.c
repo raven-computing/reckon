@@ -640,6 +640,7 @@ static void prSummaryRows(
                 break;
             case RCN_TEXT_MAKE:
                 label = "Make";
+                hasCodeLines = true;
                 break;
             case RCN_TEXT_YAML:
                 label = "YAML";
