@@ -647,6 +647,7 @@ static void prSummaryRows(
                 break;
             case RCN_LANG_ASSEMBLY:
                 label = "Assembly";
+                hasCodeLines = true;
                 break;
             case RCN_LANG_R:
                 label = "R";
