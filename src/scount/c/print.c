@@ -609,87 +609,9 @@ static void prSummaryRows(
     const RcnCountStatistics* stats
 ) {
     for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
-        const char* label = NULL;
-        bool hasLogicalLines = false;
-        bool hasCodeLines = false;
-        switch (frmt) {
-            case RCN_TEXT_UNFORMATTED:
-                label = "Plain Text";
-                break;
-            case RCN_TEXT_MARKDOWN:
-                label = "Markdown";
-                break;
-            case RCN_TEXT_XML:
-                label = "XML";
-                break;
-            case RCN_TEXT_JSON:
-                label = "JSON";
-                break;
-            case RCN_TEXT_CSS:
-                label = "CSS";
-                break;
-            case RCN_TEXT_HTML:
-                label = "HTML";
-                break;
-            case RCN_TEXT_SQL:
-                label = "SQL";
-                break;
-            case RCN_TEXT_CMAKE:
-                label = "CMake";
-                hasCodeLines = true;
-                break;
-            case RCN_TEXT_MAKE:
-                label = "Make";
-                hasCodeLines = true;
-                break;
-            case RCN_TEXT_YAML:
-                label = "YAML";
-                break;
-            case RCN_LANG_ASSEMBLY:
-                label = "Assembly";
-                hasCodeLines = true;
-                break;
-            case RCN_LANG_R:
-                label = "R";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_C:
-                label = "C";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_JAVA:
-                label = "Java";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_PYTHON:
-                label = "Python";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_CPP:
-                label = "C++";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_JAVASCRIPT:
-                label = "JavaScript";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_TYPESCRIPT:
-                label = "TypeScript";
-                hasLogicalLines = true;
-                break;
-            case RCN_LANG_BATCH:
-                label = "DOS Batch";
-                break;
-            case RCN_LANG_BASH:
-                label = "Shell";
-                hasLogicalLines = true;
-                break;
-            // LCOV_EXCL_START
-            default:
-                assert(0 && "Unhandled text format");
-                break;
-            // LCOV_EXCL_STOP
-        }
+        const char* label = rcnGetTextFormatLabel(frmt);
+        bool hasLogicalLines = rcnIsLlcCountingSupported(frmt);
+        bool hasCodeLines = rcnIsLocCountingSupported(frmt);
         assert(label != NULL);
 
         if (stats->sourceSize[frmt] == 0) {
