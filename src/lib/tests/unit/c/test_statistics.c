@@ -490,6 +490,7 @@ void testCountResultsBatch(void) {
     TEST_ASSERT_EQUAL_STRING("sample.bat", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(4, result->codeLines);
     TEST_ASSERT_EQUAL_INT(4, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(11, result->words);
     TEST_ASSERT_EQUAL_INT(75, result->characters);

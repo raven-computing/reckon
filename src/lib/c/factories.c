@@ -67,7 +67,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_LANG_JAVASCRIPT] = {"JavaScript", true, true},
     [RCN_LANG_TYPESCRIPT] = {"TypeScript", true, true},
     [RCN_LANG_R] = {"R", true, true},
-    [RCN_LANG_BATCH] = {"DOS Batch", false, false},
+    [RCN_LANG_BATCH] = {"DOS Batch", false, true},
     [RCN_LANG_BASH] = {"Shell", true, true},
 };
 
@@ -159,6 +159,11 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
                 .ptr=";",
                 .length=strlen(";")
             };
+        case RCN_LANG_BATCH:
+            return (Span){
+                .ptr="REM ",
+                .length=strlen("REM ")
+            };
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -228,6 +233,7 @@ bool isLocEnabled(RcnTextFormat language) {
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
         case RCN_LANG_R:
+        case RCN_LANG_BATCH:
         case RCN_LANG_BASH:
             return true;
         default:
