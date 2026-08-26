@@ -173,12 +173,6 @@ Span getBlockCommentStartString(RcnTextFormat language);
 Span getBlockCommentEndString(RcnTextFormat language);
 
 /**
- * Returns true if the specified format denotes a supported programming
- * language for LOC counting, false otherwise (e.g. for plain-text).
- */
-bool isLocEnabled(RcnTextFormat language);
-
-/**
  * Allocates a new node evaluation context for an annotation operation.
  * Ownership of the returned context is transferred to the caller. It must be
  * freed with `freeNodeEvalContextAnnotation()`.

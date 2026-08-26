@@ -486,7 +486,7 @@ RcnCountResult rcnCountLinesOfCode(
         return result;
     }
 
-    if (!isLocEnabled(language)) {
+    if (!rcnIsLocCountingSupported(language)) {
         result.state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
         result.state.errorMessage = (
             "The LOC count input format or programming language "

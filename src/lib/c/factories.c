@@ -222,27 +222,6 @@ Span getBlockCommentEndString(RcnTextFormat language) {
     }
 }
 
-bool isLocEnabled(RcnTextFormat language) {
-    switch (language) {
-        case RCN_TEXT_CMAKE:
-        case RCN_TEXT_MAKE:
-        case RCN_TEXT_YAML:
-        case RCN_LANG_ASSEMBLY:
-        case RCN_LANG_C:
-        case RCN_LANG_JAVA:
-        case RCN_LANG_PYTHON:
-        case RCN_LANG_CPP:
-        case RCN_LANG_JAVASCRIPT:
-        case RCN_LANG_TYPESCRIPT:
-        case RCN_LANG_R:
-        case RCN_LANG_BATCH:
-        case RCN_LANG_BASH:
-            return true;
-        default:
-            return false;
-    }
-}
-
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     SourceFormatDetection detection = {
