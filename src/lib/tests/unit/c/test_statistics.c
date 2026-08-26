@@ -439,6 +439,7 @@ void testCountResultsYaml(void) {
     TEST_ASSERT_EQUAL_STRING("sample.yaml", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(3, result->codeLines);
     TEST_ASSERT_EQUAL_INT(4, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(10, result->words);
     TEST_ASSERT_EQUAL_INT(68, result->characters);

@@ -58,7 +58,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_SQL] = {"SQL", false, false},
     [RCN_TEXT_CMAKE] = {"CMake", false, true},
     [RCN_TEXT_MAKE] = {"Make", false, true},
-    [RCN_TEXT_YAML] = {"YAML", false, false},
+    [RCN_TEXT_YAML] = {"YAML", false, true},
     [RCN_LANG_ASSEMBLY] = {"Assembly", false, true},
     [RCN_LANG_C] = {"C", true, true},
     [RCN_LANG_JAVA] = {"Java", true, true},
@@ -147,6 +147,7 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_CMAKE:
         case RCN_TEXT_MAKE:
+        case RCN_TEXT_YAML:
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
         case RCN_LANG_BASH:
@@ -225,6 +226,7 @@ bool isLocEnabled(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_CMAKE:
         case RCN_TEXT_MAKE:
+        case RCN_TEXT_YAML:
         case RCN_LANG_ASSEMBLY:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
