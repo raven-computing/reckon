@@ -262,10 +262,11 @@ void testCountResultsXml(void) {
     TEST_ASSERT_EQUAL_STRING("sample.xml", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
-    TEST_ASSERT_EQUAL_INT(16, result->physicalLines);
-    TEST_ASSERT_EQUAL_INT(35, result->words);
-    TEST_ASSERT_EQUAL_INT(471, result->characters);
-    TEST_ASSERT_EQUAL_INT(471, result->sourceSize);
+    TEST_ASSERT_EQUAL_INT(16, result->codeLines);
+    TEST_ASSERT_EQUAL_INT(20, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(44, result->words);
+    TEST_ASSERT_EQUAL_INT(534, result->characters);
+    TEST_ASSERT_EQUAL_INT(534, result->sourceSize);
     rcnFreeCountStatistics(stats);
 }
 

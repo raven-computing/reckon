@@ -2,6 +2,10 @@
 <sample xmlns="urn:reckon:sample" version="1.0">
   <title>Sample Document</title>
   <items>
+    <!--
+    This is a comment,
+    on multiple lines.
+    -->
     <item id="1" enabled="true">Alpha</item>
     <item id="2" enabled="false">Beta</item>
     <item id="3" enabled="true">

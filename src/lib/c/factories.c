@@ -51,7 +51,7 @@ typedef struct FormatFeatures {
 static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_UNFORMATTED] = {"Plain Text", false, false},
     [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
-    [RCN_TEXT_XML] = {"XML", false, false},
+    [RCN_TEXT_XML] = {"XML", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, false},
     [RCN_TEXT_HTML] = {"HTML", false, false},
@@ -180,6 +180,11 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
 
 Span getBlockCommentStartString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_XML:
+            return (Span){
+                .ptr="<!--",
+                .length=strlen("<!--")
+            };
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -202,6 +207,11 @@ Span getBlockCommentStartString(RcnTextFormat language) {
 
 Span getBlockCommentEndString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_XML:
+            return (Span){
+                .ptr="-->",
+                .length=strlen("-->")
+            };
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
