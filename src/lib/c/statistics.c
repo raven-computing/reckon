@@ -267,7 +267,7 @@ static inline bool count(
     RCN_LOG_DBG(file->path)
 
     bool ok = false;
-    result->hasLogicalLines = detected.isProgrammingLanguage;
+    result->hasLogicalLines = rcnIsLlcCountingSupported(detected.format);
     result->hasCodeLines = rcnIsLocCountingSupported(detected.format);
     RcnTextFormat sourceFormat = detected.format;
     ok = ensureFileContent(stats, options, file, result);
