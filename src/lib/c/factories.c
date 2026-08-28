@@ -54,7 +54,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_XML] = {"XML", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, false},
-    [RCN_TEXT_HTML] = {"HTML", false, false},
+    [RCN_TEXT_HTML] = {"HTML", false, true},
     [RCN_TEXT_SQL] = {"SQL", false, false},
     [RCN_TEXT_CMAKE] = {"CMake", false, true},
     [RCN_TEXT_MAKE] = {"Make", false, true},
@@ -180,6 +180,7 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
 
 Span getBlockCommentStartString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
             return (Span){
                 .ptr="<!--",
@@ -207,6 +208,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
 
 Span getBlockCommentEndString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
             return (Span){
                 .ptr="-->",
