@@ -53,7 +53,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
     [RCN_TEXT_XML] = {"XML", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
-    [RCN_TEXT_CSS] = {"CSS", false, false},
+    [RCN_TEXT_CSS] = {"CSS", false, true},
     [RCN_TEXT_HTML] = {"HTML", false, true},
     [RCN_TEXT_SQL] = {"SQL", false, false},
     [RCN_TEXT_CMAKE] = {"CMake", false, true},
@@ -186,6 +186,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
                 .ptr="<!--",
                 .length=strlen("<!--")
             };
+        case RCN_TEXT_CSS:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -214,6 +215,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
                 .ptr="-->",
                 .length=strlen("-->")
             };
+        case RCN_TEXT_CSS:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
