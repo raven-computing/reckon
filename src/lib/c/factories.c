@@ -55,7 +55,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, true},
     [RCN_TEXT_HTML] = {"HTML", false, true},
-    [RCN_TEXT_SQL] = {"SQL", false, false},
+    [RCN_TEXT_SQL] = {"SQL", false, true},
     [RCN_TEXT_CMAKE] = {"CMake", false, true},
     [RCN_TEXT_MAKE] = {"Make", false, true},
     [RCN_TEXT_YAML] = {"YAML", false, true},
@@ -145,6 +145,11 @@ NodeVisitor createEvaluationFunction(RcnTextFormat language) {
 
 Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
+        case RCN_TEXT_SQL:
+            return (Span){
+                .ptr="--",
+                .length=strlen("--")
+            };
         case RCN_TEXT_CMAKE:
         case RCN_TEXT_MAKE:
         case RCN_TEXT_YAML:
@@ -187,6 +192,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
                 .length=strlen("<!--")
             };
         case RCN_TEXT_CSS:
+        case RCN_TEXT_SQL:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -216,6 +222,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
                 .length=strlen("-->")
             };
         case RCN_TEXT_CSS:
+        case RCN_TEXT_SQL:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
