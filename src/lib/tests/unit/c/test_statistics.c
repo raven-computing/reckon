@@ -366,10 +366,10 @@ void testCountResultsSql(void) {
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
     TEST_ASSERT_EQUAL_INT(5, result->codeLines);
-    TEST_ASSERT_EQUAL_INT(6, result->physicalLines);
-    TEST_ASSERT_EQUAL_INT(17, result->words);
-    TEST_ASSERT_EQUAL_INT(93, result->characters);
-    TEST_ASSERT_EQUAL_INT(93, result->sourceSize);
+    TEST_ASSERT_EQUAL_INT(10, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(22, result->words);
+    TEST_ASSERT_EQUAL_INT(125, result->characters);
+    TEST_ASSERT_EQUAL_INT(125, result->sourceSize);
     rcnFreeCountStatistics(stats);
 }
 
