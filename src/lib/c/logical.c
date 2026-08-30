@@ -15,6 +15,7 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "reckon/reckon.h"
 #include "evaluation.h"
@@ -90,7 +91,8 @@ RcnSourceText rcnMarkLogicalLinesInFile(const char* path) {
         return (RcnSourceText){0};
     }
     SourceFormatDetection detected = detectSourceFormat(file);
-    if (!detected.isProgrammingLanguage || !readSourceFileContent(file)) {
+    const bool hasLlc = rcnIsLlcCountingSupported(detected.format);
+    if (!hasLlc || !readSourceFileContent(file)) {
         freeSourceFile(file);
         return (RcnSourceText){0};
     }
