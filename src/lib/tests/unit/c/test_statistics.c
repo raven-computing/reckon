@@ -55,6 +55,7 @@ void testCountWithVariousNullInputs(void) {
     TEST_ASSERT_NULL(stats->state.errorMessage);
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
     TEST_ASSERT_EQUAL_INT(0, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalCodeLines);
     TEST_ASSERT_EQUAL_INT(0, stats->totalPhysicalLines);
     TEST_ASSERT_EQUAL_INT(0, stats->totalWords);
     TEST_ASSERT_EQUAL_INT(0, stats->totalCharacters);
@@ -202,6 +203,7 @@ void testCountWithMultipleFilesWhenOneFileHasError(void) {
     );
     TEST_ASSERT_FALSE(result1->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result1->logicalLines);
+    TEST_ASSERT_EQUAL_INT(0, result1->codeLines);
     TEST_ASSERT_EQUAL_INT(0, result1->physicalLines);
     TEST_ASSERT_EQUAL_INT(0, result1->words);
     TEST_ASSERT_EQUAL_INT(0, result1->characters);
@@ -210,6 +212,7 @@ void testCountWithMultipleFilesWhenOneFileHasError(void) {
     TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result2->state.errorCode);
     TEST_ASSERT_NULL(result2->state.errorMessage);
     TEST_ASSERT_EQUAL_INT(2, result2->logicalLines);
+    TEST_ASSERT_EQUAL_INT(1, result2->codeLines);
     TEST_ASSERT_EQUAL_INT(1, result2->physicalLines);
     TEST_ASSERT_EQUAL_INT(6, result2->words);
     TEST_ASSERT_EQUAL_INT(24, result2->characters);
@@ -288,6 +291,7 @@ void testCountResultsJson(void) {
     TEST_ASSERT_EQUAL_STRING("sample.json", file->name);
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(0, result->codeLines);
     TEST_ASSERT_EQUAL_INT(37, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(59, result->words);
     TEST_ASSERT_EQUAL_INT(561, result->characters);
@@ -522,6 +526,7 @@ void testCountResultsR(void) {
     TEST_ASSERT_TRUE(result->isProcessed);
     TEST_ASSERT_TRUE(result->hasLogicalLines);
     TEST_ASSERT_EQUAL_INT(3, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(3, result->codeLines);
     TEST_ASSERT_EQUAL_INT(4, result->physicalLines);
     TEST_ASSERT_EQUAL_INT(9, result->words);
     TEST_ASSERT_EQUAL_INT(28, result->characters);
