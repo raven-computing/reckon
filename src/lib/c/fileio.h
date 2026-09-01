@@ -79,14 +79,10 @@ typedef struct BaseDir {
  * Indicates whether the text format is supported and which format or
  * programming language was detected. If `isSupportedFormat` is `false`,
  * then the value of `format` is undefined and should not be used.
- * A `true` value of `isProgrammingLanguage` implies that `isSupportedFormat`
- * is also `true` and that the detected format represents a
- * supported programming language.
  */
 typedef struct SourceFormatDetection {
     RcnTextFormat format;
     bool isSupportedFormat;
-    bool isProgrammingLanguage;
 } SourceFormatDetection;
 
 /**

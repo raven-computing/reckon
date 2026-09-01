@@ -247,7 +247,6 @@ Span getBlockCommentEndString(RcnTextFormat language) {
 SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     SourceFormatDetection detection = {
         .isSupportedFormat = false,
-        .isProgrammingLanguage = false,
         .format = RCN_TEXT_UNFORMATTED // undefined placeholder
     };
 
@@ -258,32 +257,26 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     const char* extension = file->extension ? file->extension : "";
     if (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_C;
     } else if (strcmp(extension, "java") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_JAVA;
     } else if (strcmp(extension, "py") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_PYTHON;
     } else if (strcmp(extension, "js") == 0
         || strcmp(extension, "mjs") == 0
         || strcmp(extension, "cjs") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_JAVASCRIPT;
     } else if (strcmp(extension, "ts") == 0
         || strcmp(extension, "mts") == 0
         || strcmp(extension, "cts") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_TYPESCRIPT;
     } else if (strcmp(extension, "sh") == 0
         || strcmp(extension, "bash") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_BASH;
     } else if (strcmp(extension, "md") == 0
         || strcmp(extension, "markdown") == 0) {
@@ -331,7 +324,6 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "R") == 0
         || strcmp(extension, "r") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_R;
     } else if (strcmp(extension, "txt") == 0) {
         detection.isSupportedFormat = true;
@@ -348,7 +340,6 @@ SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
         || strcmp(extension, "c++m") == 0
         || strcmp(extension, "ixx") == 0) {
         detection.isSupportedFormat = true;
-        detection.isProgrammingLanguage = true;
         detection.format = RCN_LANG_CPP;
     }
 
