@@ -638,7 +638,7 @@ static void prSummaryRows(
             prChr(buffer, ' ');
             prLocLineCount(
                 buffer,
-                hasCodeLines || hasLogicalLines,
+                hasCodeLines,
                 stats->codeLines[frmt]
             );
             prChr(buffer, ' ');
