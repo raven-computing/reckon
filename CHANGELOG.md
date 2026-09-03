@@ -1,3 +1,22 @@
+#### 1.8.0
+* Added rcnGetTextFormatLabel() API function. [[Issue#77]](https://github.com/raven-computing/reckon/issues/77)
+* Added rcnIsLocCountingSupported() API function. [[Issue#77]](https://github.com/raven-computing/reckon/issues/77)
+* Added rcnIsLlcCountingSupported() API function. [[Issue#77]](https://github.com/raven-computing/reckon/issues/77)
+* Added support for assembly format. [[Issue#71]](https://github.com/raven-computing/reckon/issues/71)
+* Added support for Makefile format. [[Issue#72]](https://github.com/raven-computing/reckon/issues/72)
+* Added support for Windows batch script format. [[Issue#70]](https://github.com/raven-computing/reckon/issues/70)
+* Added LOC support for assembly source files.
+* Added LOC support for CSS source files.
+* Added LOC support for DOS Batch source files.
+* Added LOC support for HTML source files.
+* Added LOC support for Make source files.
+* Added LOC support for SQL source files.
+* Added LOC support for XML source files.
+* Added LOC support for YAML source files.
+* Refactored factories.c in libreckon to use an internal FormatFeatures struct with an index into an array for querying capabilities per supported text format.
+* Removed isProgrammingLanguage member from internal SourceFormatDetection struct.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.7.0...v1.8.0)
+
 #### 1.7.0
 * Added operation support for physical lines of code (LOC). [[Issue#10]](https://github.com/raven-computing/reckon/issues/10)
 * Added 'node_modules' to the set of directories to be ignored.
