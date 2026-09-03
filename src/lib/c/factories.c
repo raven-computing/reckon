@@ -42,6 +42,17 @@ void evaluateNodeR(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeBash(TSNode node, NodeEvalTrace* trace);
 void evaluateNodeCpp(TSNode node, NodeEvalTrace* trace);
 
+static const char* LINE_COMMENT_STYLE_SQL = "--";
+static const char* LINE_COMMENT_STYLE_SHELL = "#";
+static const char* LINE_COMMENT_STYLE_ASSEMBLY = ";";
+static const char* LINE_COMMENT_STYLE_DOS_BATCH = "REM ";
+static const char* LINE_COMMENT_STYLE_C = "//";
+
+static const char* BLOCK_COMMENT_START_STYLE_XML = "<!--";
+static const char* BLOCK_COMMENT_END_STYLE_XML = "-->";
+static const char* BLOCK_COMMENT_START_STYLE_C = "/*";
+static const char* BLOCK_COMMENT_END_STYLE_C = "*/";
+
 typedef struct FormatFeatures {
     const char* label;
     bool hasLogicalLines;
@@ -147,8 +158,8 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_SQL:
             return (Span){
-                .ptr="--",
-                .length=strlen("--")
+                .ptr=LINE_COMMENT_STYLE_SQL,
+                .length=strlen(LINE_COMMENT_STYLE_SQL)
             };
         case RCN_TEXT_CMAKE:
         case RCN_TEXT_MAKE:
@@ -157,18 +168,18 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
         case RCN_LANG_R:
         case RCN_LANG_BASH:
             return (Span){
-                .ptr="#",
-                .length=strlen("#")
+                .ptr=LINE_COMMENT_STYLE_SHELL,
+                .length=strlen(LINE_COMMENT_STYLE_SHELL)
             };
         case RCN_LANG_ASSEMBLY:
             return (Span){
-                .ptr=";",
-                .length=strlen(";")
+                .ptr=LINE_COMMENT_STYLE_ASSEMBLY,
+                .length=strlen(LINE_COMMENT_STYLE_ASSEMBLY)
             };
         case RCN_LANG_BATCH:
             return (Span){
-                .ptr="REM ",
-                .length=strlen("REM ")
+                .ptr=LINE_COMMENT_STYLE_DOS_BATCH,
+                .length=strlen(LINE_COMMENT_STYLE_DOS_BATCH)
             };
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
@@ -177,8 +188,8 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
         case RCN_LANG_TYPESCRIPT:
         default:
             return (Span){
-                .ptr="//",
-                .length=strlen("//")
+                .ptr=LINE_COMMENT_STYLE_C,
+                .length=strlen(LINE_COMMENT_STYLE_C)
             };
     }
 }
@@ -188,8 +199,8 @@ Span getBlockCommentStartString(RcnTextFormat language) {
         case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
             return (Span){
-                .ptr="<!--",
-                .length=strlen("<!--")
+                .ptr=BLOCK_COMMENT_START_STYLE_XML,
+                .length=strlen(BLOCK_COMMENT_START_STYLE_XML)
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
@@ -199,8 +210,8 @@ Span getBlockCommentStartString(RcnTextFormat language) {
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
-                .ptr="/*",
-                .length=strlen("/*")
+                .ptr=BLOCK_COMMENT_START_STYLE_C,
+                .length=strlen(BLOCK_COMMENT_START_STYLE_C)
             };
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
@@ -218,8 +229,8 @@ Span getBlockCommentEndString(RcnTextFormat language) {
         case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
             return (Span){
-                .ptr="-->",
-                .length=strlen("-->")
+                .ptr=BLOCK_COMMENT_END_STYLE_XML,
+                .length=strlen(BLOCK_COMMENT_END_STYLE_XML)
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
@@ -229,8 +240,8 @@ Span getBlockCommentEndString(RcnTextFormat language) {
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
-                .ptr="*/",
-                .length=strlen("*/")
+                .ptr=BLOCK_COMMENT_END_STYLE_C,
+                .length=strlen(BLOCK_COMMENT_END_STYLE_C)
             };
         case RCN_LANG_PYTHON:
         case RCN_LANG_R:
