@@ -1069,8 +1069,9 @@ RECKON_EXPORT void rcnFreeCountStatistics(RcnCountStatistics* stats);
  *
  * Processes the source files of the specified statistics and performs analysis
  * operations, e.g. counting the number of logical lines of code, according to
- * the given options. The files inside the given statistics must exist and be
- * readable regular text files.
+ * the given options. The files inside the given statistics will be read from
+ * the filesystem if they are not already loaded into memory, in which case a
+ * file must exist and be readable regular text files.
  * 
  * This function is not idempotent with respect to the same stats struct.
  * Calling it multiple times on the same `RcnCountStatistics` struct is
