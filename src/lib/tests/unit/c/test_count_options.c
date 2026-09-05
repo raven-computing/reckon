@@ -771,6 +771,32 @@ void testCountStatisticsWithStopOnErrorOptionActivated(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testStatOptionsZeroInitLeavesMultiThreadingDisabled(void) {
+    RcnStatOptions options = {0};
+    TEST_ASSERT_FALSE(options.useMultiThreading);
+}
+
+void testCountStatisticsWithMultiThreadingOptionActivated(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/mixed";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .useMultiThreading = true
+    };
+    rcnCount(stats, options);
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
+    TEST_ASSERT_NULL(stats->state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(34, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(39, stats->totalCodeLines);
+    TEST_ASSERT_EQUAL_INT(60, stats->totalPhysicalLines);
+    TEST_ASSERT_EQUAL_INT(129, stats->totalWords);
+    TEST_ASSERT_EQUAL_INT(1079, stats->totalCharacters);
+    TEST_ASSERT_EQUAL_INT(1079, stats->totalSourceSize);
+    TEST_ASSERT_EQUAL_INT(4, stats->count.size);
+    TEST_ASSERT_EQUAL_INT(4, stats->count.sizeProcessed);
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -789,5 +815,7 @@ int main(void) {
     RUN_TEST(testCountStatisticsWithKeepFileContentOptionActivated);
     RUN_TEST(testCountStatisticsWithStopOnErrorOptionDeactivated);
     RUN_TEST(testCountStatisticsWithStopOnErrorOptionActivated);
+    RUN_TEST(testStatOptionsZeroInitLeavesMultiThreadingDisabled);
+    RUN_TEST(testCountStatisticsWithMultiThreadingOptionActivated);
     return UNITY_END();
 }

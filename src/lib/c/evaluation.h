@@ -60,6 +60,15 @@ typedef struct Span {
 } Span;
 
 /**
+ * An indicator for a slice of an array.
+ * Has a start (inclusive) and an end (exclusive) index.
+ */
+typedef struct Slice {
+    size_t start;
+    size_t end;
+} Slice;
+
+/**
  * Opaque context type used during node evaluation.
  * Can be used by concrete `NodeVisitor` implementations to store
  * language-specific processing state.

@@ -31,8 +31,11 @@ target_sources(
     "c/encoding.c"
     "c/factories.c"
     "c/fileio.c"
+    "c/threading.c"
     "$<$<PLATFORM_ID:Linux>:${CMAKE_CURRENT_SOURCE_DIR}/c/linux/fileio.c>"
+    "$<$<PLATFORM_ID:Linux>:${CMAKE_CURRENT_SOURCE_DIR}/c/linux/threading.c>"
     "$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/c/win32/fileio.c>"
+    "$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/c/win32/threading.c>"
     "c/lang_c.c"
     "c/lang_java.c"
     "c/lang_python.c"
@@ -61,6 +64,7 @@ target_include_directories(
 target_link_libraries(
     ${RECKON_TARGET_LIB_OBJ}
     PUBLIC
+    Threads::Threads
     ${RECKON_DEPENDENCIES_LINK_TARGETS}
 )
 
@@ -124,6 +128,7 @@ target_include_directories(
 target_link_libraries(
     ${RECKON_TARGET_LIB}
     PRIVATE
+    Threads::Threads
     ${RECKON_DEPENDENCIES_LINK_TARGETS}
 )
 
