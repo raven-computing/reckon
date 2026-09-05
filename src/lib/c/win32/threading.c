@@ -23,13 +23,13 @@
 #include "threading.h"
 
 typedef struct RcnThreadArg {
-    RcnThreadRoutine routine;
+    ThreadRoutine routine;
     ThreadWork* arg;
 } RcnThreadArg;
 
 static DWORD WINAPI rcnRun(LPVOID arg) {
     RcnThreadArg* feeder = arg;
-    RcnThreadRoutine routine = feeder->routine;
+    ThreadRoutine routine = feeder->routine;
     ThreadWork* threadArg = feeder->arg;
     free(feeder);
     routine(threadArg);
@@ -75,8 +75,8 @@ size_t getSystemConcurrency(void) {
 }
 
 bool createThread(
-    RcnThreadHandle* handle,
-    RcnThreadRoutine routine,
+    ThreadHandle* handle,
+    ThreadRoutine routine,
     ThreadWork* arg
 ) {
     RcnThreadArg* feeder = malloc(sizeof(RcnThreadArg));
@@ -101,7 +101,7 @@ bool createThread(
     return true;
 }
 
-void joinThread(RcnThreadHandle* handle) {
+void joinThread(ThreadHandle* handle) {
     HANDLE nativeThread = (HANDLE) handle->nativeHandle;
     if (!nativeThread) {
         return;
