@@ -100,9 +100,9 @@ typedef void (*NodeVisitor)(TSNode node, NodeEvalTrace* trace);
  * Enumeration of supported text encodings.
  */
 typedef enum TextEncoding {
-  TextEncodingUTF8,
-  TextEncodingUTF16LE,
-  TextEncodingUTF16BE
+    TextEncodingUTF8,
+    TextEncodingUTF16LE,
+    TextEncodingUTF16BE,
 } TextEncoding;
 
 /**
