@@ -23,6 +23,7 @@
 #include "reckon/reckon.h"
 #include "evaluation.h"
 #include "fileio.h"
+#include "threading.h"
 
 /**
  * Asserts that the given RcnTextFormat enumerator value is within bounds.
@@ -43,6 +44,20 @@ static const uint32_t DEFAULT_OPT_ENABLE_ALL = 0xffffffff;
 
 static_assert(RECKON_NUM_SUPPORTED_FORMATS < 64, "Too many formats");
 
+static size_t getWorkerCount(size_t fileCount, RcnStatOptions options) {
+    if (!options.useMultiThreading || fileCount < 2) {
+        return 1;
+    }
+    size_t workerCount = getSystemConcurrency();
+    if (workerCount < 2) {
+        return 1;
+    }
+    if (workerCount > fileCount) {
+        workerCount = fileCount;
+    }
+    return workerCount;
+}
+
 static bool isFormatSelected(RcnStatOptions options, RcnTextFormat srcFormat) {
     return (options.formats & RECKON_MK_FRMT_OPT(srcFormat)) != 0;
 }
@@ -55,12 +70,94 @@ static inline void resetResultGroup(RcnCountResultGroup* resultGroup) {
     resultGroup->characters = 0;
     resultGroup->sourceSize = 0;
     resultGroup->state.ok = false;
+    resultGroup->state.errorCode = RCN_ERR_NONE;
+    resultGroup->state.errorMessage = NULL;
     resultGroup->isProcessed = false;
+    resultGroup->hasLogicalLines = false;
+    resultGroup->hasCodeLines = false;
+}
+
+static inline bool hasCriticalError(RcnResultState state) {
+    const RcnErrorCode errorCode = state.errorCode;
+    return errorCode == RCN_ERR_ALLOC_FAILURE || errorCode == RCN_ERR_UNKNOWN;
+}
+
+static void resetAggregateStatistics(RcnCountStatistics* stats) {
+    stats->totalLogicalLines = 0;
+    stats->totalCodeLines = 0;
+    stats->totalPhysicalLines = 0;
+    stats->totalWords = 0;
+    stats->totalCharacters = 0;
+    stats->totalSourceSize = 0;
+    stats->count.sizeProcessed = 0;
+    for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
+        stats->logicalLines[frmt] = 0;
+        stats->codeLines[frmt] = 0;
+        stats->physicalLines[frmt] = 0;
+        stats->words[frmt] = 0;
+        stats->characters[frmt] = 0;
+        stats->sourceSize[frmt] = 0;
+    }
+}
+
+static void updateStatsState(
+    RcnResultState* state,
+    RcnResultState resultState,
+    bool stopOnError
+) {
+    if (resultState.errorCode == RCN_ERR_NONE) {
+        return;
+    }
+    if (resultState.errorCode == RCN_ERR_UNSUPPORTED_FORMAT) {
+        return;
+    }
+    state->errorCode = resultState.errorCode;
+    state->errorMessage = resultState.errorMessage;
+    if (stopOnError || hasCriticalError(resultState)) {
+        state->ok = false;
+    }
+}
+
+static void aggregateStatistics(
+    RcnCountStatistics* stats,
+    RcnStatOptions options
+) {
+    if (!stats->state.ok) {
+        return;
+    }
+    resetAggregateStatistics(stats);
+    stats->state.ok = true;
+    stats->state.errorCode = RCN_ERR_NONE;
+    stats->state.errorMessage = NULL;
+
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        RcnSourceFile* file = &stats->count.files[i];
+        RcnCountResultGroup* result = &stats->count.results[i];
+        if (result->isProcessed) {
+            SourceFormatDetection detected = detectSourceFormat(file);
+            if (detected.isSupportedFormat) {
+                const RcnTextFormat sourceFormat = detected.format;
+                ASSERT_SOURCE_FORMAT_INDEX(sourceFormat);
+                stats->totalLogicalLines += result->logicalLines;
+                stats->totalCodeLines += result->codeLines;
+                stats->totalPhysicalLines += result->physicalLines;
+                stats->totalWords += result->words;
+                stats->totalCharacters += result->characters;
+                stats->totalSourceSize += result->sourceSize;
+                stats->logicalLines[sourceFormat] += result->logicalLines;
+                stats->codeLines[sourceFormat] += result->codeLines;
+                stats->physicalLines[sourceFormat] += result->physicalLines;
+                stats->words[sourceFormat] += result->words;
+                stats->characters[sourceFormat] += result->characters;
+                stats->sourceSize[sourceFormat] += result->sourceSize;
+                stats->count.sizeProcessed += 1;
+            }
+        }
+        updateStatsState(&stats->state, result->state, options.stopOnError);
+    }
 }
 
 static inline bool ensureFileContent(
-    RcnCountStatistics* stats,
-    RcnStatOptions options,
     RcnSourceFile* file,
     RcnCountResultGroup* resultGroup
 ) {
@@ -69,49 +166,39 @@ static inline bool ensureFileContent(
             resultGroup->state.errorCode = RCN_ERR_INVALID_INPUT;
             resultGroup->state.errorMessage = "Failed to read file content";
             resultGroup->state.ok = false;
-            stats->state.errorCode = RCN_ERR_INVALID_INPUT;
-            stats->state.errorMessage = "Failed to read file content";
-            if (options.stopOnError) {
-                stats->state.ok = false;
-            }
             return false;
         }
     }
     if (file->status != RCN_FILE_OP_OK || !file->content.text) {
         resultGroup->state.errorCode = RCN_ERR_INVALID_INPUT;
+        resultGroup->state.errorMessage = "Failed to read file content";
         resultGroup->state.ok = false;
-        stats->state.errorCode = RCN_ERR_INVALID_INPUT;
-        if (options.stopOnError) {
-            stats->state.ok = false;
-        }
         return false;
     }
     return true;
 }
 
 static bool checkIntermediateResultState(
-    RcnCountStatistics* stats,
     RcnCountResultGroup* resultGroup,
     RcnResultState state
 ) {
     switch (state.errorCode) {
         case RCN_ERR_NONE:
             return true;
-        case RCN_ERR_ALLOC_FAILURE:
-        case RCN_ERR_UNKNOWN:
-            stats->state.ok = false;
-            stats->state.errorCode = state.errorCode;
-            stats->state.errorMessage = state.errorMessage;
-            FALLTHROUGH;
         default:
+            resultGroup->logicalLines = 0;
+            resultGroup->codeLines = 0;
+            resultGroup->physicalLines = 0;
+            resultGroup->words = 0;
+            resultGroup->characters = 0;
+            resultGroup->sourceSize = 0;
+            resultGroup->isProcessed = false;
             resultGroup->state = state;
         }
-        resetResultGroup(resultGroup);
         return false;
 }
 
 static inline bool countLogicalLines(
-    RcnCountStatistics* stats,
     RcnStatOptions options,
     RcnSourceFile* file,
     RcnTextFormat language,
@@ -122,101 +209,82 @@ static inline bool countLogicalLines(
         ? rcnCountLogicalLinesStrict(language, file->content)
         : rcnCountLogicalLines(language, file->content);
 
-    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+    if (!checkIntermediateResultState(resultGroup, result.state)) {
         return false;
     }
     resultGroup->logicalLines = result.count;
     resultGroup->state.ok = true;
     resultGroup->state.errorCode = RCN_ERR_NONE;
-    stats->totalLogicalLines += resultGroup->logicalLines;
-    stats->logicalLines[language] += resultGroup->logicalLines;
     return true;
 }
 
 static inline bool countCodeLines(
-    RcnCountStatistics* stats,
     RcnSourceFile* file,
     RcnTextFormat language,
     RcnCountResultGroup* resultGroup
 ) {
     RcnCountResult result = rcnCountLinesOfCode(language, file->content);
-    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+    if (!checkIntermediateResultState(resultGroup, result.state)) {
         return false;
     }
     resultGroup->codeLines = result.count;
     resultGroup->state.ok = true;
     resultGroup->state.errorCode = RCN_ERR_NONE;
-    stats->totalCodeLines += resultGroup->codeLines;
-    stats->codeLines[language] += resultGroup->codeLines;
     return true;
 }
 
 static inline bool countPhysicalLines(
-    RcnCountStatistics* stats,
     RcnSourceFile* file,
     RcnTextFormat sourceFormat,
     RcnCountResultGroup* resultGroup
 ) {
     RcnCountResult result = rcnCountPhysicalLines(file->content);
-    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+    if (!checkIntermediateResultState(resultGroup, result.state)) {
         return false;
     }
     resultGroup->physicalLines = result.count;
     resultGroup->state.ok = true;
     resultGroup->state.errorCode = RCN_ERR_NONE;
-    stats->totalPhysicalLines += resultGroup->physicalLines;
-    stats->physicalLines[sourceFormat] += resultGroup->physicalLines;
     return true;
 }
 
 static inline bool countWords(
-    RcnCountStatistics* stats,
     RcnSourceFile* file,
     RcnTextFormat sourceFormat,
     RcnCountResultGroup* resultGroup
 ) {
     RcnCountResult result = rcnCountWords(file->content);
-    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+    if (!checkIntermediateResultState(resultGroup, result.state)) {
         return false;
     }
     resultGroup->words = result.count;
     resultGroup->state.ok = true;
     resultGroup->state.errorCode = RCN_ERR_NONE;
-    stats->totalWords += resultGroup->words;
-    stats->words[sourceFormat] += resultGroup->words;
     return true;
 }
 
 static inline bool countCharacters(
-    RcnCountStatistics* stats,
     RcnSourceFile* file,
     RcnTextFormat sourceFormat,
     RcnCountResultGroup* resultGroup
 ) {
     RcnCountResult result = rcnCountCharacters(file->content);
-    if (!checkIntermediateResultState(stats, resultGroup, result.state)) {
+    if (!checkIntermediateResultState(resultGroup, result.state)) {
         return false;
     }
     resultGroup->characters = result.count;
     resultGroup->state.ok = true;
     resultGroup->state.errorCode = RCN_ERR_NONE;
-    stats->totalCharacters += result.count;
-    stats->characters[sourceFormat] += result.count;
     return true;
 }
 
 static inline void countProcessedFile(
-    RcnCountStatistics* stats,
     RcnSourceFile* file,
-    RcnTextFormat sourceFormat,
     RcnCountResultGroup* resultGroup
 ) {
     const RcnCount fileSize = file->content.size;
     resultGroup->isProcessed = true;
     resultGroup->sourceSize = fileSize;
-    stats->count.sizeProcessed += 1;
-    stats->totalSourceSize += fileSize;
-    stats->sourceSize[sourceFormat] += fileSize;
 }
 
 static bool collectFiles(const char* directory, RcnCountStatistics* stats) {
@@ -257,7 +325,6 @@ static bool setupFile(const char* regularFile, RcnCountStatistics* stats) {
 }
 
 static inline bool count(
-    RcnCountStatistics* stats,
     RcnStatOptions options,
     RcnSourceFile* file,
     RcnCountResultGroup* result,
@@ -270,40 +337,142 @@ static inline bool count(
     result->hasLogicalLines = rcnIsLlcCountingSupported(detected.format);
     result->hasCodeLines = rcnIsLocCountingSupported(detected.format);
     RcnTextFormat sourceFormat = detected.format;
-    ok = ensureFileContent(stats, options, file, result);
+    ok = ensureFileContent(file, result);
     if (ok && options.operations & RCN_OPT_COUNT_LOGICAL_LINES){
         if (result->hasLogicalLines) {
-            ok = countLogicalLines(stats, options, file, sourceFormat, result);
+            ok = countLogicalLines(options, file, sourceFormat, result);
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_CODE_LINES) {
         if (result->hasCodeLines) {
-            ok = countCodeLines(stats, file, sourceFormat, result);
+            ok = countCodeLines(file, sourceFormat, result);
         }
     }
     if (ok && options.operations & RCN_OPT_COUNT_PHYSICAL_LINES) {
-        ok = countPhysicalLines(stats, file, sourceFormat, result);
+        ok = countPhysicalLines(file, sourceFormat, result);
     }
     if (ok && options.operations & RCN_OPT_COUNT_WORDS) {
-        ok = countWords(stats, file, sourceFormat, result);
+        ok = countWords(file, sourceFormat, result);
     }
     if (ok && options.operations & RCN_OPT_COUNT_CHARACTERS) {
-        ok = countCharacters(stats, file, sourceFormat, result);
+        ok = countCharacters(file, sourceFormat, result);
     }
     if (ok) {
-        countProcessedFile(stats, file, sourceFormat, result);
+        countProcessedFile(file, result);
     }
     if (!options.keepFileContent) {
         freeSourceFileContent(file);
-    }
-    if (!ok && options.stopOnError) {
-        stats->state = result->state;
-        stats->state.ok = false;
     }
 
     RCN_LOG_DBG("Done processing file:")
     RCN_LOG_DBG(file->path)
     return ok;
+}
+
+static void processFileRange(
+    RcnCountStatistics* stats,
+    RcnStatOptions options,
+    Slice slice,
+    ThreadControl* control
+) {
+    for (size_t i = slice.start; i < slice.end; ++i) {
+        if (shouldAbortRange(control)) {
+            break;
+        }
+
+        RcnSourceFile* file = &stats->count.files[i];
+        RcnCountResultGroup* result = &stats->count.results[i];
+        resetResultGroup(result);
+
+        SourceFormatDetection detected = detectSourceFormat(file);
+        if (!detected.isSupportedFormat) {
+            result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
+            result->state.errorMessage = "The source format is not supported";
+            continue;
+        }
+
+        RcnTextFormat sourceFormat = detected.format;
+        ASSERT_SOURCE_FORMAT_INDEX(sourceFormat);
+        if (!isFormatSelected(options, sourceFormat)) {
+            continue;
+        }
+
+        const bool ok = count(options, file, result, detected);
+        if (!ok) {
+            if (options.stopOnError || hasCriticalError(result->state)) {
+                requestAbortRange(control);
+                break;
+            }
+        }
+    }
+}
+
+static void runCountThread(ThreadWork* arg) {
+    processFileRange(
+        arg->stats,
+        arg->options,
+        arg->slice,
+        arg->control
+    );
+}
+
+static bool parallelizeCount(
+    RcnCountStatistics* stats,
+    RcnStatOptions options,
+    size_t workerCount
+) {
+    ThreadHandle* threads = calloc(workerCount, sizeof(ThreadHandle));
+    ThreadWork* workItems = calloc(workerCount, sizeof(ThreadWork));
+    if (!threads || !workItems) {
+        free(threads);
+        free(workItems);
+        return false;
+    }
+
+    ThreadControl control;
+    if (!initThreadControl(&control)) {
+        free(threads);
+        free(workItems);
+        return false;
+    }
+
+    const size_t baseChunkSize = stats->count.size / workerCount;
+    const size_t remainder = stats->count.size % workerCount;
+    size_t startIndex = 0;
+    size_t createdThreads = 0;
+    bool createdAllThreads = true;
+
+    for (size_t i = 0; i < workerCount; ++i) {
+        const size_t chunkSize = baseChunkSize + (i < remainder ? 1 : 0);
+        ThreadWork* chunk = &workItems[i];
+        chunk->stats = stats;
+        chunk->options = options;
+        chunk->slice = (Slice){
+            .start = startIndex,
+            .end = startIndex + chunkSize
+        };
+        chunk->control = &control;
+        startIndex = chunk->slice.end;
+
+        if (!createThread(&threads[i], runCountThread, chunk)) {
+            createdAllThreads = false;
+            break;
+        }
+        createdThreads += 1;
+    }
+
+    if (!createdAllThreads) {
+        requestAbortRange(&control);
+    }
+
+    for (size_t i = 0; i < createdThreads; ++i) {
+        joinThread(&threads[i]);
+    }
+
+    deinitThreadControl(&control);
+    free(threads);
+    free(workItems);
+    return createdAllThreads;
 }
 
 RcnCountStatistics* rcnCreateCountStatistics(const char* path) {
@@ -418,27 +587,23 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
     stats->state.errorCode = RCN_ERR_NONE;
     stats->state.errorMessage = NULL;
 
-    for (size_t i = 0; i < stats->count.size; ++i) {
-        RcnSourceFile* file = &stats->count.files[i];
-        RcnCountResultGroup* result = &stats->count.results[i];
-        resetResultGroup(result);
-
-        SourceFormatDetection detected = detectSourceFormat(file);
-        if (!detected.isSupportedFormat) {
-            result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
-            result->state.errorMessage = "The source format is not supported";
-            continue;
+    const size_t workerCount = getWorkerCount(stats->count.size, options);
+    if (workerCount > 1) {
+        const bool ok = parallelizeCount(stats, options, workerCount);
+        if (!ok) {
+            stats->state.ok = false;
+            stats->state.errorCode = RCN_ERR_UNKNOWN;
+            stats->state.errorMessage = "Failed to run in parallel";
         }
-        RcnTextFormat sourceFormat = detected.format;
-        ASSERT_SOURCE_FORMAT_INDEX(sourceFormat);
-        if (!isFormatSelected(options, sourceFormat)) {
-            continue;
-        }
-        const bool ok = count(stats, options, file, result, detected);
-        if (!ok && (options.stopOnError || !stats->state.ok)) {
-            break;
-        }
+    } else {
+        processFileRange(
+            stats,
+            options,
+            (Slice){0, stats->count.size},
+            NULL
+        );
     }
+    aggregateStatistics(stats, options);
     if (stats->count.size == 1) {
         stats->state = stats->count.results[0].state;
     }

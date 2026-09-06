@@ -50,6 +50,8 @@ include(cmake/TestUtil.cmake)
 include(cmake/TestCoverageUtil.cmake)
 include(cmake/SanitizerUtil.cmake)
 
+find_package(Threads REQUIRED)
+
 if(NOT DEFINED RECKON_DO_NOT_OVERWRITE_OUTPUT_DIRECTORY)
     set_output_directories()
 endif()
