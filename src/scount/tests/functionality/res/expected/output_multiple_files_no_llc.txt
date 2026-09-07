@@ -1,5 +1,5 @@
 Directory: txt
-Scanned files: 6
+Scanned all 6 found files
 
   o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | 1sample1.txt             |    n/a    |    n/a    |     1     |     2     |    26     |    26     |

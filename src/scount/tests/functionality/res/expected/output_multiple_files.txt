@@ -1,5 +1,5 @@
 Directory: java
-Scanned files: 3
+Scanned all 3 found files
 
   o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | Sample.java              |    104    |    142    |    188    |    494    |   4709    |   4709    |

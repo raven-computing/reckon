@@ -1,5 +1,5 @@
 Directory: mixed
-Scanned files: 41
+Scanned all 41 found files
 
   o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | Plain Text               |    n/a    |    n/a    |     3     |    22     |    127    |    127    |
