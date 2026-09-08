@@ -325,7 +325,7 @@ void testPrintMultiResultWithFileWarnings(void) {
     rcnFreeCountStatistics(stats);
 }
 
-void testFoundFilesLabelWithSingularFile(void) {
+void testFoundFilesLabelTextWithOneFoundFile(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile1.java",
         1, 1, 2, 3, 4, 5
@@ -334,6 +334,7 @@ void testFoundFilesLabelWithSingularFile(void) {
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned 1 found file"));
     free(buffer.text);
     rcnFreeCountStatistics(stats);
@@ -353,6 +354,6 @@ int main(void) {
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
     RUN_TEST(testPrintMultiResultWithFileWarnings);
-    RUN_TEST(testFoundFilesLabelWithSingularFile);
+    RUN_TEST(testFoundFilesLabelTextWithOneFoundFile);
     return UNITY_END();
 }
