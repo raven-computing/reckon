@@ -356,8 +356,18 @@ static void prInputInfo(
     prStr(buffer, "Directory: ");
     prStr(buffer, (name && name[0] != '\0') ? name : "(unknown name)");
     prChr(buffer, '\n');
-    prStr(buffer, "Scanned files: ");
-    prSize(buffer, stats->count.size);
+    const size_t scanCount = stats->count.sizeProcessed;
+    const size_t totalCount = stats->count.size;
+    prStr(buffer, "Scanned ");
+    if (scanCount == totalCount) {
+        prStr(buffer, totalCount > 1 ? "all " : "");
+    } else {
+        prSize(buffer, scanCount);
+        prStr(buffer, " out of ");
+    }
+    prSize(buffer, totalCount);
+    prStr(buffer, " found file");
+    prStr(buffer, totalCount > 1 ? "s": "");
     prChr(buffer, '\n');
     prChr(buffer, '\n');
 
@@ -794,7 +804,6 @@ void printResultsMultiple(
     assert(buffer != NULL);
     assert(path != NULL);
     assert(stats != NULL);
-    assert(stats->count.size > 1);
 
     prInputInfo(buffer, path, stats);
 

@@ -1,5 +1,5 @@
 Directory: special
-Scanned files: 2
+Scanned all 2 found files
 
   o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | mb_😀_char_🔥_n.txt      |    n/a    |    n/a    |     1     |    13     |    78     |    78     |

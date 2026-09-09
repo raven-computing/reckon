@@ -135,7 +135,7 @@ void testPrintSingleResultWithUnknownFileName(void) {
 void testPrintMultiResultBasic(void) {
     char* expected = (
         "Directory: myDirectory\n"
-        "Scanned files: 3\n"
+        "Scanned all 3 found files\n"
         "\n"
         "  o---------- File ----------o--- LLC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o\n"
         "  | SomeFile.java            |     1     |     2     |     3     |     4     |     5     |\n"
@@ -182,7 +182,7 @@ void testPrintMultiResultForDirectoryInputWithManyFiles(void) {
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(strlen(buffer.text) > 1);
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
-    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 45\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned all 45 found files\n"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedFileRow));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, expectedEllipsisRow));
     free(buffer.text);
@@ -219,7 +219,7 @@ void testPrintMultiResultWithErrorInResultGroup(void) {
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
-    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 3"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned all 3 found files"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile0.java"));
     TEST_ASSERT_NULL(strstr(buffer.text, "SomeFile1.java"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile2.java"));
@@ -238,7 +238,7 @@ void testPrintMultiResultWithBigNumbers(void) {
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
-    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 2"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned all 2 found files"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile0.java"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile1.java"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "| 123456789 |"));
@@ -301,7 +301,7 @@ void testPrintMultiResultWithFileWarnings(void) {
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);
-    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned files: 7"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned all 7 found files"));
     TEST_ASSERT_NOT_NULL(strstr(buffer.text, "SomeFile0.java"));
     TEST_ASSERT_NOT_NULL(
         strstr(
@@ -325,6 +325,41 @@ void testPrintMultiResultWithFileWarnings(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testFoundFilesLabelTextWithPartiallyProcessedFileSet(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile1.java",
+        2, 1, 2, 3, 4, 5
+    );
+    stats->count.files[1].path[8] = '1';
+    stats->count.results[0].isProcessed = false;
+    stats->count.sizeProcessed = 1;
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
+    TEST_ASSERT_NOT_NULL(
+        strstr(buffer.text, "Scanned 1 out of 2 found files")
+    );
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
+void testFoundFilesLabelTextWithOneFoundFile(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile1.java",
+        1, 1, 2, 3, 4, 5
+    );
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Scanned 1 found file"));
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -339,5 +374,7 @@ int main(void) {
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
     RUN_TEST(testPrintMultiResultWithFileWarnings);
+    RUN_TEST(testFoundFilesLabelTextWithPartiallyProcessedFileSet);
+    RUN_TEST(testFoundFilesLabelTextWithOneFoundFile);
     return UNITY_END();
 }
