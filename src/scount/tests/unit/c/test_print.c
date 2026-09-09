@@ -325,6 +325,26 @@ void testPrintMultiResultWithFileWarnings(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testFoundFilesLabelTextWithPartiallyProcessedFileSet(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile1.java",
+        2, 1, 2, 3, 4, 5
+    );
+    stats->count.files[1].path[8] = '1';
+    stats->count.results[0].isProcessed = false;
+    stats->count.sizeProcessed = 1;
+    PrintBuffer buffer = mkBufferAllMetrics();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Directory: myDirectory\n"));
+    TEST_ASSERT_NOT_NULL(
+        strstr(buffer.text, "Scanned 1 out of 2 found files")
+    );
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
 void testFoundFilesLabelTextWithOneFoundFile(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile1.java",
@@ -354,6 +374,7 @@ int main(void) {
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
     RUN_TEST(testPrintMultiResultWithFileWarnings);
+    RUN_TEST(testFoundFilesLabelTextWithPartiallyProcessedFileSet);
     RUN_TEST(testFoundFilesLabelTextWithOneFoundFile);
     return UNITY_END();
 }
