@@ -31,6 +31,7 @@ void tearDown(void) { }
 static PrintBuffer mkBufferAllMetrics(void) {
     return (PrintBuffer) {
         .showLogicalLines = true,
+        .showCodeLines = false,
         .showPhysicalLines = true,
         .showWords = true,
         .showCharacters = true,
@@ -42,6 +43,7 @@ static PrintBuffer mkBufferAllMetrics(void) {
 static PrintBuffer mkBufferLinesOnly(void) {
     return (PrintBuffer) {
         .showLogicalLines = true,
+        .showCodeLines = false,
         .showPhysicalLines = true,
         .showWords = false,
         .showCharacters = false,
@@ -69,19 +71,23 @@ static RcnCountStatistics* mkStats(
         stats->count.files[i].path = name;
         stats->count.files[i].extension = name;
         stats->count.results[i].logicalLines = logical;
+        stats->count.results[i].codeLines = 0;
         stats->count.results[i].physicalLines = physical;
         stats->count.results[i].words = words;
         stats->count.results[i].characters = characters;
         stats->count.results[i].sourceSize = sourceSize;
         stats->count.results[i].hasLogicalLines = true;
+        stats->count.results[i].hasCodeLines = false;
         stats->count.results[i].isProcessed = true;
     }
     stats->logicalLines[RCN_LANG_JAVA] = logical;
+    stats->codeLines[RCN_LANG_JAVA] = 0;
     stats->physicalLines[RCN_LANG_JAVA] = physical;
     stats->words[RCN_LANG_JAVA] = words;
     stats->characters[RCN_LANG_JAVA] = characters;
     stats->sourceSize[RCN_LANG_JAVA] = sourceSize;
     stats->totalLogicalLines = logical * size;
+    stats->totalCodeLines = 0;
     stats->totalPhysicalLines = physical * size;
     stats->totalWords = words * size;
     stats->totalCharacters = characters * size;
