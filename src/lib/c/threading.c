@@ -21,30 +21,30 @@
 
 bool initThreadControl(ThreadControl* control) {
     control->abortRequested = false;
-    return initThreadMutex(&control->nativeMutex);
+    return initThreadMutex(&control->mutex);
 }
 
 void deinitThreadControl(ThreadControl* control) {
     if (control) {
-        deinitThreadMutex(control->nativeMutex);
-        control->nativeMutex = NULL;
+        deinitThreadMutex(control->mutex);
+        control->mutex = NULL;
     }
 }
 
 bool shouldAbortRange(ThreadControl* control) {
     bool abortRequested = false;
     if (control) {
-        lockThreadMutex(control->nativeMutex);
+        lockThreadMutex(control->mutex);
         abortRequested = control->abortRequested;
-        unlockThreadMutex(control->nativeMutex);
+        unlockThreadMutex(control->mutex);
     }
     return abortRequested;
 }
 
 void requestAbortRange(ThreadControl* control) {
     if (control) {
-        lockThreadMutex(control->nativeMutex);
+        lockThreadMutex(control->mutex);
         control->abortRequested = true;
-        unlockThreadMutex(control->nativeMutex);
+        unlockThreadMutex(control->mutex);
     }
 }

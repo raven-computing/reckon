@@ -41,7 +41,7 @@ extern "C" {
  * The underlying implementation is platform-specific.
  */
 typedef struct ThreadHandle {
-    RCN_NATIVE_HANDLE nativeHandle;
+    RCN_NATIVE_HANDLE handle;
 } ThreadHandle;
 
 /**
@@ -49,7 +49,7 @@ typedef struct ThreadHandle {
  * synchronization and abort requests.
  */
 typedef struct ThreadControl {
-    RCN_NATIVE_HANDLE nativeMutex;
+    RCN_NATIVE_HANDLE mutex;
     bool abortRequested;
 } ThreadControl;
 
