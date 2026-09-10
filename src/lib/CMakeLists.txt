@@ -92,6 +92,14 @@ if("${RECKON_MAIN_LIB_TYPE}" STREQUAL "SHARED")
     )
 endif()
 
+if(MSVC)
+    target_compile_options(
+        ${RECKON_TARGET_LIB_OBJ}
+        PRIVATE
+        /experimental:c11atomics
+    )
+endif()
+
 enable_compiler_warnings(
     ${RECKON_TARGET_LIB_OBJ}
     ${RECKON_IGNORE_WARNINGS}
@@ -140,6 +148,14 @@ set_target_properties(
     C_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN True
 )
+
+if(MSVC)
+    target_compile_options(
+        ${RECKON_TARGET_LIB}
+        PRIVATE
+        /experimental:c11atomics
+    )
+endif()
 
 set(RECKON_EXPORT_HEADER
     "${RECKON_GENERATED_HEADERS}/${RECKON_TARGET_LIB}_export.h"
