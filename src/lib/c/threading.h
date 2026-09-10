@@ -22,6 +22,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdatomic.h>
 
 #include "reckon/reckon.h"
 #include "evaluation.h"
@@ -50,7 +51,7 @@ typedef struct ThreadHandle {
  */
 typedef struct ThreadControl {
     RCN_NATIVE_HANDLE mutex;
-    bool abortRequested;
+    atomic_bool abortRequested;
 } ThreadControl;
 
 /**

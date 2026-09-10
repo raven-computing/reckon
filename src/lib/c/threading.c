@@ -16,11 +16,12 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdatomic.h>
 
 #include "threading.h"
 
 bool initThreadControl(ThreadControl* control) {
-    control->abortRequested = false;
+    atomic_init(&control->abortRequested, false);
     return initThreadMutex(&control->mutex);
 }
 
@@ -34,17 +35,20 @@ void deinitThreadControl(ThreadControl* control) {
 bool shouldAbortRange(ThreadControl* control) {
     bool abortRequested = false;
     if (control) {
-        lockThread(control->mutex);
-        abortRequested = control->abortRequested;
-        unlockThread(control->mutex);
+        abortRequested = atomic_load_explicit(
+            &control->abortRequested,
+            memory_order_relaxed
+        );
     }
     return abortRequested;
 }
 
 void requestAbortRange(ThreadControl* control) {
     if (control) {
-        lockThread(control->mutex);
-        control->abortRequested = true;
-        unlockThread(control->mutex);
+        atomic_store_explicit(
+            &control->abortRequested,
+            true,
+            memory_order_relaxed
+        );
     }
 }
