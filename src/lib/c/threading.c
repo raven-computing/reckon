@@ -34,17 +34,17 @@ void deinitThreadControl(ThreadControl* control) {
 bool shouldAbortRange(ThreadControl* control) {
     bool abortRequested = false;
     if (control) {
-        lockThreadMutex(control->mutex);
+        lockThread(control->mutex);
         abortRequested = control->abortRequested;
-        unlockThreadMutex(control->mutex);
+        unlockThread(control->mutex);
     }
     return abortRequested;
 }
 
 void requestAbortRange(ThreadControl* control) {
     if (control) {
-        lockThreadMutex(control->mutex);
+        lockThread(control->mutex);
         control->abortRequested = true;
-        unlockThreadMutex(control->mutex);
+        unlockThread(control->mutex);
     }
 }

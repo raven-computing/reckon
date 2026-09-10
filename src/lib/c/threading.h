@@ -133,12 +133,12 @@ void deinitThreadMutex(RCN_NATIVE_HANDLE mutex);
  * Locks the specified thread mutex, blocking the calling thread until
  * the mutex becomes available.
  */
-void lockThreadMutex(RCN_NATIVE_HANDLE mutex);
+void lockThread(RCN_NATIVE_HANDLE mutex);
 
 /**
  * Unlocks the specified thread mutex, allowing other threads to acquire it.
  */
-void unlockThreadMutex(RCN_NATIVE_HANDLE mutex);
+void unlockThread(RCN_NATIVE_HANDLE mutex);
 
 #ifdef __cplusplus
 }

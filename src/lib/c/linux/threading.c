@@ -58,12 +58,12 @@ void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     free(nativeMutex);
 }
 
-void lockThreadMutex(RCN_NATIVE_HANDLE mutex) {
-    (void) pthread_mutex_lock((pthread_mutex_t*)mutex);
+void lockThread(RCN_NATIVE_HANDLE mutex) {
+    (void) pthread_mutex_lock((pthread_mutex_t*) mutex);
 }
 
-void unlockThreadMutex(RCN_NATIVE_HANDLE mutex) {
-    (void) pthread_mutex_unlock((pthread_mutex_t*)mutex);
+void unlockThread(RCN_NATIVE_HANDLE mutex) {
+    (void) pthread_mutex_unlock((pthread_mutex_t*) mutex);
 }
 
 size_t getSystemConcurrency(void) {
