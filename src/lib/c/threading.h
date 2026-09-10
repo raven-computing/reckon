@@ -30,15 +30,29 @@
 extern "C" {
 #endif
 
+/**
+ * An opaque handle representing a thread.
+ * The underlying implementation is platform-specific.
+ */
 typedef struct ThreadHandle {
     void* nativeHandle;
 } ThreadHandle;
 
+/**
+ * A control structure for managing thread execution, including
+ * synchronization and abort requests.
+ */
 typedef struct ThreadControl {
     void* nativeMutex;
     bool abortRequested;
 } ThreadControl;
 
+/**
+ * A structure encapsulating the work to be performed by a single thread.
+ * The `stats` field points to the `RcnCountStatistics` structure that is
+ * shared by potentially multiple worker threads. It will be updated with
+ * the computed results of a thread's work.
+ */
 typedef struct ThreadWork {
     RcnCountStatistics* stats;
     RcnStatOptions options;
@@ -46,32 +60,78 @@ typedef struct ThreadWork {
     ThreadControl* control;
 } ThreadWork;
 
+/**
+ * A function pointer type representing the routine executed by a thread.
+ */
 typedef void (*ThreadRoutine)(ThreadWork* arg);
 
+/**
+ * Initializes the specified `ThreadControl` struct, setting up the necessary
+ * synchronization primitives and preparing it for use.
+ */
 bool initThreadControl(ThreadControl* control);
 
+/**
+ * Deinitializes the specified `ThreadControl` struct, releasing any resources
+ * associated with it.
+ */
 void deinitThreadControl(ThreadControl* control);
 
+/**
+ * Indicates whether the current thread should abort its work.
+ */
 bool shouldAbortRange(ThreadControl* control);
 
+/**
+ * Requests that the current thread abort its work.
+ */
 void requestAbortRange(ThreadControl* control);
 
+/**
+ * Indicates the number of threads that can be used by the system
+ * to parallelize work.
+ */
 size_t getSystemConcurrency(void);
 
+/**
+ * Creates a new thread that executes the specified routine with the
+ * given argument. The routine is executed immediately upon thread creation.
+ * Returns `true` if the thread was successfully created and started.
+ * Returns `false` if an error occurred and the thread was not created or
+ * started as a result of that.
+ */
 bool createThread(
     ThreadHandle* handle,
     ThreadRoutine routine,
     ThreadWork* arg
 );
 
+/**
+ * Waits for the specified thread to complete its execution.
+ */
 void joinThread(ThreadHandle* handle);
 
+/**
+ * Initializes a thread mutex, allocating and setting up the necessary
+ * synchronization primitives.
+ * Returns `true` if the mutex was successfully initialized, `false` otherwise.
+ */
 bool initThreadMutex(void** mutex);
 
+/**
+ * Deinitializes a thread mutex, releasing any resources associated with it.
+ */
 void deinitThreadMutex(void* mutex);
 
+/**
+ * Locks the specified thread mutex, blocking the calling thread until
+ * the mutex becomes available.
+ */
 void lockThreadMutex(void* mutex);
 
+/**
+ * Unlocks the specified thread mutex, allowing other threads to acquire it.
+ */
 void unlockThreadMutex(void* mutex);
 
 #ifdef __cplusplus
