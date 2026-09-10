@@ -31,11 +31,17 @@ extern "C" {
 #endif
 
 /**
+ * Represents a native handle to some platform-specific object,
+ * like a thread or synchronization primitive.
+ */
+#define RCN_NATIVE_HANDLE void*
+
+/**
  * An opaque handle representing a thread.
  * The underlying implementation is platform-specific.
  */
 typedef struct ThreadHandle {
-    void* nativeHandle;
+    RCN_NATIVE_HANDLE nativeHandle;
 } ThreadHandle;
 
 /**
@@ -43,7 +49,7 @@ typedef struct ThreadHandle {
  * synchronization and abort requests.
  */
 typedef struct ThreadControl {
-    void* nativeMutex;
+    RCN_NATIVE_HANDLE nativeMutex;
     bool abortRequested;
 } ThreadControl;
 
@@ -116,23 +122,23 @@ void joinThread(ThreadHandle* handle);
  * synchronization primitives.
  * Returns `true` if the mutex was successfully initialized, `false` otherwise.
  */
-bool initThreadMutex(void** mutex);
+bool initThreadMutex(RCN_NATIVE_HANDLE* mutex);
 
 /**
  * Deinitializes a thread mutex, releasing any resources associated with it.
  */
-void deinitThreadMutex(void* mutex);
+void deinitThreadMutex(RCN_NATIVE_HANDLE mutex);
 
 /**
  * Locks the specified thread mutex, blocking the calling thread until
  * the mutex becomes available.
  */
-void lockThreadMutex(void* mutex);
+void lockThreadMutex(RCN_NATIVE_HANDLE mutex);
 
 /**
  * Unlocks the specified thread mutex, allowing other threads to acquire it.
  */
-void unlockThreadMutex(void* mutex);
+void unlockThreadMutex(RCN_NATIVE_HANDLE mutex);
 
 #ifdef __cplusplus
 }

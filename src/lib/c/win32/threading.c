@@ -36,7 +36,7 @@ static DWORD WINAPI rcnRun(LPVOID arg) {
     return 0;
 }
 
-bool initThreadMutex(void** mutex) {
+bool initThreadMutex(RCN_NATIVE_HANDLE* mutex) {
     CRITICAL_SECTION* nativeMutex = malloc(sizeof(CRITICAL_SECTION));
     if (!nativeMutex) {
         return false;
@@ -46,7 +46,7 @@ bool initThreadMutex(void** mutex) {
     return true;
 }
 
-void deinitThreadMutex(void* mutex) {
+void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     CRITICAL_SECTION* nativeMutex = mutex;
     if (!nativeMutex) {
         return;
@@ -55,11 +55,11 @@ void deinitThreadMutex(void* mutex) {
     free(nativeMutex);
 }
 
-void lockThreadMutex(void* mutex) {
+void lockThreadMutex(RCN_NATIVE_HANDLE mutex) {
     EnterCriticalSection((CRITICAL_SECTION*) mutex);
 }
 
-void unlockThreadMutex(void* mutex) {
+void unlockThreadMutex(RCN_NATIVE_HANDLE mutex) {
     LeaveCriticalSection((CRITICAL_SECTION*) mutex);
 }
 

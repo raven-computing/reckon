@@ -36,7 +36,7 @@ static void* rcnRun(void* arg) {
     return NULL;
 }
 
-bool initThreadMutex(void** mutex) {
+bool initThreadMutex(RCN_NATIVE_HANDLE* mutex) {
     pthread_mutex_t* nativeMutex = malloc(sizeof(pthread_mutex_t));
     if (!nativeMutex) {
         return false;
@@ -49,7 +49,7 @@ bool initThreadMutex(void** mutex) {
     return true;
 }
 
-void deinitThreadMutex(void* mutex) {
+void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     pthread_mutex_t* nativeMutex = mutex;
     if (!nativeMutex) {
         return;
@@ -58,11 +58,11 @@ void deinitThreadMutex(void* mutex) {
     free(nativeMutex);
 }
 
-void lockThreadMutex(void* mutex) {
+void lockThreadMutex(RCN_NATIVE_HANDLE mutex) {
     (void) pthread_mutex_lock((pthread_mutex_t*)mutex);
 }
 
-void unlockThreadMutex(void* mutex) {
+void unlockThreadMutex(RCN_NATIVE_HANDLE mutex) {
     (void) pthread_mutex_unlock((pthread_mutex_t*)mutex);
 }
 
