@@ -88,7 +88,7 @@
  * particular metric and input combination.
  * For more information, please refer to the official Reckon documentation.
  * 
- * The functions in this library are not MT-safe.
+ * The functions in this library are MT-safe.
  *
  * @see https://docs.raven-computing.com/reckon/latest
  * @author Phil Gaiser
