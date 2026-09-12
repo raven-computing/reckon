@@ -22,13 +22,19 @@
 
 #include "threading.h"
 
-typedef struct RcnThreadArg {
+/**
+ * The argument passed to CreateThread()
+ */
+typedef struct NativeThreadArg {
     ThreadRoutine routine;
     ThreadWork* arg;
-} RcnThreadArg;
+} NativeThreadArg;
 
+/**
+ * The start routine passed to CreateThread()
+ */
 static DWORD WINAPI rcnRun(LPVOID arg) {
-    RcnThreadArg* feeder = arg;
+    NativeThreadArg* feeder = arg;
     ThreadRoutine routine = feeder->routine;
     ThreadWork* threadArg = feeder->arg;
     free(feeder);
@@ -79,7 +85,7 @@ bool createThread(
     ThreadRoutine routine,
     ThreadWork* arg
 ) {
-    RcnThreadArg* feeder = malloc(sizeof(RcnThreadArg));
+    NativeThreadArg* feeder = malloc(sizeof(NativeThreadArg));
     if (!feeder) {
         return false;
     }

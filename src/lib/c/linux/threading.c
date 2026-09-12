@@ -22,13 +22,19 @@
 
 #include "threading.h"
 
-typedef struct RcnThreadArg {
+/**
+ * The argument passed to pthread_create()
+ */
+typedef struct NativeThreadArg {
     ThreadRoutine routine;
     ThreadWork* arg;
-} RcnThreadArg;
+} NativeThreadArg;
 
+/**
+ * The start routine passed to pthread_create()
+ */
 static void* rcnRun(void* arg) {
-    RcnThreadArg* feeder = (RcnThreadArg*) arg;
+    NativeThreadArg* feeder = (NativeThreadArg*) arg;
     ThreadRoutine routine = feeder->routine;
     ThreadWork* threadArg = feeder->arg;
     free(feeder);
@@ -80,7 +86,7 @@ bool createThread(
     ThreadWork* arg
 ) {
     pthread_t* nativeThread = malloc(sizeof(pthread_t));
-    RcnThreadArg* feeder = malloc(sizeof(RcnThreadArg));
+    NativeThreadArg* feeder = malloc(sizeof(NativeThreadArg));
     if (!nativeThread || !feeder) {
         free(nativeThread);
         free(feeder);
