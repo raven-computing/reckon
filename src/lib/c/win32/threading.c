@@ -107,7 +107,7 @@ bool createThread(
     return true;
 }
 
-void joinThread(ThreadHandle* handle) {
+void waitForThread(ThreadHandle* handle) {
     HANDLE nativeThread = (HANDLE) handle->instance;
     if (!nativeThread) {
         return;

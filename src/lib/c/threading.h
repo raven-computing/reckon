@@ -117,8 +117,9 @@ bool createThread(
 
 /**
  * Waits for the specified thread to complete its execution.
+ * This function blocks the calling thread until the specified thread finishes.
  */
-void joinThread(ThreadHandle* handle);
+void waitForThread(ThreadHandle* handle);
 
 /**
  * Initializes a thread mutex, allocating and setting up the necessary

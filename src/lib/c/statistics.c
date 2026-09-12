@@ -466,7 +466,7 @@ static bool parallelizeCount(
     }
 
     for (size_t i = 0; i < createdThreads; ++i) {
-        joinThread(&threads[i]);
+        waitForThread(&threads[i]);
     }
 
     deinitThreadControl(&control);
