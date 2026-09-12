@@ -103,18 +103,18 @@ bool createThread(
         free(feeder);
         return false;
     }
-    handle->handle = nativeThread;
+    handle->instance = nativeThread;
     return true;
 }
 
 void joinThread(ThreadHandle* handle) {
-    HANDLE nativeThread = (HANDLE) handle->handle;
+    HANDLE nativeThread = (HANDLE) handle->instance;
     if (!nativeThread) {
         return;
     }
     WaitForSingleObject(nativeThread, INFINITE);
     CloseHandle(nativeThread);
-    handle->handle = NULL;
+    handle->instance = NULL;
 }
 
 #endif // _WIN32

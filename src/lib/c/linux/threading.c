@@ -99,18 +99,18 @@ bool createThread(
         free(nativeThread);
         return false;
     }
-    handle->handle = nativeThread;
+    handle->instance = nativeThread;
     return true;
 }
 
 void joinThread(ThreadHandle* handle) {
-    pthread_t* nativeThread = (pthread_t*) handle->handle;
+    pthread_t* nativeThread = (pthread_t*) handle->instance;
     if (!nativeThread) {
         return;
     }
     (void) pthread_join(*nativeThread, NULL);
     free(nativeThread);
-    handle->handle = NULL;
+    handle->instance = NULL;
 }
 
 #endif // __linux__

@@ -42,7 +42,7 @@ extern "C" {
  * The underlying implementation is platform-specific.
  */
 typedef struct ThreadHandle {
-    RCN_NATIVE_HANDLE handle;
+    RCN_NATIVE_HANDLE instance;
 } ThreadHandle;
 
 /**
