@@ -17,6 +17,7 @@
 #ifdef __linux__
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <pthread.h>

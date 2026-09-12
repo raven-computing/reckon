@@ -17,6 +17,7 @@
 #ifdef _WIN32
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <windows.h>
 
