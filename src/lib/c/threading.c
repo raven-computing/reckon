@@ -26,10 +26,8 @@ bool initThreadControl(ThreadControl* control) {
 }
 
 void deinitThreadControl(ThreadControl* control) {
-    if (control) {
-        deinitThreadMutex(control->mutex);
-        control->mutex = NULL;
-    }
+    deinitThreadMutex(control->mutex);
+    control->mutex = NULL;
 }
 
 bool shouldAbortRange(ThreadControl* control) {

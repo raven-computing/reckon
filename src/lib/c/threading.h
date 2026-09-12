@@ -86,11 +86,13 @@ void deinitThreadControl(ThreadControl* control);
 
 /**
  * Indicates whether the current thread should abort its work.
+ * The `control` argument may be `NULL` in a single-threaded context.
  */
 bool shouldAbortRange(ThreadControl* control);
 
 /**
  * Requests that the current thread abort its work.
+ * The `control` argument may be `NULL` in a single-threaded context.
  */
 void requestAbortRange(ThreadControl* control);
 
