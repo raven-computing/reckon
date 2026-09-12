@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <assert.h>
 #include <pthread.h>
 
 #include "threading.h"
@@ -62,16 +63,19 @@ void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     if (!nativeMutex) {
         return;
     }
-    (void) pthread_mutex_destroy(nativeMutex);
+    int status = pthread_mutex_destroy(nativeMutex);
+    assert(status == 0);
     free(nativeMutex);
 }
 
 void lockThread(RCN_NATIVE_HANDLE mutex) {
-    (void) pthread_mutex_lock((pthread_mutex_t*) mutex);
+    int status = pthread_mutex_lock((pthread_mutex_t*) mutex);
+    assert(status == 0);
 }
 
 void unlockThread(RCN_NATIVE_HANDLE mutex) {
-    (void) pthread_mutex_unlock((pthread_mutex_t*) mutex);
+    int status = pthread_mutex_unlock((pthread_mutex_t*) mutex);
+    assert(status == 0);
 }
 
 size_t getSystemConcurrency(void) {
@@ -110,7 +114,8 @@ void waitForThread(ThreadHandle* handle) {
     if (!nativeThread) {
         return;
     }
-    (void) pthread_join(*nativeThread, NULL);
+    int status = pthread_join(*nativeThread, NULL);
+    assert(status == 0);
     free(nativeThread);
     handle->instance = NULL;
 }
