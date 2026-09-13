@@ -54,6 +54,7 @@ typedef struct AppArgs {
     bool linesOnly;      // Option: `-l|--lines`
     bool showFiles;      // Option: `--show-files`
     bool showAllFiles;   // Option: `--show-all-files`
+    bool noParallelization; // Option: `--no-parallelization`
     bool stopOnError;    // Option: `--stop-on-error`
     bool strict;         // Option: `--strict`
     bool verbose;        // Option: `--verbose`

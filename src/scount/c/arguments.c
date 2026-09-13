@@ -37,6 +37,8 @@ AppArgs parseArgs(int argc, char** argv) {
             args.showFiles = true;
         } else if (strcmp(argv[i], "--show-all-files") == 0) {
             args.showAllFiles = true;
+        } else if (strcmp(argv[i], "--no-parallelization") == 0) {
+            args.noParallelization = true;
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
         } else if (strcmp(argv[i], "--strict") == 0) {
@@ -128,6 +130,11 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--show-all-files]  Show a table of all individual files in the result.");
     logI("                      All files are listed without any limitation.");
+    logI(" ");
+    logI("  [--no-parallelization]");
+    logI("                      Disable multithreaded file processing.");
+    logI("                      By default, scount may process files in parallel");
+    logI("                      when multiple CPU cores are available.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");
