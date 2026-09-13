@@ -65,17 +65,20 @@ void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     }
     int status = pthread_mutex_destroy(nativeMutex);
     assert(status == 0);
+    (void) status;
     free(nativeMutex);
 }
 
 void lockThread(RCN_NATIVE_HANDLE mutex) {
     int status = pthread_mutex_lock((pthread_mutex_t*) mutex);
     assert(status == 0);
+    (void) status;
 }
 
 void unlockThread(RCN_NATIVE_HANDLE mutex) {
     int status = pthread_mutex_unlock((pthread_mutex_t*) mutex);
     assert(status == 0);
+    (void) status;
 }
 
 size_t getSystemConcurrency(void) {
@@ -116,6 +119,7 @@ void waitForThread(ThreadHandle* handle) {
     }
     int status = pthread_join(*nativeThread, NULL);
     assert(status == 0);
+    (void) status;
     free(nativeThread);
     handle->instance = NULL;
 }
