@@ -22,6 +22,7 @@
 
 bool initThreadControl(ThreadControl* control) {
     atomic_init(&control->abortRequested, false);
+    control->mutex = NULL;
     return initThreadMutex(&control->mutex);
 }
 
