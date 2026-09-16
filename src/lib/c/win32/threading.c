@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <assert.h>
 #include <windows.h>
 
 #include "threading.h"
@@ -113,8 +114,12 @@ void waitForThread(ThreadHandle* handle) {
     if (!nativeThread) {
         return;
     }
-    WaitForSingleObject(nativeThread, INFINITE);
-    CloseHandle(nativeThread);
+    DWORD status = WaitForSingleObject(nativeThread, INFINITE);
+    assert(status == WAIT_OBJECT_0);
+    (void) status;
+    BOOL ok = CloseHandle(nativeThread);
+    assert(ok);
+    (void) ok;
     handle->instance = NULL;
 }
 
