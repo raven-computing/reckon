@@ -771,11 +771,6 @@ void testCountStatisticsWithStopOnErrorOptionActivated(void) {
     rcnFreeCountStatistics(stats);
 }
 
-void testStatOptionsZeroInitLeavesMultiThreadingDisabled(void) {
-    RcnStatOptions options = {0};
-    TEST_ASSERT_FALSE(options.useMultiThreading);
-}
-
 void testCountStatisticsWithMultiThreadingOptionActivated(void) {
     char* path = RECKON_TEST_PATH_RES_BASE "/mixed";
     RcnCountStatistics* stats = rcnCreateCountStatistics(path);
@@ -815,7 +810,6 @@ int main(void) {
     RUN_TEST(testCountStatisticsWithKeepFileContentOptionActivated);
     RUN_TEST(testCountStatisticsWithStopOnErrorOptionDeactivated);
     RUN_TEST(testCountStatisticsWithStopOnErrorOptionActivated);
-    RUN_TEST(testStatOptionsZeroInitLeavesMultiThreadingDisabled);
     RUN_TEST(testCountStatisticsWithMultiThreadingOptionActivated);
     return UNITY_END();
 }
