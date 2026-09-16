@@ -149,14 +149,6 @@ set_target_properties(
     VISIBILITY_INLINES_HIDDEN True
 )
 
-if(MSVC)
-    target_compile_options(
-        ${RECKON_TARGET_LIB}
-        PRIVATE
-        /experimental:c11atomics
-    )
-endif()
-
 set(RECKON_EXPORT_HEADER
     "${RECKON_GENERATED_HEADERS}/${RECKON_TARGET_LIB}_export.h"
 )
