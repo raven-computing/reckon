@@ -421,14 +421,10 @@ static bool parallelizeCount(
 ) {
     ThreadHandle* threads = calloc(workerCount, sizeof(ThreadHandle));
     ThreadWork* workItems = calloc(workerCount, sizeof(ThreadWork));
-    if (!threads || !workItems) {
-        free(threads);
-        free(workItems);
-        return false;
-    }
-
     ThreadControl control;
-    if (!initThreadControl(&control)) {
+    const bool ThreadCtlOk = initThreadControl(&control);
+    if (!threads || !workItems || !ThreadCtlOk) {
+        deinitThreadControl(&control);
         free(threads);
         free(workItems);
         return false;
