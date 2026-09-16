@@ -398,11 +398,9 @@ static void processFileRange(
         }
 
         const bool ok = count(options, file, result, detected);
-        if (!ok) {
-            if (options.stopOnError || hasCriticalError(result->state)) {
-                requestAbortRange(control);
-                break;
-            }
+        if (!ok && (options.stopOnError || hasCriticalError(result->state))) {
+            requestAbortRange(control);
+            break;
         }
     }
 }
