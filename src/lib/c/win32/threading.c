@@ -96,7 +96,7 @@ bool createThread(
     HANDLE nativeThread = CreateThread(
         NULL,
         0,
-        rcnRun,
+        (LPTHREAD_START_ROUTINE) rcnRun,
         feeder,
         0,
         NULL
