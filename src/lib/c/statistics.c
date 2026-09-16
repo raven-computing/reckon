@@ -182,20 +182,18 @@ static bool checkIntermediateResultState(
     RcnCountResultGroup* resultGroup,
     RcnResultState state
 ) {
-    switch (state.errorCode) {
-        case RCN_ERR_NONE:
-            return true;
-        default:
-            resultGroup->logicalLines = 0;
-            resultGroup->codeLines = 0;
-            resultGroup->physicalLines = 0;
-            resultGroup->words = 0;
-            resultGroup->characters = 0;
-            resultGroup->sourceSize = 0;
-            resultGroup->isProcessed = false;
-            resultGroup->state = state;
-        }
-        return false;
+    if (state.errorCode == RCN_ERR_NONE) {
+        return true;
+    }
+    resultGroup->logicalLines = 0;
+    resultGroup->codeLines = 0;
+    resultGroup->physicalLines = 0;
+    resultGroup->words = 0;
+    resultGroup->characters = 0;
+    resultGroup->sourceSize = 0;
+    resultGroup->isProcessed = false;
+    resultGroup->state = state;
+    return false;
 }
 
 static inline bool countLogicalLines(
