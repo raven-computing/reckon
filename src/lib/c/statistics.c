@@ -412,24 +412,29 @@ static void runCountThread(ThreadWork* arg) {
     );
 }
 
-static bool parallelizeCount(
+static RcnResultState parallelizeCount(
     RcnCountStatistics* stats,
     RcnStatOptions options,
     size_t workerCount
 ) {
+    RcnResultState state = {0};
     ThreadHandle* threads = calloc(workerCount, sizeof(ThreadHandle));
     ThreadWork* workItems = calloc(workerCount, sizeof(ThreadWork));
     if (!threads || !workItems) {
         free(threads);
         free(workItems);
-        return false;
+        state.errorCode = RCN_ERR_ALLOC_FAILURE;
+        state.errorMessage = "Failed to allocate memory for worker threads";
+        return state;
     }
 
     ThreadControl control;
     if (!initThreadControl(&control)) {
         free(threads);
         free(workItems);
-        return false;
+        state.errorCode = RCN_ERR_ALLOC_FAILURE;
+        state.errorMessage = "Failed to initialize thread control object";
+        return state;
     }
 
     const size_t baseChunkSize = stats->count.size / workerCount;
@@ -468,7 +473,16 @@ static bool parallelizeCount(
     deinitThreadControl(&control);
     free(threads);
     free(workItems);
-    return createdAllThreads;
+    if (createdAllThreads) {
+        state.ok = true;
+    } else {
+        state.errorCode = RCN_ERR_UNKNOWN;
+        state.errorMessage = (
+            "Failed to create all worker threads. "
+            "An unknown error has occurred."
+        );
+    }
+    return state;
 }
 
 RcnCountStatistics* rcnCreateCountStatistics(const char* path) {
@@ -585,11 +599,13 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
 
     const size_t workerCount = getWorkerCount(stats->count.size, options);
     if (workerCount > 1) {
-        const bool ok = parallelizeCount(stats, options, workerCount);
-        if (!ok) {
-            stats->state.ok = false;
-            stats->state.errorCode = RCN_ERR_UNKNOWN;
-            stats->state.errorMessage = "Failed to run in parallel";
+        const RcnResultState parallelizationState = parallelizeCount(
+            stats,
+            options,
+            workerCount
+        );
+        if (!parallelizationState.ok) {
+            stats->state = parallelizationState;
         }
     } else {
         processFileRange(
