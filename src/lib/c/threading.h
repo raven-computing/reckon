@@ -75,24 +75,28 @@ typedef void (*ThreadRoutine)(ThreadWork* arg);
 /**
  * Initializes the specified `ThreadControl` struct, setting up the necessary
  * synchronization primitives and preparing it for use.
+ * The `control` argument must not be `NULL`.
  */
 bool initThreadControl(ThreadControl* control);
 
 /**
  * Deinitializes the specified `ThreadControl` struct, releasing any resources
  * associated with it.
+ * The `control` argument must not be `NULL`.
  */
 void deinitThreadControl(ThreadControl* control);
 
 /**
- * Indicates whether the current thread should abort its work.
- * The `control` argument may be `NULL` in a single-threaded context.
+ * Indicates whether threads bound to the given thread control should abort
+ * their work. The `control` argument may be `NULL` in a
+ * single-threaded context.
  */
 bool shouldAbortRange(ThreadControl* control);
 
 /**
- * Requests that the current thread abort its work.
- * The `control` argument may be `NULL` in a single-threaded context.
+ * Requests that all threads bound to the given thread control abort
+ * their work. The `control` argument may be `NULL` in a single-threaded
+ * context.
  */
 void requestAbortRange(ThreadControl* control);
 
