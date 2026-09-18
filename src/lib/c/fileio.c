@@ -300,7 +300,8 @@ bool shouldIgnoreDirectory(const char* name) {
         || strcmp(name, "bin") == 0
         || strcmp(name, "target") == 0
         || strcmp(name, "dist") == 0
-        || strcmp(name, "node_modules") == 0;
+        || strcmp(name, "node_modules") == 0
+        || strcmp(name, "__pycache__") == 0;
 }
 
 bool readSourceFileContent(RcnSourceFile* file) {
