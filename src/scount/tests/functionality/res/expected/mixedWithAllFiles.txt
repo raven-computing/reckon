@@ -1,5 +1,5 @@
 Directory: mixed
-Scanned files: 41
+Scanned all 41 found files
 
   o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | CMakeLists.txt           |    n/a    |     7     |    10     |    21     |    250    |    250    |
