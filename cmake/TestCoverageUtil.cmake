@@ -81,7 +81,10 @@ function(add_code_coverage target_name)
     target_compile_options(
         ${target_name}
         PRIVATE
-        -ftest-coverage -fprofile-arcs -fno-default-inline
+        -ftest-coverage
+        -fprofile-arcs
+        -fprofile-update=atomic
+        -fno-default-inline
         $<$<COMPILE_LANGUAGE:CXX>:-fno-elide-constructors>
     )
     target_link_libraries(

@@ -88,7 +88,7 @@
  * particular metric and input combination.
  * For more information, please refer to the official Reckon documentation.
  * 
- * The functions in this library are not MT-safe.
+ * The functions in this library are MT-safe.
  *
  * @see https://docs.raven-computing.com/reckon/latest
  * @author Phil Gaiser
@@ -1004,6 +1004,17 @@ typedef struct RcnStatOptions {
      * @since 1.3.0
      */
     bool strict;
+
+    /**
+     * Whether to use multi-threading when processing multiple files.
+     * 
+     * If this is set to `true`, compound operations may distribute eligible
+     * input files across multiple worker threads when the underlying host
+     * provides more than one processor core.
+     * 
+     * @since 1.9.0
+     */
+    bool useMultiThreading;
 
 } RcnStatOptions;
 
