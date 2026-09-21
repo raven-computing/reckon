@@ -45,6 +45,11 @@ Options:
 
   [--skip-tests]  Do not build any tests.
 
+  [--thread-sanitizer]
+                  Use a thread sanitizer (TSAN) instead of the default set of sanitizers when
+                  building and running. Implies --sanitizers. This option is only available
+                  on Linux.
+
   [-?|--help]     Show this help message.
 EOS
 )
@@ -64,6 +69,7 @@ ARG_IGNORE_WARNINGS=false;
 ARG_ONLY_LIBS=false;
 ARG_SKIP_CONFIG=false;
 ARG_SKIP_TESTS=false;
+ARG_THREAD_SANITIZER=false;
 ARG_SHOW_HELP=false;
 
 # Parse all arguments given to this script
@@ -123,6 +129,11 @@ for arg in "$@"; do
     ;;
     --skip-tests)
     ARG_SKIP_TESTS=true;
+    shift
+    ;;
+    --thread-sanitizers)
+    ARG_THREAD_SANITIZER=true;
+    ARG_SANITIZERS=true;
     shift
     ;;
     -\?|--help)
@@ -243,6 +254,7 @@ IGNORE_WARNINGS="OFF";
 BUILD_ONLY_LIBS=OFF;
 BUILD_ANALYZE="OFF";
 BUILD_WITH_SANITIZERS="OFF";
+BUILD_WITH_THREAD_SANITIZER="OFF";
 BUILD_WITH_COVERAGE="OFF";
 BUILD_WITH_LTO="ON";
 
@@ -260,6 +272,9 @@ if [[ $ARG_SKIP_TESTS == true ]]; then
 fi
 if [[ $ARG_SANITIZERS == true ]]; then
   BUILD_WITH_SANITIZERS="ON";
+fi
+if [[ $ARG_THREAD_SANITIZER == true ]]; then
+  BUILD_WITH_THREAD_SANITIZER="ON";
 fi
 if [[ $ARG_DISABLE_LTO == true ]]; then
   BUILD_WITH_LTO="OFF";
@@ -294,6 +309,7 @@ if [[ $ARG_SKIP_CONFIG == false ]]; then
         -DRECKON_BUILD_SHARED_LIBS="$BUILD_SHARED_LIBS" \
         -DRECKON_BUILD_ONLY_LIBS="$BUILD_ONLY_LIBS" \
         -DRECKON_USE_SANITIZERS="$BUILD_WITH_SANITIZERS" \
+        -DRECKON_USE_THREAD_SANITIZER="$BUILD_WITH_THREAD_SANITIZER" \
         -DRECKON_BUILD_TEST_COVERAGE="$BUILD_WITH_COVERAGE" \
         -DRECKON_ENABLE_LTO="$BUILD_WITH_LTO" ..;
 

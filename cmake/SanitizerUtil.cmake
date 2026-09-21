@@ -34,19 +34,48 @@
 #       The name of the target to which sanitizers will be added.
 #       This argument is mandatory.
 #
+#   USE_THREAD_SANITIZER:
+#       Optional argument. If specified, enables thread sanitizer (TSAN)
+#       instead of the default Address/Leak/Undefined sanitizers.
+#       This option can only be used on Linux.
+#
 # Example:
 #   add_sanitizers(mytarget)
+#   add_sanitizers(mytarget USE_THREAD_SANITIZER)
 #
 function(add_sanitizers target_name)
-    set(
-        SAN_COMPILE_FLAGS_LINUX
-        "-fsanitize=address" "-fsanitize=leak" "-fsanitize=undefined"
-        "-fno-omit-frame-pointer"
-    )
-    set(
-        SAN_LINK_FLAGS_LINUX
-        "-fsanitize=address" "-fsanitize=leak" "-fsanitize=undefined"
-    )
+
+    cmake_parse_arguments(ARG "USE_THREAD_SANITIZER" "" "" ${ARGN})
+
+    if(ARG_USE_THREAD_SANITIZER)
+        if(MSVC)
+            message(
+                WARNING
+                "Thread sanitizer is not supported on MSVC. "
+                "Falling back to default sanitizers."
+            )
+        endif()
+        set(
+            SAN_COMPILE_FLAGS_LINUX
+            "-fsanitize=thread"
+            "-fno-omit-frame-pointer"
+        )
+        set(
+            SAN_LINK_FLAGS_LINUX
+            "-fsanitize=thread"
+        )
+    else()
+        set(
+            SAN_COMPILE_FLAGS_LINUX
+            "-fsanitize=address" "-fsanitize=leak" "-fsanitize=undefined"
+            "-fno-omit-frame-pointer"
+        )
+        set(
+            SAN_LINK_FLAGS_LINUX
+            "-fsanitize=address" "-fsanitize=leak" "-fsanitize=undefined"
+        )
+    endif()
+
     set(SAN_COMPILE_FLAGS_WINDOWS "/fsanitize=address" "/Oy-" "/Zi")
     set(SAN_LINK_FLAGS_WINDOWS "/INCREMENTAL:NO")
 
@@ -62,5 +91,7 @@ function(add_sanitizers target_name)
         $<$<PLATFORM_ID:Linux>:${SAN_LINK_FLAGS_LINUX}>
         $<$<PLATFORM_ID:Windows>:${SAN_LINK_FLAGS_WINDOWS}>
     )
+
+    message(STATUS "Sanitizer support enabled for target ${target_name}")
 
 endfunction()

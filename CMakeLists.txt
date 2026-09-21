@@ -21,6 +21,13 @@ option(
 option(RECKON_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(RECKON_BUILD_ONLY_LIBS "Build only the Reckon libraries" OFF)
 option(RECKON_USE_SANITIZERS "Enable/disable the use of sanitizers" OFF)
+option(
+    RECKON_USE_THREAD_SANITIZER
+    "Enable/disable the use of the thread sanitizer (TSAN). \
+    Implies RECKON_USE_SANITIZERS=ON. When enabled, a thread sanitizer \
+    will be used instead of the default set of sanitizers."
+    OFF
+)
 option(RECKON_ENABLE_LTO "Enable/disable link-time optimization (LTO)" ON)
 option(
     RECKON_BUILD_TEST_COVERAGE
@@ -43,6 +50,11 @@ endif()
 
 if(EXISTS "${PROJECT_SOURCE_DIR}/VERSION")
     file(READ "${PROJECT_SOURCE_DIR}/VERSION" RECKON_VERSION)
+endif()
+
+if(RECKON_USE_THREAD_SANITIZER)
+    set(RECKON_USE_SANITIZERS ON)
+    set(RECKON_USE_THREAD_SANITIZER "USE_THREAD_SANITIZER")
 endif()
 
 include(cmake/BuildUtil.cmake)

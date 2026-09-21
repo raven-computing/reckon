@@ -112,7 +112,7 @@ if(RECKON_SOURCE_ANALYSIS)
 endif()
 
 if(RECKON_USE_SANITIZERS)
-    add_sanitizers(${RECKON_TARGET_LIB_OBJ})
+    add_sanitizers(${RECKON_TARGET_LIB_OBJ} ${RECKON_USE_THREAD_SANITIZER})
 endif()
 
 #==================================[ TARGET ]==================================
