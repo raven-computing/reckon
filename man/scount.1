@@ -59,6 +59,11 @@ Compute and display only line-specific metrics.
 This includes logical lines of code (LLC), physical lines of code (LOC)
 and hard physical lines (PHL).
 .TP
+.B \-\-no\-parallelization
+Disable multithreaded file processing. By default, multiple files may be processed in parallel.
+This option will result in all files being processed by a single thread.
+.br
+.TP
 .B \-\-show\-files
 Show a table of individual files in the result when the given input path refers to a directory.
 .br
