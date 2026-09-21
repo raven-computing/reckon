@@ -131,7 +131,7 @@ for arg in "$@"; do
     ARG_SKIP_TESTS=true;
     shift
     ;;
-    --thread-sanitizers)
+    --thread-sanitizer)
     ARG_THREAD_SANITIZER=true;
     ARG_SANITIZERS=true;
     shift
