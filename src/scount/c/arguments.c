@@ -120,10 +120,10 @@ void showHelpText(void) {
     logI("Options:");
     logI(" ");
     logI("  [--annotate-counts] Mark counted logical lines and output the result.");
-    logI("                      This option can only be used on a single file input.");
+    logI("                      This option can only be used on a single regular file input.");
     logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
-    logI("                      This includes logical and physical lines.");
+    logI("                      This includes logical and physical lines of code, and hard physical lines.");
     logI(" ");
     logI("  [--no-parallelization]");
     logI("                      Disable multithreaded file processing.");
