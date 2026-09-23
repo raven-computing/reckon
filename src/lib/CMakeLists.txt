@@ -92,6 +92,10 @@ if("${RECKON_MAIN_LIB_TYPE}" STREQUAL "SHARED")
     )
 endif()
 
+if(RECKON_OPTIMIZE_NATIVE)
+    enable_native_optimizations(${RECKON_TARGET_LIB_OBJ})
+endif()
+
 if(MSVC)
     target_compile_options(
         ${RECKON_TARGET_LIB_OBJ}

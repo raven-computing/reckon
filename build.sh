@@ -33,6 +33,12 @@ Options:
 
   [--only-libs]   Only build the libraries.
 
+  [--optimize-native]
+                  Compile with all optimizations that are natively available for the system the
+                  build is executed on. This might produce more performant code but the built
+                  program might not run on other machines. Do not use this option if you intend
+                  to redistribute the built program.
+
   [--package]     Build a native installable package. The scount target must already be built.
 
   [--sanitizers]  Use sanitizers when building and running.
@@ -67,6 +73,7 @@ ARG_DISABLE_LTO=false;
 ARG_DOCS=false;
 ARG_IGNORE_WARNINGS=false;
 ARG_ONLY_LIBS=false;
+ARG_OPTIMIZE_NATIVE=false;
 ARG_SKIP_CONFIG=false;
 ARG_SKIP_TESTS=false;
 ARG_THREAD_SANITIZER=false;
@@ -117,6 +124,10 @@ for arg in "$@"; do
     ;;
     --only-libs)
     ARG_ONLY_LIBS=true;
+    shift
+    ;;
+    --optimize-native)
+    ARG_OPTIMIZE_NATIVE=true;
     shift
     ;;
     --docs)
@@ -252,6 +263,7 @@ fi
 BUILD_TESTS="ON";
 IGNORE_WARNINGS="OFF";
 BUILD_ONLY_LIBS=OFF;
+BUILD_OPTIMIZE_NATIVE=OFF;
 BUILD_ANALYZE="OFF";
 BUILD_WITH_SANITIZERS="OFF";
 BUILD_WITH_THREAD_SANITIZER="OFF";
@@ -263,6 +275,9 @@ if [[ $ARG_IGNORE_WARNINGS == true ]]; then
 fi
 if [[ $ARG_ONLY_LIBS == true ]]; then
   BUILD_ONLY_LIBS=ON;
+fi
+if [[ $ARG_OPTIMIZE_NATIVE == true ]]; then
+  BUILD_OPTIMIZE_NATIVE="ON";
 fi
 if [[ $ARG_ANALYZE == true ]]; then
   BUILD_ANALYZE="ON";
@@ -308,6 +323,7 @@ if [[ $ARG_SKIP_CONFIG == false ]]; then
         -DRECKON_BUILD_TESTS="$BUILD_TESTS" \
         -DRECKON_BUILD_SHARED_LIBS="$BUILD_SHARED_LIBS" \
         -DRECKON_BUILD_ONLY_LIBS="$BUILD_ONLY_LIBS" \
+        -DRECKON_OPTIMIZE_NATIVE="$BUILD_OPTIMIZE_NATIVE" \
         -DRECKON_USE_SANITIZERS="$BUILD_WITH_SANITIZERS" \
         -DRECKON_USE_THREAD_SANITIZER="$BUILD_WITH_THREAD_SANITIZER" \
         -DRECKON_BUILD_TEST_COVERAGE="$BUILD_WITH_COVERAGE" \

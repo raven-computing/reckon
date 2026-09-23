@@ -269,3 +269,41 @@ function(set_link_time_optimization enabled)
         message(STATUS "LTO is not supported: ${info}")
     endif()
 endfunction()
+
+# Enables build optimizations that are natively available for the system
+# the build is executed on.
+#
+# This might produce more performant code but the built target might not run
+# on machines other than the one it was built on. Do not use this optimization
+# if you intend to create redistributables.
+#
+# This feature is currently only available when compiling with GCC or Clang.
+#
+# Arguments:
+#
+#   target_name:
+#       The name of the target to optimize. This argument is mandatory.
+#
+# Example:
+#   enable_native_optimizations(mytarget)
+#
+function(enable_native_optimizations target_name)
+    if(MSVC)
+        message(
+            WARNING
+            "Native optimizations are not available for MSVC. "
+            "Using default optimizations"
+        )
+        return()
+    endif()
+    message(STATUS "Target ${target_name} will be optimized for this machine")
+    set(FLAGS_GCC_AND_CLANG "-march=native")
+    target_compile_options(
+        ${target_name}
+        PRIVATE
+        $<$<C_COMPILER_ID:GNU>:${FLAGS_GCC_AND_CLANG}>
+        $<$<C_COMPILER_ID:Clang>:${FLAGS_GCC_AND_CLANG}>
+        $<$<CXX_COMPILER_ID:GNU>:${FLAGS_GCC_AND_CLANG}>
+        $<$<CXX_COMPILER_ID:Clang>:${FLAGS_GCC_AND_CLANG}>
+    )
+endfunction()

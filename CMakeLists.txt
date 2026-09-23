@@ -20,6 +20,7 @@ option(
 )
 option(RECKON_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(RECKON_BUILD_ONLY_LIBS "Build only the Reckon libraries" OFF)
+option(RECKON_OPTIMIZE_NATIVE "Optimize build for the native host" OFF)
 option(RECKON_USE_SANITIZERS "Enable/disable the use of sanitizers" OFF)
 option(
     RECKON_USE_THREAD_SANITIZER

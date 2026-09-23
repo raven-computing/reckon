@@ -42,6 +42,10 @@ set_target_properties(
     C_STANDARD_REQUIRED True
 )
 
+if(RECKON_OPTIMIZE_NATIVE)
+    enable_native_optimizations(${RECKON_TARGET_APPLICATION_CORE})
+endif()
+
 enable_compiler_warnings(
     ${RECKON_TARGET_APPLICATION_CORE}
     ${RECKON_IGNORE_WARNINGS}
