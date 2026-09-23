@@ -186,6 +186,13 @@ function assert_exit_status() {
     _print_test_failure_loc;
     _assertion_failure "Expected exit status ${expected_exit_status}" \
                        "but was ${actual_exit_status}";
+    if [[ "$expected_exit_status" == "0" ]]; then
+      local stderr_output="$(cat "$TEST_TARGET_FILE_STDERR")";
+      if [ -n "$stderr_output" ]; then
+        echo "The captured error output on stderr is:";
+        _print_actual "$stderr_output";
+      fi
+    fi
     exit $EXIT_TEST_FAILURE;
   fi
   return $EXIT_SUCCESS;
