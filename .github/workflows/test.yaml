@@ -191,6 +191,33 @@ jobs:
         shell: bash
         run: bash test.sh
 
+  test-thread-sanitizer:
+    name: 'Thread Sanitizer'
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 10
+    env:
+      CC: gcc
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v6
+
+      - name: Cache Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v5
+        with:
+          key: cmake-deps-src-${{ hashFiles('Dependencies.cmake.sha256') }}
+          restore-keys: |
+            cmake-deps-src-
+          enableCrossOsArchive: true
+          path: .cache/cmake_deps_src
+
+      - name: 'Build With Thread Sanitizer Enabled'
+        run: bash build.sh --debug --thread-sanitizer
+
+      - name: 'Execute Test Suite'
+        run: bash test.sh
+
   test-coverage:
     name: 'Coverage'
     runs-on: ubuntu-latest
