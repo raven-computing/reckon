@@ -63,11 +63,11 @@ void deinitThreadMutex(RCN_NATIVE_HANDLE mutex) {
     free(nativeMutex);
 }
 
-void lockThreadMutex(RCN_NATIVE_HANDLE mutex) {
+void lockThread(RCN_NATIVE_HANDLE mutex) {
     EnterCriticalSection((LPCRITICAL_SECTION) mutex);
 }
 
-void unlockThreadMutex(RCN_NATIVE_HANDLE mutex) {
+void unlockThread(RCN_NATIVE_HANDLE mutex) {
     LeaveCriticalSection((LPCRITICAL_SECTION) mutex);
 }
 
