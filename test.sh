@@ -231,10 +231,18 @@ if [[ $ARG_COVERAGE == true ]]; then
 fi
 
 BUILD_CONFIGURATION="";
+TSAN_ENABLED=false;
 # Determine the build configuration of the last build.
 if [ -f "CMakeCache.txt" ]; then
   BUILD_CONFIGURATION="$(grep --max-count=1 CMAKE_BUILD_TYPE CMakeCache.txt \
                          | cut  --delimiter='=' --fields=2)";
+
+  TSAN_CONFIG_VALUE="$(grep --max-count=1 RECKON_USE_THREAD_SANITIZER CMakeCache.txt \
+                         | cut  --delimiter='=' --fields=2)";
+
+  if [[ "$TSAN_CONFIG_VALUE" == "ON" ]]; then
+    TSAN_ENABLED=true;
+  fi
 fi
 if [ -z "$BUILD_CONFIGURATION" ]; then
   if [ -d "bin/Debug" ]; then
@@ -284,8 +292,15 @@ fi
 # UB-Sanitizer options.
 export UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1";
 
+# If TSAN was enabled for the build, ASLR is disabled for the test run
+# otherwise on certain compiler versions there will be crashes.
+set_aslr="";
+if [[ $TSAN_ENABLED == true ]]; then
+  set_aslr="setarch $(uname -m) --addr-no-randomize";
+fi
+
 # Run tests with CTest
-ctest --output-on-failure \
+$set_aslr ctest --output-on-failure \
       --build-config "$BUILD_CONFIGURATION" \
       $CTEST_ARG_STOP_ON_FAILURE \
       $CTEST_LABEL_OPT $CTEST_LABEL_OPT_ARG;
