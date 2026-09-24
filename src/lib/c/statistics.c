@@ -125,6 +125,7 @@ static void aggregateStatistics(
     if (!stats->state.ok) {
         return;
     }
+    RCN_LOG_DBG("Aggregating computed statistics");
     resetAggregateStatistics(stats);
     stats->state.ok = true;
     stats->state.errorCode = RCN_ERR_NONE;
