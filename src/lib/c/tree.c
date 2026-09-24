@@ -23,9 +23,10 @@
 #include "evaluation.h"
 
 #ifdef RECKON_DEBUG
-#define RECKON_LOG_SYNTAX_ERRORS \
-    RCN_LOG_DBG("[ERROR] Syntax error in file detected") \
-    traverseTree(rootNode, showNodeSyntaxError, trace);
+#define RECKON_LOG_SYNTAX_ERRORS do { \
+        RCN_LOG_DBG("[ERROR] Syntax error in file detected"); \
+        traverseTree(rootNode, showNodeSyntaxError, trace); \
+    } while (0)
 
 /**
  * A `NodeVisitor` function that logs syntax errors for a node.
@@ -33,11 +34,11 @@
  */
 static void showNodeSyntaxError(TSNode node, NodeEvalTrace* trace) {
     if (ts_node_is_error(node)) {
-        RCN_LOG_DBG("[ERROR] The above node has a syntax error")
+        RCN_LOG_DBG("[ERROR] The above node has a syntax error");
     } else if (ts_node_is_missing(node)) {
         RCN_LOG_DBG(
             "[ERROR] The above node is missing and produces a syntax error"
-        )
+        );
     }
 }
 #else
@@ -150,7 +151,7 @@ RcnResultState evaluateSourceTree(
     TSNode rootNode = ts_tree_root_node(tree);
 
     if (ts_node_has_error(rootNode)) {
-        RECKON_LOG_SYNTAX_ERRORS
+        RECKON_LOG_SYNTAX_ERRORS;
         if (trace->strict || isEntireSourceInvalid(rootNode)) {
             ts_tree_delete(tree);
             ts_parser_delete(parser);

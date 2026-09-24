@@ -328,8 +328,8 @@ static inline bool count(
     RcnCountResultGroup* result,
     SourceFormatDetection detected
 ) {
-    RCN_LOG_DBG("Processing file:")
-    RCN_LOG_DBG(file->path)
+    RCN_LOG_DBG("Processing file:");
+    RCN_LOG_DBG(file->path);
 
     bool ok = false;
     result->hasLogicalLines = rcnIsLlcCountingSupported(detected.format);
@@ -362,8 +362,8 @@ static inline bool count(
         freeSourceFileContent(file);
     }
 
-    RCN_LOG_DBG("Done processing file:")
-    RCN_LOG_DBG(file->path)
+    RCN_LOG_DBG("Done processing file:");
+    RCN_LOG_DBG(file->path);
     return ok;
 }
 
@@ -404,12 +404,14 @@ static void processFileRange(
 }
 
 static void runCountThread(ThreadWork* arg) {
+    RCN_LOG_DBG("Worker thread is processing chunk");
     processFileRange(
         arg->stats,
         arg->options,
         arg->slice,
         arg->control
     );
+    RCN_LOG_DBG("Worker thread has finished processing chunk");
 }
 
 static RcnResultState parallelizeCount(
@@ -455,6 +457,7 @@ static RcnResultState parallelizeCount(
         chunk->control = &control;
         startIndex = chunk->slice.end;
 
+        RCN_LOG_DBG("Creating worker thread");
         if (!createThread(&threads[i], runCountThread, chunk)) {
             createdAllThreads = false;
             break;
@@ -463,12 +466,15 @@ static RcnResultState parallelizeCount(
     }
 
     if (!createdAllThreads) {
+        RCN_LOG_DBG("Failure to create all worker threads. Signaling abort");
         requestAbortRange(&control);
     }
 
+    RCN_LOG_DBG("Waiting for threads to finish");
     for (size_t i = 0; i < createdThreads; ++i) {
         waitForThread(&threads[i]);
     }
+    RCN_LOG_DBG("All threads have finished");
 
     deinitThreadControl(&control);
     free(threads);
@@ -599,6 +605,7 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
 
     const size_t workerCount = getWorkerCount(stats->count.size, options);
     if (workerCount > 1) {
+        RCN_LOG_DBG("Parallelizing file processing");
         const RcnResultState parallelizationState = parallelizeCount(
             stats,
             options,
@@ -608,6 +615,7 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
             stats->state = parallelizationState;
         }
     } else {
+        RCN_LOG_DBG("Using single-threaded file processing");
         processFileRange(
             stats,
             options,

@@ -44,8 +44,8 @@ extern "C" {
 void logDebugNode(TSNode node);
 void logDebugMessage(const char* message);
 
-#define RCN_LOG_DBG_NODE(node) logDebugNode(node);
-#define RCN_LOG_DBG(message) logDebugMessage(message);
+#define RCN_LOG_DBG_NODE(node) do { logDebugNode(node); } while (0)
+#define RCN_LOG_DBG(message) do { logDebugMessage(message); } while (0)
 #else
 #define RCN_LOG_DBG_NODE(node)
 #define RCN_LOG_DBG(message)
