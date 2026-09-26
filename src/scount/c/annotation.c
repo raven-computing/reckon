@@ -38,14 +38,31 @@ static RcnTextFormat formatFromExtension(const char* ext) {
 
         return RCN_LANG_JAVASCRIPT;
     }
-    if (strcmp(ext, "ts") == 0) {
+    if (strcmp(ext, "ts") == 0
+        || strcmp(ext, "mts") == 0
+        || strcmp(ext, "cts") == 0) {
+
         return RCN_LANG_TYPESCRIPT;
     }
     if (strcmp(ext, "r") == 0 || strcmp(ext, "R") == 0) {
         return RCN_LANG_R;
     }
-    if (strcmp(ext, "sh") == 0) {
+    if (strcmp(ext, "sh") == 0 || strcmp(ext, "bash") == 0) {
         return RCN_LANG_BASH;
+    }
+    if (strcmp(ext, "cpp") == 0
+        || strcmp(ext, "cc") == 0
+        || strcmp(ext, "cxx") == 0
+        || strcmp(ext, "c++") == 0
+        || strcmp(ext, "hpp") == 0
+        || strcmp(ext, "hxx") == 0
+        || strcmp(ext, "cppm") == 0
+        || strcmp(ext, "ccm") == 0
+        || strcmp(ext, "cxxm") == 0
+        || strcmp(ext, "c++m") == 0
+        || strcmp(ext, "ixx") == 0) {
+
+        return RCN_LANG_CPP;
     }
     return RCN_TEXT_UNFORMATTED;
 }
