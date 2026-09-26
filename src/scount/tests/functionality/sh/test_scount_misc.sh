@@ -62,3 +62,33 @@ function test_scount_can_read_larger_source_content_from_stdin() {
   assert_stdout_contains "Logical Lines of Code (LLC):        104";
   assert_stderr_is_empty;
 }
+
+function test_annotate_counts_via_stdin_works_for_all_applicable_test_files() {
+  local expected_successes=16;
+  local expected_failures=25;
+  local actual_successes=0;
+  local actual_failures=0;
+  local filename;
+  local extension;
+  local test_file;
+  local test_res_dir="${TEST_PROJECT_DIR}/src/scount/tests/functionality/res/mixed";
+  for test_file in "${test_res_dir}/"*; do
+    filename=$(basename -- "$test_file");
+    extension="${filename##*.}";
+    run_app --annotate-counts -.${extension} < "$test_file";
+    if (( TEST_TARGET_APP_EXIT_STATUS == EXIT_SUCCESS )); then
+      ((++actual_successes));
+    else
+      ((++actual_failures));
+    fi
+  done
+  if (( actual_successes != expected_successes )); then
+    _assertion_failure "Expected ${expected_successes} successes but found ${actual_successes}";
+    return $EXIT_TEST_FAILURE;
+  fi
+  if (( actual_failures != expected_failures )); then
+    _assertion_failure "Expected ${expected_failures} failures but found ${actual_failures}";
+    return $EXIT_TEST_FAILURE;
+  fi
+  return $EXIT_SUCCESS;
+}
