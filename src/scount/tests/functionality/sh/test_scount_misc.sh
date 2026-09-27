@@ -83,11 +83,11 @@ function test_annotate_counts_via_stdin_works_for_all_applicable_test_files() {
     fi
   done
   if (( actual_successes != expected_successes )); then
-    _assertion_failure "Expected ${expected_successes} successes but found ${actual_successes}";
+    assertion_failure "Expected ${expected_successes} successes but found ${actual_successes}";
     return $EXIT_TEST_FAILURE;
   fi
   if (( actual_failures != expected_failures )); then
-    _assertion_failure "Expected ${expected_failures} failures but found ${actual_failures}";
+    assertion_failure "Expected ${expected_failures} failures but found ${actual_failures}";
     return $EXIT_TEST_FAILURE;
   fi
   return $EXIT_SUCCESS;
