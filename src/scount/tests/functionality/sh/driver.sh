@@ -77,14 +77,6 @@ if [[ "$A_TERMINAL_USE_ANSI_COLORS" == "0" ]]; then
   COLOR_NC="";
 fi
 
-# Prints an assertion_failure message.
-function _assertion_failure() {
-  local message="$*";
-  echo -n -e "${COLOR_RED}Assertion failure:${COLOR_NC} ";
-  echo "$message";
-  echo "";
-}
-
 # Prints a separator line with the specified length.
 function _print_sep() {
   local cnt="$1";
@@ -174,6 +166,18 @@ function run_app() {
   TEST_TARGET_APP_EXIT_STATUS=$?;
 }
 
+# Prints an assertion failure message.
+#
+# Args:
+# $@ - Assertion failure message.
+#
+function assertion_failure() {
+  local message="$*";
+  echo -n -e "${COLOR_RED}Assertion failure:${COLOR_NC} ";
+  echo "$message";
+  echo "";
+}
+
 # Asserts that the executable under test has returned the specified exit status.
 #
 # Args:
@@ -184,7 +188,7 @@ function assert_exit_status() {
   local actual_exit_status="$TEST_TARGET_APP_EXIT_STATUS";
   if (( actual_exit_status != expected_exit_status )); then
     _print_test_failure_loc;
-    _assertion_failure "Expected exit status ${expected_exit_status}" \
+    assertion_failure "Expected exit status ${expected_exit_status}" \
                        "but was ${actual_exit_status}";
     if [[ "$expected_exit_status" == "0" ]]; then
       local stderr_output="$(cat "$TEST_TARGET_FILE_STDERR")";
@@ -211,7 +215,7 @@ function assert_stdout_equals() {
   local actual_output="$READ_FILE_CONTENT";
   if [[ "$actual_output" != "$expected_output" ]]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stdout) does not match expected output";
+    assertion_failure "Program output (stdout) does not match expected output";
     _print_diff "$expected_output" "$actual_output";
     exit $EXIT_TEST_FAILURE;
   fi
@@ -248,7 +252,7 @@ function assert_stdout_equals_file() {
     _read_file "$TEST_TARGET_FILE_STDOUT";
     local actual_output="$READ_FILE_CONTENT";
     _print_test_failure_loc;
-    _assertion_failure "Program output (stdout) does not match expected output";
+    assertion_failure "Program output (stdout) does not match expected output";
     if (( ${#expected_output} > 1024 )); then
       echo "Computed SHA256 hashes differ:";
       echo "Expected: '${expected_hash}'";
@@ -273,7 +277,7 @@ function assert_stdout_contains() {
   local actual_output="$(cat "$TEST_TARGET_FILE_STDOUT")";
   if [[ "$actual_output" != *"$expected_contains"* ]]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stdout) does not contain expected output";
+    assertion_failure "Program output (stdout) does not contain expected output";
     echo "Expected that output contains:";
     _print_expected "$expected_contains";
     echo "";
@@ -289,7 +293,7 @@ function assert_stdout_is_empty() {
   local actual_stdout_output="$(cat "$TEST_TARGET_FILE_STDOUT")";
   if [ -n "$actual_stdout_output" ]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stdout) is expected to be empty";
+    assertion_failure "Program output (stdout) is expected to be empty";
     echo "The actual output is:";
     _print_actual "$actual_stdout_output";
     exit $EXIT_TEST_FAILURE;
@@ -309,7 +313,7 @@ function assert_stderr_equals() {
   local actual_output="$(cat "$TEST_TARGET_FILE_STDERR")";
   if [[ "$actual_output" != "$expected_output" ]]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stderr) does not match expected output";
+    assertion_failure "Program output (stderr) does not match expected output";
     _print_diff "$expected_output" "$actual_output";
     exit $EXIT_TEST_FAILURE;
   fi
@@ -328,7 +332,7 @@ function assert_stderr_contains() {
   local actual_output="$(cat "$TEST_TARGET_FILE_STDERR")";
   if [[ "$actual_output" != *"$expected_contains"* ]]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stderr) does not contain expected output";
+    assertion_failure "Program output (stderr) does not contain expected output";
     echo "Expected that output contains:";
     _print_expected "$expected_contains";
     echo "";
@@ -344,7 +348,7 @@ function assert_stderr_is_empty() {
   local actual_stderr_output="$(cat "$TEST_TARGET_FILE_STDERR")";
   if [ -n "$actual_stderr_output" ]; then
     _print_test_failure_loc;
-    _assertion_failure "Program output (stderr) is expected to be empty";
+    assertion_failure "Program output (stderr) is expected to be empty";
     echo "The actual error output is:";
     _print_actual "$actual_stderr_output";
     exit $EXIT_TEST_FAILURE;
