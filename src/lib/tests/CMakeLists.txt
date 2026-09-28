@@ -58,6 +58,13 @@ add_test_suite(
 )
 
 add_test_suite(
+    TEST_SUITE_NAME        ThreadingUnitTest
+    TEST_SUITE_TARGET      test_threading
+    TEST_SUITE_SOURCE      unit/c/test_threading.c
+    TEST_SUITE_LINK        ${RECKON_TARGET_LIB_OBJ}
+)
+
+add_test_suite(
     TEST_SUITE_NAME        FactoriesUnitTest
     TEST_SUITE_TARGET      test_factories
     TEST_SUITE_SOURCE      unit/c/test_factories.c
