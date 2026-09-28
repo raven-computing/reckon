@@ -424,20 +424,24 @@ static RcnResultState parallelizeCount(
     ThreadHandle* threads = calloc(workerCount, sizeof(ThreadHandle));
     ThreadWork* workItems = calloc(workerCount, sizeof(ThreadWork));
     if (!threads || !workItems) {
+        // LCOV_EXCL_START
         free(threads);
         free(workItems);
         state.errorCode = RCN_ERR_ALLOC_FAILURE;
         state.errorMessage = "Failed to allocate memory for worker threads";
         return state;
+        // LCOV_EXCL_STOP
     }
 
     ThreadControl control;
     if (!initThreadControl(&control)) {
+        // LCOV_EXCL_START
         free(threads);
         free(workItems);
         state.errorCode = RCN_ERR_ALLOC_FAILURE;
         state.errorMessage = "Failed to initialize thread control object";
         return state;
+        // LCOV_EXCL_STOP
     }
 
     const size_t baseChunkSize = stats->count.size / workerCount;
