@@ -53,8 +53,7 @@ Options:
 
   [--thread-sanitizer]
                   Use a thread sanitizer (TSAN) instead of the default set of sanitizers when
-                  building and running. Implies --sanitizers. This option is only available
-                  on Linux.
+                  building and running. Implies --sanitizers.
 
   [-?|--help]     Show this help message.
 EOS
