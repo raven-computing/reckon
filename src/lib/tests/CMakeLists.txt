@@ -151,3 +151,11 @@ add_test_suite(
 add_compile_definitions(
     RECKON_TEST_PATH_RES_BASE="${CMAKE_CURRENT_SOURCE_DIR}/res"
 )
+
+if(MSVC)
+    target_compile_options(
+        test_threading
+        PRIVATE
+        /experimental:c11atomics
+    )
+endif()
