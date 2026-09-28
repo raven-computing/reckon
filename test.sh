@@ -296,7 +296,11 @@ export UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1";
 # otherwise on certain compiler versions there will be crashes.
 set_aslr="";
 if [[ $TSAN_ENABLED == true ]]; then
-  set_aslr="setarch $(uname -m) --addr-no-randomize";
+  if command -v "setarch" &> /dev/null; then
+    set_aslr="setarch $(uname -m) --addr-no-randomize";
+  else
+    echo "Warning: Command 'setarch' was not found. Cannot disable ASLR for TSAN.";
+  fi
 fi
 
 # Run tests with CTest
