@@ -97,16 +97,20 @@ bool createThread(
     pthread_t* nativeThread = malloc(sizeof(pthread_t));
     NativeThreadArg* feeder = malloc(sizeof(NativeThreadArg));
     if (!nativeThread || !feeder) {
+        // LCOV_EXCL_START
         free(nativeThread);
         free(feeder);
         return false;
+        // LCOV_EXCL_STOP
     }
     feeder->routine = routine;
     feeder->arg = arg;
     if (pthread_create(nativeThread, NULL, rcnRun, feeder) != 0) {
+        // LCOV_EXCL_START
         free(feeder);
         free(nativeThread);
         return false;
+        // LCOV_EXCL_STOP
     }
     handle->instance = nativeThread;
     return true;
