@@ -46,21 +46,21 @@ typedef enum ExitStatus {
  * Structure holding all parsed application arguments.
  */
 typedef struct AppArgs {
-    char* inputPath;     // The input `<PATH>` to process
-    char* errorMessage;  // Error message in case of invalid input
-    int indexUnknown;    // Index into `argv` when unknown arg found, or zero
-    bool readFromStdin;  // True when 'inputPath' is '-' or '-.ext'
-    bool annotateCounts; // Option: `--annotate-counts`
-    bool linesOnly;      // Option: `-l|--lines`
-    bool showFiles;      // Option: `--show-files`
-    bool showAllFiles;   // Option: `--show-all-files`
+    char* inputPath;             // The input `<PATH>` to process
+    char* errorMessage;          // Error message in case of invalid input
+    int indexUnknown;            // Index into `argv` when unknown arg found, or zero
+    bool readFromStdin;          // True when 'inputPath' is '-' or '-.ext'
+    bool annotateCounts;         // Option: `--annotate-counts`
+    bool linesOnly;              // Option: `-l|--lines`
+    bool showFiles;              // Option: `--show-files`
+    bool showAllFiles;           // Option: `--show-all-files`
     bool disableParallelization; // Option: `--disable-parallelization`
-    bool stopOnError;    // Option: `--stop-on-error`
-    bool strict;         // Option: `--strict`
-    bool verbose;        // Option: `--verbose`
-    bool version;        // Option: `-#|--version`
-    bool versionShort;   // Option: `-#`
-    bool help;           // Option: `-?`|`--help`
+    bool stopOnError;            // Option: `--stop-on-error`
+    bool strict;                 // Option: `--strict`
+    bool verbose;                // Option: `--verbose`
+    bool version;                // Option: `-#|--version`
+    bool versionShort;           // Option: `-#`
+    bool help;                   // Option: `-?`|`--help`
 } AppArgs;
 
 /**
