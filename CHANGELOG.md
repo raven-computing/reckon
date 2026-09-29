@@ -1,3 +1,14 @@
+#### 1.9.0
+* Added parallelization capabilities. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
+* Added --disable-parallelization option to control parallel execution. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
+* Added the RcnStatOptions.useMultiThreading member to control multi-threading. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
+* Added '\_\_pycache\_\_' to list of directory names to be ignored.
+* Changed the API function documentation in the header from MT-unsafe to MT-safe. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
+* Fixed invalid handling of count annotation via stdin for certain file extensions. [[Issue#86]](https://github.com/raven-computing/reckon/issues/86)
+* Improved number for scanned files label. [[Issue#79]](https://github.com/raven-computing/reckon/issues/79)
+* Improved documentation.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.8.0...v1.9.0)
+
 #### 1.8.0
 * Added rcnGetTextFormatLabel() API function. [[Issue#77]](https://github.com/raven-computing/reckon/issues/77)
 * Added rcnIsLocCountingSupported() API function. [[Issue#77]](https://github.com/raven-computing/reckon/issues/77)
