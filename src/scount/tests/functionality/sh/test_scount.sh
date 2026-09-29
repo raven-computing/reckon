@@ -236,8 +236,8 @@ function test_scount_with_valid_directory_input_and_stop_on_error_option() {
   assert_stderr_is_empty;
 }
 
-function test_scount_with_no_parallelization_option() {
-  run_app --no-parallelization "${TEST_RES_DIR}/mixed";
+function test_scount_with_disable_parallelization_option() {
+  run_app --disable-parallelization "${TEST_RES_DIR}/mixed";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/mixed.txt";
   assert_stderr_is_empty;

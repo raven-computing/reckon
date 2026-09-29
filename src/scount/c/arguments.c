@@ -37,8 +37,8 @@ AppArgs parseArgs(int argc, char** argv) {
             args.showFiles = true;
         } else if (strcmp(argv[i], "--show-all-files") == 0) {
             args.showAllFiles = true;
-        } else if (strcmp(argv[i], "--no-parallelization") == 0) {
-            args.noParallelization = true;
+        } else if (strcmp(argv[i], "--disable-parallelization") == 0) {
+            args.disableParallelization = true;
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
         } else if (strcmp(argv[i], "--strict") == 0) {
@@ -122,13 +122,13 @@ void showHelpText(void) {
     logI("  [--annotate-counts] Mark counted logical lines and output the result.");
     logI("                      This option can only be used on a single regular file input.");
     logI(" ");
+    logI("  [--disable-parallelization]");
+    logI("                      Disable multithreaded file processing.");
+    logI("                      By default, scount may process files in parallel when multiple CPU cores");
+    logI("                      are available.");
+    logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
     logI("                      This includes logical and physical lines of code, and hard physical lines.");
-    logI(" ");
-    logI("  [--no-parallelization]");
-    logI("                      Disable multithreaded file processing.");
-    logI("                      By default, scount may process files in parallel");
-    logI("                      when multiple CPU cores are available.");
     logI(" ");
     logI("  [--show-files]      Show a table of individual files in the result.");
     logI("                      For large results, a condensed view is shown.");

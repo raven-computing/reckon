@@ -218,12 +218,12 @@ void testStrictOptionSetsStrictTrue(void) {
 }
 
 void testNoParallelizationOptionSetsFlagTrue(void) {
-    char* argv[] = { "scount", "--no-parallelization", "File.java" };
+    char* argv[] = { "scount", "--disable-parallelization", "File.java" };
     int argc = (int)(sizeof(argv) / sizeof(argv[0]));
     AppArgs args = parseArgs(argc, argv);
     bool isValid = isInputValid(args);
     TEST_ASSERT_TRUE(isValid);
-    TEST_ASSERT_TRUE(args.noParallelization);
+    TEST_ASSERT_TRUE(args.disableParallelization);
     TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
     TEST_ASSERT_NULL(args.errorMessage);
 }

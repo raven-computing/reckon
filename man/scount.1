@@ -53,16 +53,18 @@ Mark counted logical lines and output the result.
 .br
 This option can only be used on a single file input.
 .TP
+.B \-\-disable\-parallelization
+Disable multithreaded file processing. By default, multiple files may be processed in parallel
+when multiple CPU cores are available.
+This option will result in all files being processed by a single thread, reducing the
+system's CPU utilisation but also drastically slowing down the overall processing speed.
+.br
+.TP
 .B \-l, \-\-lines
 Compute and display only line-specific metrics.
 .br
 This includes logical lines of code (LLC), physical lines of code (LOC)
 and hard physical lines (PHL).
-.TP
-.B \-\-no\-parallelization
-Disable multithreaded file processing. By default, multiple files may be processed in parallel.
-This option will result in all files being processed by a single thread.
-.br
 .TP
 .B \-\-show\-files
 Show a table of individual files in the result when the given input path refers to a directory.
