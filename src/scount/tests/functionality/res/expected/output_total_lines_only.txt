@@ -1,0 +1,10 @@
+Directory: java
+Scanned all 3 found files
+
+Summary:
+
+  o--------------------------o--- LLC ---o--- LOC ---o--- PHL ---o
+  | Total:                   |    312    |    365    |    483    |
+  o--------------------------o-----------o-----------o-----------o
+
+

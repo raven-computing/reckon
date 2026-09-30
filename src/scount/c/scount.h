@@ -52,6 +52,7 @@ typedef struct AppArgs {
     bool readFromStdin;          // True when 'inputPath' is '-' or '-.ext'
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
+    bool totalsOnly;             // Option: `--total`
     bool showFiles;              // Option: `--show-files`
     bool showAllFiles;           // Option: `--show-all-files`
     bool disableParallelization; // Option: `--disable-parallelization`
@@ -110,6 +111,7 @@ typedef struct PrintBuffer {
     bool showWords;
     bool showCharacters;
     bool showSourceSize;
+    bool showTotalsOnly;
     bool showFileTable;
     bool showAllFileRows;
     bool showWarnings;

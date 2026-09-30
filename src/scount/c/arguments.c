@@ -33,6 +33,8 @@ AppArgs parseArgs(int argc, char** argv) {
         } else if (strcmp(argv[i], "--lines") == 0
                 || strcmp(argv[i], "-l") == 0) {
             args.linesOnly = true;
+        } else if (strcmp(argv[i], "--total") == 0) {
+            args.totalsOnly = true;
         } else if (strcmp(argv[i], "--show-files") == 0) {
             args.showFiles = true;
         } else if (strcmp(argv[i], "--show-all-files") == 0) {
@@ -129,6 +131,9 @@ void showHelpText(void) {
     logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
     logI("                      This includes logical and physical lines of code, and hard physical lines.");
+    logI(" ");
+    logI("  [--total]           Show only the totals summary row in table output.");
+    logI("                      This suppresses per-file and per-language detail rows.");
     logI(" ");
     logI("  [--show-files]      Show a table of individual files in the result.");
     logI("                      For large results, a condensed view is shown.");
