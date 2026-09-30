@@ -444,11 +444,11 @@ typedef struct RcnCountResultGroup {
      * 
      * If this is `false`, then no counts are available and all count values
      * are zero. This may happen if the source entity's format is not
-     * supported, was not selected in a performed analysis operation, an
-     * attempt to read the source file content failed, or some other error
-     * has occurred. A processed entity might still have zero counts, e.g. if
-     * it is an empty file, and it might still have errors as indicated
-     * in the `state` field.
+     * supported, was not selected in a performed analysis operation, it was
+     * marked to be ignored, an attempt to read the source file content failed,
+     * or some other error has occurred. A processed entity might still have
+     * zero counts, e.g. if it is an empty file, and it might still have errors
+     * as indicated in the `state` field.
      */
     bool isProcessed;
 
@@ -611,6 +611,17 @@ typedef struct RcnSourceFile {
      * from the file system.
      */
     bool isContentRead;
+
+    /**
+     * Indicates whether this file should be skipped during processing.
+     *
+     * This flag is `false` by default and can be set to `true` before calling
+     * any analysis functions to exclude this file from analysis while keeping
+     * it in the result set.
+     * 
+     * @since 1.10.0
+     */
+    bool ignore;
 
     /**
      * The status code indicating the processing state of the source code file.

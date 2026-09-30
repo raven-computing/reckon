@@ -383,6 +383,12 @@ static void processFileRange(
         RcnCountResultGroup* result = &stats->count.results[i];
         resetResultGroup(result);
 
+        if (file->ignore) {
+            RCN_LOG_DBG("Skipping file that is marked as ignored:");
+            RCN_LOG_DBG(file->path);
+            continue;
+        }
+
         SourceFormatDetection detected = detectSourceFormat(file);
         if (!detected.isSupportedFormat) {
             result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
