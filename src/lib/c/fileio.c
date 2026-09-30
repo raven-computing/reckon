@@ -213,6 +213,7 @@ void initSourceFile(RcnSourceFile* file, const char* path) {
     file->content = (RcnSourceText){0};
     file->status = status;
     file->isContentRead = false;
+    file->ignore = false;
 }
 
 void deinitSourceFile(RcnSourceFile* file) {

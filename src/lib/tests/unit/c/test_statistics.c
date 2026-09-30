@@ -15,6 +15,7 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "unity.h"
 
@@ -279,6 +280,104 @@ void testCountWithMultipleFilesWhenOneFileHasErrorAndMultiThreading(void) {
     TEST_ASSERT_EQUAL_INT(24, stats->totalCharacters);
     TEST_ASSERT_EQUAL_INT(24, stats->totalSourceSize);
     file2->content = (RcnSourceText){0};
+    rcnFreeCountStatistics(stats);
+}
+
+void testCountSkipsIgnoredFile(void) {
+    RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
+    RcnSourceFile* files = calloc(2, sizeof(RcnSourceFile));
+    RcnSourceFile* file1 = &files[0];
+    RcnSourceFile* file2 = &files[1];
+    initSourceFile(file1, "ignored_file.c");
+    file1->ignore = true;
+    initSourceFile(file2, "normal_file.c");
+    file2->content = (RcnSourceText){
+        .text = "int main() { return 0; }",
+        .size = 24
+    };
+    file2->isContentRead = true;
+    RcnCountResultGroup* results = calloc(2, sizeof(RcnCountResultGroup));
+    RcnCountResultGroup* result1 = &results[0];
+    RcnCountResultGroup* result2 = &results[1];
+    stats->count.size = 2;
+    stats->count.files = files;
+    stats->count.results = results;
+    RcnStatOptions options = {
+        .keepFileContent = true
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
+    TEST_ASSERT_NULL(stats->state.errorMessage);
+    TEST_ASSERT_FALSE(file1->isContentRead);
+    TEST_ASSERT_FALSE(result1->isProcessed);
+    TEST_ASSERT_FALSE(result1->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result1->state.errorCode);
+    TEST_ASSERT_TRUE(result2->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result2->state.errorCode);
+    TEST_ASSERT_TRUE(result2->isProcessed);
+    TEST_ASSERT_EQUAL_INT(2, result2->logicalLines);
+    TEST_ASSERT_EQUAL_INT(1, result2->codeLines);
+    TEST_ASSERT_EQUAL_INT(1, result2->physicalLines);
+    TEST_ASSERT_EQUAL_INT(6, result2->words);
+    TEST_ASSERT_EQUAL_INT(24, result2->characters);
+    TEST_ASSERT_EQUAL_INT(24, result2->sourceSize);
+    TEST_ASSERT_EQUAL_INT(1, stats->count.sizeProcessed);
+    TEST_ASSERT_EQUAL_INT(2, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(1, stats->totalCodeLines);
+    TEST_ASSERT_EQUAL_INT(1, stats->totalPhysicalLines);
+    TEST_ASSERT_EQUAL_INT(6, stats->totalWords);
+    TEST_ASSERT_EQUAL_INT(24, stats->totalCharacters);
+    TEST_ASSERT_EQUAL_INT(24, stats->totalSourceSize);
+    file2->content = (RcnSourceText){0};
+    rcnFreeCountStatistics(stats);
+}
+
+void testCountSkipsAllIgnoredFilesInDirectory(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {0};
+
+    TEST_ASSERT_NOT_NULL(stats);
+    TEST_ASSERT_EQUAL_INT(11, stats->count.size);
+
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        stats->count.files[i].ignore = true;
+    }
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, stats->state.errorCode);
+    TEST_ASSERT_NULL(stats->state.errorMessage);
+    TEST_ASSERT_EQUAL_INT(0, stats->count.sizeProcessed);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalLogicalLines);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalCodeLines);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalPhysicalLines);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalWords);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalCharacters);
+    TEST_ASSERT_EQUAL_INT(0, stats->totalSourceSize);
+
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        RcnSourceFile* file = &stats->count.files[i];
+        RcnCountResultGroup* result = &stats->count.results[i];
+        TEST_ASSERT_TRUE(file->ignore);
+        TEST_ASSERT_FALSE(file->isContentRead);
+        TEST_ASSERT_EQUAL_INT(RCN_FILE_OP_OK, file->status);
+        TEST_ASSERT_FALSE(result->isProcessed);
+        TEST_ASSERT_FALSE(result->state.ok);
+        TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+        TEST_ASSERT_NULL(result->state.errorMessage);
+        TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+        TEST_ASSERT_EQUAL_INT(0, result->codeLines);
+        TEST_ASSERT_EQUAL_INT(0, result->physicalLines);
+        TEST_ASSERT_EQUAL_INT(0, result->words);
+        TEST_ASSERT_EQUAL_INT(0, result->characters);
+        TEST_ASSERT_EQUAL_INT(0, result->sourceSize);
+    }
+
     rcnFreeCountStatistics(stats);
 }
 
@@ -605,6 +704,8 @@ int main(void) {
     RUN_TEST(testCountWhenFileHasUnsupportedFormat);
     RUN_TEST(testCountWithMultipleFilesWhenOneFileHasError);
     RUN_TEST(testCountWithMultipleFilesWhenOneFileHasErrorAndMultiThreading);
+    RUN_TEST(testCountSkipsIgnoredFile);
+    RUN_TEST(testCountSkipsAllIgnoredFilesInDirectory);
     RUN_TEST(testCountResultGroupLogicalLineCheckField);
     RUN_TEST(testCountResultsXml);
     RUN_TEST(testCountResultsJson);
