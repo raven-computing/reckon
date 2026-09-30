@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <Label text="First" />
+  </children>
+</VBox>
