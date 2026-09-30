@@ -135,7 +135,7 @@ static void aggregateStatistics(
         RcnSourceFile* file = &stats->count.files[i];
         RcnCountResultGroup* result = &stats->count.results[i];
         if (result->isProcessed) {
-            SourceFormatDetection detected = detectSourceFormat(file);
+            RcnSourceFormatDetection detected = rcnDetectSourceFormat(file);
             if (detected.isSupportedFormat) {
                 const RcnTextFormat sourceFormat = detected.format;
                 ASSERT_SOURCE_FORMAT_INDEX(sourceFormat);
@@ -327,7 +327,7 @@ static inline bool count(
     RcnStatOptions options,
     RcnSourceFile* file,
     RcnCountResultGroup* result,
-    SourceFormatDetection detected
+    RcnSourceFormatDetection detected
 ) {
     RCN_LOG_DBG("Processing file:");
     RCN_LOG_DBG(file->path);
@@ -383,7 +383,7 @@ static void processFileRange(
         RcnCountResultGroup* result = &stats->count.results[i];
         resetResultGroup(result);
 
-        SourceFormatDetection detected = detectSourceFormat(file);
+        RcnSourceFormatDetection detected = rcnDetectSourceFormat(file);
         if (!detected.isSupportedFormat) {
             result->state.errorCode = RCN_ERR_UNSUPPORTED_FORMAT;
             result->state.errorMessage = "The source format is not supported";

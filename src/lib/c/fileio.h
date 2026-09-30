@@ -74,18 +74,6 @@ typedef struct BaseDir {
 } BaseDir;
 
 /**
- * The result type of the `detectSourceFormat()` function.
- * 
- * Indicates whether the text format is supported and which format or
- * programming language was detected. If `isSupportedFormat` is `false`,
- * then the value of `format` is undefined and should not be used.
- */
-typedef struct SourceFormatDetection {
-    RcnTextFormat format;
-    bool isSupportedFormat;
-} SourceFormatDetection;
-
-/**
  * Appends a new source file with the given path to the list.
  * 
  * Returns `true` on success, `false` on failure.
@@ -176,13 +164,6 @@ void freeSourceFileList(SourceFileList* list);
  * during directory traversal. Name must not be `NULL`.
  */
 bool shouldIgnoreDirectory(const char* name);
-
-/**
- * Performs lightweight text format detection for a file.
- *
- * Detection currently relies solely on the file extension.
- */
-SourceFormatDetection detectSourceFormat(const RcnSourceFile* file);
 
 /**
  * Loads the entire file content into memory.

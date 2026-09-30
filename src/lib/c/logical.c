@@ -90,7 +90,7 @@ RcnSourceText rcnMarkLogicalLinesInFile(const char* path) {
     if (!file) {
         return (RcnSourceText){0};
     }
-    SourceFormatDetection detected = detectSourceFormat(file);
+    RcnSourceFormatDetection detected = rcnDetectSourceFormat(file);
     const bool hasLlc = rcnIsLlcCountingSupported(detected.format);
     if (!hasLlc || !readSourceFileContent(file)) {
         freeSourceFile(file);

@@ -620,6 +620,30 @@ typedef struct RcnSourceFile {
 } RcnSourceFile;
 
 /**
+ * The result of lightweight text format detection for a source file.
+ *
+ * Indicates whether the source file format is supported and, if so,
+ * which format or programming language was detected.
+ * If `isSupportedFormat` is `false`, then the value of `format`
+ * is undefined and must not be used.
+ *
+ * @since 1.10.0
+ */
+typedef struct RcnSourceFormatDetection {
+
+    /**
+     * The detected supported text format.
+     */
+    RcnTextFormat format;
+
+    /**
+     * Indicates whether the file format is supported by the library.
+     */
+    bool isSupportedFormat;
+
+} RcnSourceFormatDetection;
+
+/**
  * The count results for a set of source files.
  * 
  * Contains a list of source files that are subject to analysis, along
@@ -1271,6 +1295,20 @@ RECKON_EXPORT RcnCountResult rcnCountWords(RcnSourceText source);
  * @return A `RcnCountResult` containing the character count.
  */
 RECKON_EXPORT RcnCountResult rcnCountCharacters(RcnSourceText source);
+
+/**
+ * Performs lightweight text format detection for a source file.
+ *
+ * Detection relies on the file name and extension metadata stored in the
+ * specified `RcnSourceFile`.
+ *
+ * @param file The source file whose format should be detected.
+ * @return The detected format information.
+ * @since 1.10.0
+ */
+RECKON_EXPORT RcnSourceFormatDetection rcnDetectSourceFormat(
+    const RcnSourceFile* file
+);
 
 /**
  * Returns a human-readable label for the given text format.

@@ -231,7 +231,7 @@ void testReadSourceFileFailsWhenFilePathIsNull(void) {
 void testDetectSourceFormatSupported(void) {
     RcnSourceFile* file = newSourceFile(PATH_SAMPLE_JAVA_FILE);
     TEST_ASSERT_NOT_NULL(file);
-    SourceFormatDetection detection = detectSourceFormat(file);
+    RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
     TEST_ASSERT_TRUE(detection.isSupportedFormat);
     TEST_ASSERT_EQUAL_INT(RCN_LANG_JAVA, detection.format);
     freeSourceFile(file);
@@ -240,7 +240,7 @@ void testDetectSourceFormatSupported(void) {
 void testDetectSourceFormatR(void) {
     RcnSourceFile* file = newSourceFile(PATH_SAMPLE_R_FILE);
     TEST_ASSERT_NOT_NULL(file);
-    SourceFormatDetection detection = detectSourceFormat(file);
+    RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
     TEST_ASSERT_TRUE(detection.isSupportedFormat);
     TEST_ASSERT_EQUAL_INT(RCN_LANG_R, detection.format);
     freeSourceFile(file);
@@ -249,7 +249,7 @@ void testDetectSourceFormatR(void) {
 void testDetectSourceFormatUnsupported(void) {
     RcnSourceFile* file = newSourceFile("/tmp/res/unknown.xyz");
     TEST_ASSERT_NOT_NULL(file);
-    SourceFormatDetection detection = detectSourceFormat(file);
+    RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
     TEST_ASSERT_FALSE(detection.isSupportedFormat);
     freeSourceFile(file);
 }
