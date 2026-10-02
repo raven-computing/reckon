@@ -323,10 +323,10 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
     assert(padding >= 0);
     const int left = padding / 2;
     const int right = padding - left;
-    const char separatorCharacter = strcmp(
-        label,
-        TABLE_BORDER_HORIZONTAL_NORMAL
-    ) == 0 ? '-' : ' ';
+    char separatorCharacter = ' ';
+    if (strcmp(label, TABLE_BORDER_HORIZONTAL_NORMAL) == 0) {
+        separatorCharacter = TABLE_BORDER_HORIZONTAL_NORMAL[0];
+    }
 
     prRpt(buffer, "-", left);
     prChr(buffer, separatorCharacter);
