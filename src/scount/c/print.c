@@ -328,11 +328,11 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
         separatorCharacter = TABLE_BORDER_HORIZONTAL_NORMAL[0];
     }
 
-    prRpt(buffer, "-", left);
+    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, left);
     prChr(buffer, separatorCharacter);
     prStr(buffer, label);
     prChr(buffer, separatorCharacter);
-    prRpt(buffer, "-", right);
+    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, right);
 }
 
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
