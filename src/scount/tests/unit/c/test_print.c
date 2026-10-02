@@ -36,6 +36,7 @@ static PrintBuffer mkBufferAllMetrics(void) {
         .showWords = true,
         .showCharacters = true,
         .showSourceSize = true,
+        .showTotalsOnly = false,
         .showFileTable = true
     };
 }
@@ -47,7 +48,21 @@ static PrintBuffer mkBufferLinesOnly(void) {
         .showPhysicalLines = true,
         .showWords = false,
         .showCharacters = false,
-        .showSourceSize = false
+        .showSourceSize = false,
+        .showTotalsOnly = false
+    };
+}
+
+static PrintBuffer mkBufferTotalsOnly(void) {
+    return (PrintBuffer) {
+        .showLogicalLines = true,
+        .showCodeLines = true,
+        .showPhysicalLines = true,
+        .showWords = true,
+        .showCharacters = true,
+        .showSourceSize = true,
+        .showTotalsOnly = true,
+        .showFileTable = true
     };
 }
 
@@ -291,6 +306,24 @@ void testPrintMultiResultLinesOnly(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testPrintMultiResultTotalsOnlySuppressesDetailRows(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile.java",
+        3, 1, 2, 3, 4, 5
+    );
+    PrintBuffer buffer = mkBufferTotalsOnly();
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "Summary:\n\n"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "| Total: "));
+    TEST_ASSERT_NULL(strstr(buffer.text, "| Java                     |"));
+    TEST_ASSERT_NULL(strstr(buffer.text, "| SomeFile.java            |"));
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
 void testPrintMultiResultWithFileWarnings(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile0.java",
@@ -379,6 +412,7 @@ int main(void) {
     RUN_TEST(testPrintMultiResultWithBigNumbers);
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
+    RUN_TEST(testPrintMultiResultTotalsOnlySuppressesDetailRows);
     RUN_TEST(testPrintMultiResultWithFileWarnings);
     RUN_TEST(testFoundFilesLabelTextWithPartiallyProcessedFileSet);
     RUN_TEST(testFoundFilesLabelTextWithOneFoundFile);
