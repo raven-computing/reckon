@@ -110,7 +110,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 20
+#define RECKON_NUM_SUPPORTED_FORMATS 21
 
 /**
  * Macro to create a format option bitmask.
@@ -159,6 +159,11 @@ typedef enum RcnTextFormat {
      * Text formatted in XML, as found in files with a '.xml' extension.
      */
     RCN_TEXT_XML,
+
+    /**
+     * Text formatted in FXML, as found in files with a '.fxml' extension.
+     */
+    RCN_TEXT_FXML,
 
     /**
      * Text formatted in JSON, as found in files with a '.json' extension.
@@ -843,6 +848,11 @@ typedef enum RcnFormatOption {
      * Option to select statistics for XML files.
      */
     RCN_OPT_TEXT_XML = RECKON_MK_FRMT_OPT(RCN_TEXT_XML),
+
+    /**
+     * Option to select statistics for FXML files.
+     */
+    RCN_OPT_TEXT_FXML = RECKON_MK_FRMT_OPT(RCN_TEXT_FXML),
 
     /**
      * Option to select statistics for JSON text files.

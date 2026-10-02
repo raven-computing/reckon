@@ -333,6 +333,32 @@ void testCountResultsXml(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testCountResultsFxml(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.fxml";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .formats = RCN_OPT_TEXT_FXML
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    RcnSourceFile* file = &stats->count.files[0];
+    RcnCountResultGroup* result = &stats->count.results[0];
+    TEST_ASSERT_TRUE(result->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+    TEST_ASSERT_NULL(result->state.errorMessage);
+    TEST_ASSERT_EQUAL_STRING("sample.fxml", file->name);
+    TEST_ASSERT_TRUE(result->isProcessed);
+    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(7, result->codeLines);
+    TEST_ASSERT_EQUAL_INT(7, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(16, result->words);
+    TEST_ASSERT_EQUAL_INT(231, result->characters);
+    TEST_ASSERT_EQUAL_INT(231, result->sourceSize);
+    rcnFreeCountStatistics(stats);
+}
+
 void testCountResultsJson(void) {
     char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.json";
     RcnCountStatistics* stats = rcnCreateCountStatistics(path);
@@ -607,6 +633,7 @@ int main(void) {
     RUN_TEST(testCountWithMultipleFilesWhenOneFileHasErrorAndMultiThreading);
     RUN_TEST(testCountResultGroupLogicalLineCheckField);
     RUN_TEST(testCountResultsXml);
+    RUN_TEST(testCountResultsFxml);
     RUN_TEST(testCountResultsJson);
     RUN_TEST(testCountResultsCss);
     RUN_TEST(testCountResultsHtml);

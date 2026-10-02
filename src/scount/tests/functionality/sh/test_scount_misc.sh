@@ -65,7 +65,7 @@ function test_scount_can_read_larger_source_content_from_stdin() {
 
 function test_annotate_counts_via_stdin_works_for_all_applicable_test_files() {
   local expected_successes=16;
-  local expected_failures=25;
+  local expected_failures=27;
   local actual_successes=0;
   local actual_failures=0;
   local filename;
