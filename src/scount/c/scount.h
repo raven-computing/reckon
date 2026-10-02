@@ -154,6 +154,7 @@ void showHelpText(void);
 /**
  * Validates the input arguments.
  * 
+ * May print warnings as a side effect.
  * Returns `true` if the parsed application arguments contains
  * no error and the input can be further used, `false` otherwise.
  */

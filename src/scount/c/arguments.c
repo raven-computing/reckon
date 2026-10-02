@@ -156,6 +156,12 @@ void showHelpText(void) {
 }
 
 bool isInputValid(AppArgs args) {
+    if (args.totalsOnly && args.showFiles) {
+        logW("Option --show-files cannot be combined with --total option");
+    }
+    if (args.totalsOnly && args.showAllFiles) {
+        logW("Option --show-all-files cannot be combined with --total option");
+    }
     return (
         args.errorMessage == NULL
         && args.indexUnknown == 0

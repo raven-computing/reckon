@@ -94,10 +94,11 @@ function test_scount_prints_only_totals_row_with_lines_option() {
   assert_stderr_is_empty;
 }
 
-function test_scount_ignores_show_files_options_when_total_option_is_used() {
+function test_scount_prints_warning_when_combining_total_option_with_show_files_options() {
   run_app --show-files --show-all-files --total "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
-  assert_stdout_equals_file "expected/output_total_only.txt";
+  assert_stdout_contains "Option --show-files cannot be combined with --total option";
+  assert_stdout_contains "Option --show-all-files cannot be combined with --total option";
   assert_stderr_is_empty;
 }
 
