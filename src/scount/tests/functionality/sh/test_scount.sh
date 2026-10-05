@@ -99,6 +99,8 @@ function test_scount_prints_warning_when_combining_total_option_with_show_files_
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_contains "Option --show-files cannot be combined with --total option";
   assert_stdout_contains "Option --show-all-files cannot be combined with --total option";
+  assert_stdout_contains "Scanned all 3 found files";
+  assert_stdout_contains "o--- LLC ---o--- LOC ---o";
   assert_stderr_is_empty;
 }
 
