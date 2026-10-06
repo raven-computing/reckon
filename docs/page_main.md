@@ -58,6 +58,7 @@ This version of the project supports processing the following file formats:
 - C++
 - CMake
 - CSS
+- FXML
 - HTML
 - Java
 - JavaScript
