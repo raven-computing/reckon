@@ -30,8 +30,7 @@ ExitStatus outputAnnotatedSource(AppArgs args) {
         const RcnSourceFile* const file = &stats->count.files[0];
         const RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
         if (!detection.isSupportedFormat) {
-            logE("Failed to annotate source input from stdin.");
-            logE("Source format is not supported.");
+            logE("The file extension is not supported: '%s'", args.inputPath);
             return APP_EXIT_INVALID_INPUT;
         }
         annotatedSource = rcnMarkLogicalLinesInSourceText(
