@@ -255,8 +255,8 @@ Span getBlockCommentEndString(RcnTextFormat language) {
 }
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
-SourceFormatDetection detectSourceFormat(const RcnSourceFile* file) {
-    SourceFormatDetection detection = {
+RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
+    RcnSourceFormatDetection detection = {
         .isSupportedFormat = false,
         .format = RCN_TEXT_UNFORMATTED // undefined placeholder
     };
