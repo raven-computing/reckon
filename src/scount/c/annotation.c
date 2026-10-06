@@ -31,7 +31,7 @@ ExitStatus outputAnnotatedSource(AppArgs args) {
         const RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
         if (!detection.isSupportedFormat) {
             logE("The file extension is not supported: '%s'", args.inputPath);
-            return APP_EXIT_INVALID_INPUT;
+            return APP_EXIT_INVALID_ARGUMENT;
         }
         annotatedSource = rcnMarkLogicalLinesInSourceText(
             detection.format,
