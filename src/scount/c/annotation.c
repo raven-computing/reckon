@@ -19,54 +19,6 @@
 #include "reckon/reckon.h"
 #include "scount.h"
 
-static RcnTextFormat formatFromExtension(const char* ext) {
-    if (!ext) {
-        return RCN_TEXT_UNFORMATTED;
-    }
-    if (strcmp(ext, "c") == 0 || strcmp(ext, "h") == 0) {
-        return RCN_LANG_C;
-    }
-    if (strcmp(ext, "java") == 0) {
-        return RCN_LANG_JAVA;
-    }
-    if (strcmp(ext, "py") == 0) {
-        return RCN_LANG_PYTHON;
-    }
-    if (strcmp(ext, "js") == 0
-        || strcmp(ext, "mjs") == 0
-        || strcmp(ext, "cjs") == 0) {
-
-        return RCN_LANG_JAVASCRIPT;
-    }
-    if (strcmp(ext, "ts") == 0
-        || strcmp(ext, "mts") == 0
-        || strcmp(ext, "cts") == 0) {
-
-        return RCN_LANG_TYPESCRIPT;
-    }
-    if (strcmp(ext, "r") == 0 || strcmp(ext, "R") == 0) {
-        return RCN_LANG_R;
-    }
-    if (strcmp(ext, "sh") == 0 || strcmp(ext, "bash") == 0) {
-        return RCN_LANG_BASH;
-    }
-    if (strcmp(ext, "cpp") == 0
-        || strcmp(ext, "cc") == 0
-        || strcmp(ext, "cxx") == 0
-        || strcmp(ext, "c++") == 0
-        || strcmp(ext, "hpp") == 0
-        || strcmp(ext, "hxx") == 0
-        || strcmp(ext, "cppm") == 0
-        || strcmp(ext, "ccm") == 0
-        || strcmp(ext, "cxxm") == 0
-        || strcmp(ext, "c++m") == 0
-        || strcmp(ext, "ixx") == 0) {
-
-        return RCN_LANG_CPP;
-    }
-    return RCN_TEXT_UNFORMATTED;
-}
-
 ExitStatus outputAnnotatedSource(AppArgs args) {
     RcnSourceText annotatedSource = {0};
     if (args.readFromStdin) {
@@ -76,9 +28,14 @@ ExitStatus outputAnnotatedSource(AppArgs args) {
             return APP_EXIT_PROG_IO_ERROR;
         }
         const RcnSourceFile* const file = &stats->count.files[0];
-        const RcnTextFormat format = formatFromExtension(file->extension);
+        const RcnSourceFormatDetection detection = rcnDetectSourceFormat(file);
+        if (!detection.isSupportedFormat) {
+            logE("Failed to annotate source input from stdin.");
+            logE("Source format is not supported.");
+            return APP_EXIT_INVALID_INPUT;
+        }
         annotatedSource = rcnMarkLogicalLinesInSourceText(
-            format,
+            detection.format,
             file->content
         );
         rcnFreeCountStatistics(stats);
