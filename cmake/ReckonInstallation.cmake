@@ -82,6 +82,10 @@ function(setup_scount_packaging install_component)
             CPACK_INNOSETUP_EXTRA_SCRIPTS
             "${PROJECT_SOURCE_DIR}/cmake/inno/scount.iss"
         )
+        set(
+            CPACK_PACKAGE_FILE_NAME
+            "${CPACK_PACKAGE_FILE_NAME}_Setup"
+        )
     elseif(UNIX)
         set(CPACK_GENERATOR "DEB")
         set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${PACKAGE_MAINTAINER}")
