@@ -55,6 +55,13 @@ function test_scount_prints_error_when_annotating_source_of_nonexistent_file() {
   assert_stderr_contains "Check the logical line count";
 }
 
+function test_scount_annotating_source_from_stdin_with_invalid_file_extension() {
+  run_app --annotate-counts -.bla < "${TEST_PROJECT_DIR}/src/lib/tests/res/c/sample.c";
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_contains "The file extension is not supported: '.bla'";
+}
+
 function test_scount_prints_error_when_annotating_source_of_directory() {
   run_app --annotate-counts "${TEST_PROJECT_DIR}/lib/tests/res";
   assert_exit_status $EXIT_INVALID_INPUT;
