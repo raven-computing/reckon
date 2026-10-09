@@ -341,7 +341,7 @@ void testCountSkipsAllIgnoredFilesInDirectory(void) {
     RcnStatOptions options = {0};
 
     TEST_ASSERT_NOT_NULL(stats);
-    TEST_ASSERT_EQUAL_INT(11, stats->count.size);
+    TEST_ASSERT_EQUAL_INT(12, stats->count.size);
 
     for (size_t i = 0; i < stats->count.size; ++i) {
         stats->count.files[i].ignore = true;
