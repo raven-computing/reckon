@@ -63,6 +63,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_UNFORMATTED] = {"Plain Text", false, false},
     [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
     [RCN_TEXT_XML] = {"XML", false, true},
+    [RCN_TEXT_FXML] = {"FXML", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, true},
     [RCN_TEXT_HTML] = {"HTML", false, true},
@@ -198,6 +199,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
+        case RCN_TEXT_FXML:
             return (Span){
                 .ptr=BLOCK_COMMENT_START_STYLE_XML,
                 .length=strlen(BLOCK_COMMENT_START_STYLE_XML)
@@ -228,6 +230,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
     switch (language) {
         case RCN_TEXT_HTML:
         case RCN_TEXT_XML:
+        case RCN_TEXT_FXML:
             return (Span){
                 .ptr=BLOCK_COMMENT_END_STYLE_XML,
                 .length=strlen(BLOCK_COMMENT_END_STYLE_XML)
@@ -296,6 +299,9 @@ RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "xml") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_XML;
+    } else if (strcmp(extension, "fxml") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_FXML;
     } else if (strcmp(extension, "json") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_JSON;
