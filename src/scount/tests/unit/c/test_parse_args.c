@@ -206,6 +206,18 @@ void testLinesShortOptionSetsLinesOnlyTrue(void) {
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
+void testTotalOptionSetsTotalsOnlyTrue(void) {
+    char* argv[] = { "scount", "--total", "File.java" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.totalsOnly);
+    TEST_ASSERT_FALSE(args.linesOnly);
+    TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
 void testStrictOptionSetsStrictTrue(void) {
     char* argv[] = { "scount", "--strict", "File.java" };
     int argc = (int)(sizeof(argv) / sizeof(argv[0]));
@@ -268,6 +280,7 @@ int main(void) {
     RUN_TEST(testHelpWithInputSetsHelpAndInput);
     RUN_TEST(testLinesLongOptionSetsLinesOnlyTrue);
     RUN_TEST(testLinesShortOptionSetsLinesOnlyTrue);
+    RUN_TEST(testTotalOptionSetsTotalsOnlyTrue);
     RUN_TEST(testStrictOptionSetsStrictTrue);
     RUN_TEST(testNoParallelizationOptionSetsFlagTrue);
     RUN_TEST(testStdinPathDashSetsInputPathAndValid);

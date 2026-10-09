@@ -52,6 +52,7 @@ typedef struct AppArgs {
     bool readFromStdin;          // True when 'inputPath' is '-' or '-.ext'
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
+    bool totalsOnly;             // Option: `--total`
     bool showFiles;              // Option: `--show-files`
     bool showAllFiles;           // Option: `--show-all-files`
     bool disableParallelization; // Option: `--disable-parallelization`
@@ -110,6 +111,7 @@ typedef struct PrintBuffer {
     bool showWords;
     bool showCharacters;
     bool showSourceSize;
+    bool showTotalsOnly;
     bool showFileTable;
     bool showAllFileRows;
     bool showWarnings;
@@ -152,6 +154,7 @@ void showHelpText(void);
 /**
  * Validates the input arguments.
  * 
+ * May print warnings as a side effect.
  * Returns `true` if the parsed application arguments contains
  * no error and the input can be further used, `false` otherwise.
  */

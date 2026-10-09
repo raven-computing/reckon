@@ -41,8 +41,8 @@ static const int WIDTH_COL3 = 11; // WRD
 static const int WIDTH_COL4 = 11; // CHR
 static const int WIDTH_COL5 = 11; // SZE
 static const int COLUMN_PADDING = 2;
-static const char TABLE_BORDER_HORIZONTAL_NORMAL = '-';
-static const char TABLE_BORDER_HORIZONTAL_EMPHASIS = '=';
+static const char TABLE_BORDER_HORIZONTAL_NORMAL[] = "-";
+static const char TABLE_BORDER_HORIZONTAL_EMPHASIS[] = "=";
 static const char TABLE_BORDER_VERTICAL_NORMAL = '|';
 static const char TABLE_BORDER_VERTICAL_EMPHASIS = '|';
 static const char TABLE_BORDER_CORNER = 'o';
@@ -53,6 +53,9 @@ static const char ELLIPSIS_EVEN[] = "..";
 static const int ELLIPSIS_ODD_LEN = sizeof(ELLIPSIS_ODD) - 1;
 static const int ELLIPSIS_EVEN_LEN = sizeof(ELLIPSIS_EVEN) - 1;
 static const char errorMessage[] = "Error";
+
+static_assert(sizeof(TABLE_BORDER_HORIZONTAL_NORMAL) == 2, "Must only have 1 char");
+static_assert(sizeof(TABLE_BORDER_HORIZONTAL_EMPHASIS) == 2, "Must only have 1 char");
 
 #ifdef _WIN32
 static inline bool isPathSep(char character) {
@@ -235,17 +238,22 @@ static void prSize(PrintBuffer* buffer, size_t value) {
 }
 
 /**
- * Puts a specific character into the buffer repeatedly for `count` times.
+ * Puts a specific string into the buffer repeatedly for `count` times.
  */
-static void prRpt(PrintBuffer* buffer, char character, size_t count) {
+static void prRpt(PrintBuffer* buffer, const char* string, size_t count) {
+    assert(string != NULL);
     if (count == 0) {
         return;
     }
-    if (!ensureCapacity(buffer, count)) {
+    const size_t stringLength = strlen(string);
+    const size_t totalLength = stringLength * count;
+    if (!ensureCapacity(buffer, totalLength)) {
         return;
     }
-    memset(buffer->text + buffer->size, character, count);
-    buffer->size += count;
+    for (size_t i = 0; i < count; ++i) {
+        memcpy(buffer->text + buffer->size, string, stringLength);
+        buffer->size += stringLength;
+    }
     buffer->text[buffer->size] = '\0';
 }
 
@@ -272,16 +280,16 @@ static void prCnt(PrintBuffer* buffer, RcnCount value, int width) {
     const int padding = width - written;
     const int left = padding / 2;
     const int right = padding - left;
-    prRpt(buffer, ' ', left);
+    prRpt(buffer, " ", left);
     prStrN(buffer, string, (size_t) written);
-    prRpt(buffer, ' ', right);
+    prRpt(buffer, " ", right);
 }
 
 static void prNotApplicable(PrintBuffer* buffer) {
     const size_t pad = ((WIDTH_COL1 - strlen(LABEL_NOT_APPLICABLE)) / 2) - 1;
-    prRpt(buffer, ' ', pad);
+    prRpt(buffer, " ", pad);
     prStr(buffer, LABEL_NOT_APPLICABLE);
-    prRpt(buffer, ' ', pad);
+    prRpt(buffer, " ", pad);
 }
 
 static void prLogicalLineCount(
@@ -315,11 +323,16 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
     assert(padding >= 0);
     const int left = padding / 2;
     const int right = padding - left;
-    prRpt(buffer, '-', left);
-    prChr(buffer, ' ');
+    char separatorCharacter = ' ';
+    if (strcmp(label, TABLE_BORDER_HORIZONTAL_NORMAL) == 0) {
+        separatorCharacter = TABLE_BORDER_HORIZONTAL_NORMAL[0];
+    }
+
+    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, left);
+    prChr(buffer, separatorCharacter);
     prStr(buffer, label);
-    prChr(buffer, ' ');
-    prRpt(buffer, '-', right);
+    prChr(buffer, separatorCharacter);
+    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, right);
 }
 
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
@@ -337,7 +350,7 @@ static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
     }
     if (length <= width) {
         prStr(buffer, string);
-        prRpt(buffer, ' ', width - length);
+        prRpt(buffer, " ", width - length);
     } else {
         prStr(buffer, "...");
         const int tail = width - 3;
@@ -447,7 +460,7 @@ static void prTableTop(PrintBuffer* buffer, const char* title) {
     prChr(buffer, '\n');
 }
 
-static void prTableBottom(PrintBuffer* buffer, char border) {
+static void prTableBottom(PrintBuffer* buffer, const char* border) {
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
     prRpt(buffer, border, WIDTH_COL0);
@@ -483,9 +496,9 @@ static inline void prFileRowSkippedItem(PrintBuffer* buffer, int width) {
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     const bool even = width % 2 == 0;
     const int correction = even ? ELLIPSIS_EVEN_LEN : ELLIPSIS_ODD_LEN;
-    prRpt(buffer, ' ', (width - correction) / 2);
+    prRpt(buffer, " ", (width - correction) / 2);
     prStr(buffer, even ? ELLIPSIS_EVEN : ELLIPSIS_ODD);
-    prRpt(buffer, ' ', (width - correction) / 2);
+    prRpt(buffer, " ", (width - correction) / 2);
 }
 
 static void prFileRowSkipped(PrintBuffer* buffer) {
@@ -493,9 +506,9 @@ static void prFileRowSkipped(PrintBuffer* buffer) {
     prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
     bool even = WIDTH_COL0 % 2 == 0;
     int correction = even ? ELLIPSIS_EVEN_LEN : ELLIPSIS_ODD_LEN;
-    prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
+    prRpt(buffer, " ", (WIDTH_COL0 - correction) / 2);
     prStr(buffer, even ? ELLIPSIS_EVEN : ELLIPSIS_ODD);
-    prRpt(buffer, ' ', (WIDTH_COL0 - correction) / 2);
+    prRpt(buffer, " ", (WIDTH_COL0 - correction) / 2);
     if (buffer->showLogicalLines) {
         prFileRowSkippedItem(buffer, WIDTH_COL1);
     }
@@ -758,7 +771,7 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
         if (result->hasLogicalLines) {
             pr8ld(buffer, result->logicalLines);
         } else {
-            prRpt(buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));
+            prRpt(buffer, " ", 8 - strlen(LABEL_NOT_APPLICABLE));
             prStr(buffer, LABEL_NOT_APPLICABLE);
         }
         prChr(buffer, '\n');
@@ -768,7 +781,7 @@ void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
         if (result->hasCodeLines) {
             pr8ld(buffer, result->codeLines);
         } else {
-            prRpt(buffer, ' ', 8 - strlen(LABEL_NOT_APPLICABLE));
+            prRpt(buffer, " ", 8 - strlen(LABEL_NOT_APPLICABLE));
             prStr(buffer, LABEL_NOT_APPLICABLE);
         }
         prChr(buffer, '\n');
@@ -811,17 +824,32 @@ void printResultsMultiple(
         prFileWarnings(buffer, stats);
     }
 
-    if (buffer->showFileTable) {
+    if (buffer->showFileTable && !buffer->showTotalsOnly) {
         prTableTop(buffer, "File");
         prFileRows(buffer, stats);
         prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_NORMAL);
-        prStr(buffer, "\nSummary:\n\n");
+        prChr(buffer, '\n');
     }
 
-    prTableTop(buffer, "Language");
-    prSummaryRows(buffer, stats);
-    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
+    if (buffer->showTotalsOnly || buffer->showFileTable) {
+        prStr(buffer, "Summary:\n\n");
+    }
+    prTableTop(
+        buffer,
+        buffer->showTotalsOnly
+        ? TABLE_BORDER_HORIZONTAL_NORMAL
+        : "Language"
+    );
+    if (!buffer->showTotalsOnly) {
+        prSummaryRows(buffer, stats);
+        prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
+    }
     prTotalsRow(buffer, stats);
-    prTableBottom(buffer, TABLE_BORDER_HORIZONTAL_EMPHASIS);
+    prTableBottom(
+        buffer,
+        buffer->showTotalsOnly
+        ? TABLE_BORDER_HORIZONTAL_NORMAL
+        : TABLE_BORDER_HORIZONTAL_EMPHASIS
+    );
     prStr(buffer, "\n\n");
 }

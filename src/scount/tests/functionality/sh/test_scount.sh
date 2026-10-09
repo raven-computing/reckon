@@ -80,6 +80,30 @@ function test_scount_prints_only_line_metrics_with_short_option() {
   assert_stderr_is_empty;
 }
 
+function test_scount_with_totals_row_only_option() {
+  run_app --total "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_total_only.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_prints_only_totals_row_with_lines_option() {
+  run_app --total --lines "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_total_lines_only.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_prints_warning_when_combining_total_option_with_show_files_options() {
+  run_app --show-files --show-all-files --total "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --show-files cannot be combined with --total option";
+  assert_stdout_contains "Option --show-all-files cannot be combined with --total option";
+  assert_stdout_contains "Scanned all 3 found files";
+  assert_stdout_contains "o--- LLC ---o--- LOC ---o";
+  assert_stderr_is_empty;
+}
+
 function test_scount_prints_correct_output_for_single_file_no_llc() {
   run_app "${TEST_RES_DIR}/mixed/sample1.md";
   assert_exit_status $EXIT_SUCCESS;
