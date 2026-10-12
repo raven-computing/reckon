@@ -186,7 +186,10 @@ ExitStatus outputStatistics(AppArgs args) {
         .showCharacters = !args.linesOnly,
         .showSourceSize = !args.linesOnly,
         .showTotalsOnly = args.totalsOnly,
-        .showFileTable = !args.totalsOnly && (args.showFiles || args.showAllFiles),
+        .showFileTable = (
+            !args.totalsOnly
+            && (args.showFiles || args.showAllFiles)
+        ),
         .showAllFileRows = args.showAllFiles,
         .fileIsStdin = args.readFromStdin
     };
