@@ -739,7 +739,8 @@ typedef struct RcnCountStatistics {
     RcnCount totalCharacters;
 
     /**
-     * The total size of the source code files, across all files and formats.
+     * The sum of the sizes of the source code files processed,
+     * measured in bytes.
      * 
      * Measured in bytes.
      */
@@ -783,7 +784,7 @@ typedef struct RcnCountStatistics {
     RcnCount characters[RECKON_NUM_SUPPORTED_FORMATS];
 
     /**
-     * The total size of the source code files per supported format.
+     * The total size of the processed source code files per supported format.
      * 
      * The index corresponds to the `RcnTextFormat` enumerator values.
      * The size is measured in bytes.
