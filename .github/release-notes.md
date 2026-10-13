@@ -1,9 +1,9 @@
 #### Release notes:
 
-* This release comes with a massive performance improvement due to the newly added parallelization capabilities. Files can now be processed in parallel by using multiple threads. `scount` does this by default when applicable and library users can control the behaviour with the useMultiThreading option.
-* Python bytecode files are now completely ignored by ignoring '\_\_pycache\_\_' directories altogether.
-* For library users, we have marked API functions in `libreckon` explicitly as MT-safe.
-* We fixed a bug where count annotations for certain file extensions did not work when the input was passed in over standard-input with a specified file extension, e.g. `-.cpp`.
-* Improvements of the UX.
+* Added support for the Java FXML markup format.
+* With `scount` you can now use the `--total` option to only show the totals summary in the output.
+* The `RcnSourceFile` type now has a boolean `ignore` member that can be set by library users to indicate that the file should be completely ignored during processing.
+* Added the `rcnDetectSourceFormat()` API function and the `RcnSourceFormatDetection` type.
+* Stability improvements.
 
-See [Changelog](https://github.com/raven-computing/reckon/blob/v1.9.0/CHANGELOG.md).
+See [Changelog](https://github.com/raven-computing/reckon/blob/v1.10.0/CHANGELOG.md).
