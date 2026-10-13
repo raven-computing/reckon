@@ -54,8 +54,12 @@ static const int ELLIPSIS_ODD_LEN = sizeof(ELLIPSIS_ODD) - 1;
 static const int ELLIPSIS_EVEN_LEN = sizeof(ELLIPSIS_EVEN) - 1;
 static const char errorMessage[] = "Error";
 
-static_assert(sizeof(TABLE_BORDER_HORIZONTAL_NORMAL) == 2, "Must only have 1 char");
-static_assert(sizeof(TABLE_BORDER_HORIZONTAL_EMPHASIS) == 2, "Must only have 1 char");
+static_assert(
+    sizeof(TABLE_BORDER_HORIZONTAL_NORMAL) == 2, "Must only have 1 char"
+);
+static_assert(
+    sizeof(TABLE_BORDER_HORIZONTAL_EMPHASIS) == 2, "Must only have 1 char"
+);
 
 #ifdef _WIN32
 static inline bool isPathSep(char character) {
