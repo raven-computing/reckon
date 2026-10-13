@@ -1,3 +1,11 @@
+#### 1.10.0
+* Added bool RcnSourceFile.ignore member. [[Issue#85]](https://github.com/raven-computing/reckon/issues/85)
+* Added RcnSourceFormatDetection type and rcnDetectSourceFormat() API function. [[Issue#88]](https://github.com/raven-computing/reckon/issues/88)
+* Added support for FXML format. [[Issue#83]](https://github.com/raven-computing/reckon/issues/83)
+* Added --total option to scount CLI to show only totals summary in output. [[Issue#82]](https://github.com/raven-computing/reckon/issues/82)
+* Refactored source format detection in outputAnnotatedSource() function. [[Issue#88]](https://github.com/raven-computing/reckon/issues/88)
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.9.0...v1.10.0)
+
 #### 1.9.0
 * Added parallelization capabilities. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
 * Added --disable-parallelization option to control parallel execution. [[Issue#9]](https://github.com/raven-computing/reckon/issues/9)
