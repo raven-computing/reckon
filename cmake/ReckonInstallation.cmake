@@ -57,9 +57,14 @@ function(setup_scount_packaging install_component)
     if(PACKAGE_ARCH STREQUAL "AMD64" OR PACKAGE_ARCH STREQUAL "amd64")
         set(PACKAGE_ARCH "x86_64")
     endif()
+    set(PACKAGE_NAME_SUFFIX "")
+    if(WIN32)
+        set(PACKAGE_NAME_SUFFIX "Setup")
+    endif()
+    set(PACKAGE_NAME "${CPACK_PACKAGE_NAME}${PACKAGE_NAME_SUFFIX}")
     set(
         CPACK_PACKAGE_FILE_NAME
-        "${CPACK_PACKAGE_NAME}-${CMAKE_PROJECT_VERSION}-${PACKAGE_ARCH}"
+        "${PACKAGE_NAME}-${CMAKE_PROJECT_VERSION}-${PACKAGE_ARCH}"
     )
     # Package metadata
     set(CPACK_PACKAGE_VENDOR "Raven Computing")
@@ -81,10 +86,6 @@ function(setup_scount_packaging install_component)
         set(
             CPACK_INNOSETUP_EXTRA_SCRIPTS
             "${PROJECT_SOURCE_DIR}/cmake/inno/scount.iss"
-        )
-        set(
-            CPACK_PACKAGE_FILE_NAME
-            "${CPACK_PACKAGE_FILE_NAME}_Setup"
         )
     elseif(UNIX)
         set(CPACK_GENERATOR "DEB")
