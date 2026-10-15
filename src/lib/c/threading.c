@@ -51,3 +51,11 @@ void requestAbortRange(ThreadControl* control) {
         );
     }
 }
+
+void initThreadWorkIndex(ThreadWorkIndex* index, size_t initialValue) {
+    atomic_init(index, initialValue);
+}
+
+size_t getNextThreadWorkIndexAtomic(ThreadWorkIndex* index) {
+    return atomic_fetch_add_explicit(index, 1, memory_order_relaxed);
+}
