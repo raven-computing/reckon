@@ -379,9 +379,6 @@ static void processFileRange(
         if (nextIndex >= stats->count.size) {
             break;
         }
-        if (shouldAbortRange(control)) {
-            break;
-        }
 
         RcnSourceFile* file = &stats->count.files[nextIndex];
         RcnCountResultGroup* result = &stats->count.results[nextIndex];
