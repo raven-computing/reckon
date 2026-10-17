@@ -371,16 +371,17 @@ static inline bool count(
 static void processFileRange(
     RcnCountStatistics* stats,
     RcnStatOptions options,
-    Slice slice,
+    ThreadWorkIndex* index,
     ThreadControl* control
 ) {
-    for (size_t i = slice.start; i < slice.end; ++i) {
-        if (shouldAbortRange(control)) {
+    while (!shouldAbortRange(control)) {
+        const size_t nextIndex = getNextThreadWorkIndexAtomic(index);
+        if (nextIndex >= stats->count.size) {
             break;
         }
 
-        RcnSourceFile* file = &stats->count.files[i];
-        RcnCountResultGroup* result = &stats->count.results[i];
+        RcnSourceFile* file = &stats->count.files[nextIndex];
+        RcnCountResultGroup* result = &stats->count.results[nextIndex];
         resetResultGroup(result);
 
         if (file->ignore) {
@@ -411,14 +412,14 @@ static void processFileRange(
 }
 
 static void runCountThread(ThreadWork* arg) {
-    RCN_LOG_DBG("Worker thread is processing chunk");
+    RCN_LOG_DBG("Worker thread is processing files");
     processFileRange(
         arg->stats,
         arg->options,
-        arg->slice,
+        arg->index,
         arg->control
     );
-    RCN_LOG_DBG("Worker thread has finished processing chunk");
+    RCN_LOG_DBG("Worker thread has finished processing files");
 }
 
 static RcnResultState parallelizeCount(
@@ -450,26 +451,20 @@ static RcnResultState parallelizeCount(
         // LCOV_EXCL_STOP
     }
 
-    const size_t baseChunkSize = stats->count.size / workerCount;
-    const size_t remainder = stats->count.size % workerCount;
-    size_t startIndex = 0;
+    ThreadWorkIndex sharedIndex;
+    initThreadWorkIndex(&sharedIndex, 0);
     size_t createdThreads = 0;
     bool createdAllThreads = true;
 
     for (size_t i = 0; i < workerCount; ++i) {
-        const size_t chunkSize = baseChunkSize + (i < remainder ? 1 : 0);
-        ThreadWork* chunk = &workItems[i];
-        chunk->stats = stats;
-        chunk->options = options;
-        chunk->slice = (Slice){
-            .start = startIndex,
-            .end = startIndex + chunkSize
-        };
-        chunk->control = &control;
-        startIndex = chunk->slice.end;
+        ThreadWork* work = &workItems[i];
+        work->stats = stats;
+        work->options = options;
+        work->index = &sharedIndex;
+        work->control = &control;
 
         RCN_LOG_DBG("Creating worker thread");
-        if (!createThread(&threads[i], runCountThread, chunk)) {
+        if (!createThread(&threads[i], runCountThread, work)) {
             createdAllThreads = false;
             break;
         }
@@ -627,10 +622,12 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
         }
     } else {
         RCN_LOG_DBG("Using single-threaded file processing");
+        ThreadWorkIndex index;
+        initThreadWorkIndex(&index, 0);
         processFileRange(
             stats,
             options,
-            (Slice){0, stats->count.size},
+            &index,
             NULL
         );
     }

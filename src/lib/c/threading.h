@@ -55,6 +55,11 @@ typedef struct ThreadControl {
 } ThreadControl;
 
 /**
+ * Atomic counter type used to coordinate shared file indexing among workers.
+ */
+typedef atomic_size_t ThreadWorkIndex;
+
+/**
  * A structure encapsulating the work to be performed by a single thread.
  * The `stats` field points to the `RcnCountStatistics` structure that is
  * shared by potentially multiple worker threads. It will be updated with
@@ -63,7 +68,7 @@ typedef struct ThreadControl {
 typedef struct ThreadWork {
     RcnCountStatistics* stats;
     RcnStatOptions options;
-    Slice slice;
+    ThreadWorkIndex* index;
     ThreadControl* control;
 } ThreadWork;
 
@@ -147,6 +152,16 @@ void lockThread(RCN_NATIVE_HANDLE mutex);
  * Unlocks the specified thread mutex, allowing other threads to acquire it.
  */
 void unlockThread(RCN_NATIVE_HANDLE mutex);
+
+/**
+ * Initializes the given atomic index with the specified start value.
+ */
+void initThreadWorkIndex(ThreadWorkIndex* index, size_t initialValue);
+
+/**
+ * Atomically returns the current index value and increments it by one.
+ */
+size_t getNextThreadWorkIndexAtomic(ThreadWorkIndex* index);
 
 #ifdef __cplusplus
 }
