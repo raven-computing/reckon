@@ -3,7 +3,7 @@ include(cmake/DependencyUtil.cmake)
 dependency(
     DEPENDENCY_NAME         tree-sitter
     DEPENDENCY_RESOURCE     tree-sitter/tree-sitter
-    DEPENDENCY_VERSION      v0.26.3
+    DEPENDENCY_VERSION      v0.27.1
     DEPENDENCY_LINK_TARGETS tree-sitter
 )
 
