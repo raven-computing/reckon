@@ -606,6 +606,9 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     for (size_t i = 0; i < nFiles; ++i) {
         const RcnSourceFile* file = &stats->count.files[i];
         const RcnCountResultGroup* resultGroup = &stats->count.results[i];
+        if (!resultGroup->isProcessed) {
+            continue;
+        }
         if (resultGroup->state.errorCode != RCN_ERR_NONE ){
             continue;
         }

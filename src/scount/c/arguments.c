@@ -16,6 +16,8 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <ctype.h>
 #include <string.h>
 
 #include "scount.h"
@@ -24,6 +26,158 @@
 #define RECKON_VERSION "unknown"
 #endif
 
+static uint32_t getFormatBit(RcnTextFormat format) {
+    return (uint32_t) RECKON_MK_FRMT_OPT(format);
+}
+
+static bool equalsSpecifier(
+    const char* spec,
+    size_t length,
+    const char* value
+) {
+    const size_t valueLen = strlen(value);
+    if (length != valueLen) {
+        return false;
+    }
+    for (size_t i = 0; i < length; ++i) {
+        const unsigned char lhs = (unsigned char) spec[i];
+        const unsigned char rhs = (unsigned char) value[i];
+        if (tolower(lhs) != tolower(rhs)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// NOLINTBEGIN(readability-function-cognitive-complexity)
+static bool parseFormatSpecifier(
+    const char* spec,
+    size_t length,
+    uint32_t* formatBit
+) {
+    if (!spec || length == 0 || !formatBit) {
+        return false;
+    }
+
+    if (equalsSpecifier(spec, length, "txt")
+        || equalsSpecifier(spec, length, "text")
+        || equalsSpecifier(spec, length, "plaintext")
+        || equalsSpecifier(spec, length, "plain-text")
+        || equalsSpecifier(spec, length, "unformatted")) {
+        *formatBit = getFormatBit(RCN_TEXT_UNFORMATTED);
+    } else if (equalsSpecifier(spec, length, "md")
+        || equalsSpecifier(spec, length, "markdown")) {
+        *formatBit = getFormatBit(RCN_TEXT_MARKDOWN);
+    } else if (equalsSpecifier(spec, length, "xml")) {
+        *formatBit = getFormatBit(RCN_TEXT_XML);
+    } else if (equalsSpecifier(spec, length, "fxml")) {
+        *formatBit = getFormatBit(RCN_TEXT_FXML);
+    } else if (equalsSpecifier(spec, length, "json")) {
+        *formatBit = getFormatBit(RCN_TEXT_JSON);
+    } else if (equalsSpecifier(spec, length, "css")) {
+        *formatBit = getFormatBit(RCN_TEXT_CSS);
+    } else if (equalsSpecifier(spec, length, "html")
+        || equalsSpecifier(spec, length, "htm")) {
+        *formatBit = getFormatBit(RCN_TEXT_HTML);
+    } else if (equalsSpecifier(spec, length, "sql")) {
+        *formatBit = getFormatBit(RCN_TEXT_SQL);
+    } else if (equalsSpecifier(spec, length, "cmake")
+        || equalsSpecifier(spec, length, "cmakelists")
+        || equalsSpecifier(spec, length, "cmakelists.txt")) {
+        *formatBit = getFormatBit(RCN_TEXT_CMAKE);
+    } else if (equalsSpecifier(spec, length, "make")
+        || equalsSpecifier(spec, length, "mk")
+        || equalsSpecifier(spec, length, "makefile")) {
+        *formatBit = getFormatBit(RCN_TEXT_MAKE);
+    } else if (equalsSpecifier(spec, length, "yaml")
+        || equalsSpecifier(spec, length, "yml")) {
+        *formatBit = getFormatBit(RCN_TEXT_YAML);
+    } else if (equalsSpecifier(spec, length, "assembly")
+        || equalsSpecifier(spec, length, "asm")
+        || equalsSpecifier(spec, length, "s")) {
+        *formatBit = getFormatBit(RCN_LANG_ASSEMBLY);
+    } else if (equalsSpecifier(spec, length, "c")) {
+        *formatBit = getFormatBit(RCN_LANG_C);
+    } else if (equalsSpecifier(spec, length, "java")) {
+        *formatBit = getFormatBit(RCN_LANG_JAVA);
+    } else if (equalsSpecifier(spec, length, "python")
+        || equalsSpecifier(spec, length, "py")) {
+        *formatBit = getFormatBit(RCN_LANG_PYTHON);
+    } else if (equalsSpecifier(spec, length, "cpp")
+        || equalsSpecifier(spec, length, "c++")
+        || equalsSpecifier(spec, length, "cplusplus")
+        || equalsSpecifier(spec, length, "cc")
+        || equalsSpecifier(spec, length, "cxx")) {
+        *formatBit = getFormatBit(RCN_LANG_CPP);
+    } else if (equalsSpecifier(spec, length, "javascript")
+        || equalsSpecifier(spec, length, "js")) {
+        *formatBit = getFormatBit(RCN_LANG_JAVASCRIPT);
+    } else if (equalsSpecifier(spec, length, "typescript")
+        || equalsSpecifier(spec, length, "ts")) {
+        *formatBit = getFormatBit(RCN_LANG_TYPESCRIPT);
+    } else if (equalsSpecifier(spec, length, "r")) {
+        *formatBit = getFormatBit(RCN_LANG_R);
+    } else if (equalsSpecifier(spec, length, "batch")
+        || equalsSpecifier(spec, length, "dos-batch")
+        || equalsSpecifier(spec, length, "dosbatch")
+        || equalsSpecifier(spec, length, "bat")
+        || equalsSpecifier(spec, length, "cmd")) {
+        *formatBit = getFormatBit(RCN_LANG_BATCH);
+    } else if (equalsSpecifier(spec, length, "bash")
+        || equalsSpecifier(spec, length, "shell")
+        || equalsSpecifier(spec, length, "sh")) {
+        *formatBit = getFormatBit(RCN_LANG_BASH);
+    } else {
+        return false;
+    }
+
+    return true;
+}
+// NOLINTEND(readability-function-cognitive-complexity)
+
+static void parseFormatList(
+    const char* value,
+    uint32_t* formatMask,
+    bool* hasMask,
+    bool* hasInvalidSpecifier
+) {
+    if (!value || value[0] == '\0') {
+        *hasInvalidSpecifier = true;
+        return;
+    }
+
+    const char* tokenStart = value;
+    while (true) {
+        const char* tokenEnd = tokenStart;
+        while (*tokenEnd != '\0' && *tokenEnd != ',') {
+            ++tokenEnd;
+        }
+
+        while (*tokenStart != '\0' && isspace((unsigned char) *tokenStart)) {
+            ++tokenStart;
+        }
+        while (tokenEnd > tokenStart
+            && isspace((unsigned char) *(tokenEnd - 1))) {
+            --tokenEnd;
+        }
+
+        const size_t tokenLength = (size_t) (tokenEnd - tokenStart);
+        uint32_t formatBit = 0;
+        if (!parseFormatSpecifier(tokenStart, tokenLength, &formatBit)) {
+            *hasInvalidSpecifier = true;
+        } else {
+            *formatMask |= formatBit;
+            *hasMask = true;
+        }
+
+        if (*tokenEnd == '\0') {
+            break;
+        }
+        tokenStart = tokenEnd + 1;
+    }
+}
+
+// NOLINTBEGIN(readability-function-cognitive-complexity)
 AppArgs parseArgs(int argc, char** argv) {
     AppArgs args = {0};
     for (int i = 1; i < argc; ++i) {
@@ -41,6 +195,30 @@ AppArgs parseArgs(int argc, char** argv) {
             args.showAllFiles = true;
         } else if (strcmp(argv[i], "--disable-parallelization") == 0) {
             args.disableParallelization = true;
+        } else if (strcmp(argv[i], "--include-format") == 0) {
+            if (i + 1 >= argc) {
+                args.errorMessage = "Missing argument for option '--include-format'.";
+                break;
+            }
+            const char* optionArg = argv[++i];
+            parseFormatList(
+                optionArg,
+                &args.includeFormatMask,
+                &args.hasIncludeFormatMask,
+                &args.hasInvalidIncludeFormatSpecifier
+            );
+        } else if (strcmp(argv[i], "--exclude-format") == 0) {
+            if (i + 1 >= argc) {
+                args.errorMessage = "Missing argument for option '--exclude-format'.";
+                break;
+            }
+            const char* optionArg = argv[++i];
+            parseFormatList(
+                optionArg,
+                &args.excludeFormatMask,
+                &args.hasExcludeFormatMask,
+                &args.hasInvalidExcludeFormatSpecifier
+            );
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
         } else if (strcmp(argv[i], "--strict") == 0) {
@@ -77,11 +255,12 @@ AppArgs parseArgs(int argc, char** argv) {
             }
         }
     }
-    if (args.inputPath == NULL) {
+    if (args.inputPath == NULL && args.errorMessage == NULL) {
         args.errorMessage = "No input path specified.";
     }
     return args;
 }
+// NOLINTEND(readability-function-cognitive-complexity)
 
 void showUsage(void) {
     logI("Usage: scount [options] <PATH>");
@@ -129,6 +308,16 @@ void showHelpText(void) {
     logI("                      By default, scount may process files in parallel when multiple CPU cores");
     logI("                      are available.");
     logI(" ");
+    logI("  [--exclude-format <SPEC1[,SPEC2,...]>]");
+    logI("                      Exclude the specified text formats/languages.");
+    logI("                      Format specifiers are case-insensitive and this option");
+    logI("                      can be repeated.");
+    logI(" ");
+    logI("  [--include-format <SPEC1[,SPEC2,...]>]");
+    logI("                      Include only the specified text formats/languages.");
+    logI("                      Format specifiers are case-insensitive and this option");
+    logI("                      can be repeated.");
+    logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
     logI("                      This includes logical and physical lines of code, and hard physical lines.");
     logI(" ");
@@ -156,6 +345,18 @@ void showHelpText(void) {
 }
 
 bool isInputValid(AppArgs args) {
+    if (args.hasInvalidIncludeFormatSpecifier) {
+        logW(
+            "Option --include-format contains an invalid format specifier. "
+            "Invalid entries were ignored."
+        );
+    }
+    if (args.hasInvalidExcludeFormatSpecifier) {
+        logW(
+            "Option --exclude-format contains an invalid format specifier. "
+            "Invalid entries were ignored."
+        );
+    }
     if (args.totalsOnly && args.showFiles) {
         logW("Option --show-files cannot be combined with --total option");
     }

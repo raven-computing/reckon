@@ -240,6 +240,93 @@ void testNoParallelizationOptionSetsFlagTrue(void) {
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
+void testIncludeFormatOptionParsesCommaSeparatedCaseInsensitive(void) {
+    char* argv[] = {
+        "scount",
+        "--include-format",
+        "java,C,txt",
+        "File.java"
+    };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    const uint32_t expectedMask = (
+        (uint32_t) RECKON_MK_FRMT_OPT(RCN_LANG_JAVA)
+        | (uint32_t) RECKON_MK_FRMT_OPT(RCN_LANG_C)
+        | (uint32_t) RECKON_MK_FRMT_OPT(RCN_TEXT_UNFORMATTED)
+    );
+
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.hasIncludeFormatMask);
+    TEST_ASSERT_EQUAL_HEX32(expectedMask, args.includeFormatMask);
+    TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
+    TEST_ASSERT_EQUAL_STRING("File.java", args.inputPath);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
+void testFormatOptionsCanBeSpecifiedMultipleTimes(void) {
+    char* argv[] = {
+        "scount",
+        "--include-format",
+        "java",
+        "--include-format",
+        "txt",
+        "--exclude-format",
+        "C",
+        "--exclude-format",
+        "md",
+        "File.java"
+    };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+    const uint32_t expectedIncludeMask = (
+        (uint32_t) RECKON_MK_FRMT_OPT(RCN_LANG_JAVA)
+        | (uint32_t) RECKON_MK_FRMT_OPT(RCN_TEXT_UNFORMATTED)
+    );
+    const uint32_t expectedExcludeMask = (
+        (uint32_t) RECKON_MK_FRMT_OPT(RCN_LANG_C)
+        | (uint32_t) RECKON_MK_FRMT_OPT(RCN_TEXT_MARKDOWN)
+    );
+
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.hasIncludeFormatMask);
+    TEST_ASSERT_TRUE(args.hasExcludeFormatMask);
+    TEST_ASSERT_EQUAL_HEX32(expectedIncludeMask, args.includeFormatMask);
+    TEST_ASSERT_EQUAL_HEX32(expectedExcludeMask, args.excludeFormatMask);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
+void testIncludeFormatOptionMissingArgumentSetsError(void) {
+    char* argv[] = { "scount", "--include-format" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+
+    TEST_ASSERT_FALSE(isValid);
+    TEST_ASSERT_EQUAL_STRING(
+        "Missing argument for option '--include-format'.",
+        args.errorMessage
+    );
+}
+
+void testExcludeFormatOptionWithInvalidSpecifierIsIgnored(void) {
+    char* argv[] = {
+        "scount",
+        "--exclude-format",
+        "this-is-not-a-format",
+        "File.java"
+    };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+
+    TEST_ASSERT_TRUE(isValid);
+    TEST_ASSERT_TRUE(args.hasInvalidExcludeFormatSpecifier);
+    TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
+    TEST_ASSERT_NULL(args.errorMessage);
+}
+
 void testStdinPathDashSetsInputPathAndValid(void) {
     char* argv[] = { "scount", "-" };
     int argc = (int)(sizeof(argv) / sizeof(argv[0]));
@@ -283,6 +370,10 @@ int main(void) {
     RUN_TEST(testTotalOptionSetsTotalsOnlyTrue);
     RUN_TEST(testStrictOptionSetsStrictTrue);
     RUN_TEST(testNoParallelizationOptionSetsFlagTrue);
+    RUN_TEST(testIncludeFormatOptionParsesCommaSeparatedCaseInsensitive);
+    RUN_TEST(testFormatOptionsCanBeSpecifiedMultipleTimes);
+    RUN_TEST(testIncludeFormatOptionMissingArgumentSetsError);
+    RUN_TEST(testExcludeFormatOptionWithInvalidSpecifierIsIgnored);
     RUN_TEST(testStdinPathDashSetsInputPathAndValid);
     RUN_TEST(testStdinPathDashDotFileExtensionSetsInputPathAndValid);
     return UNITY_END();

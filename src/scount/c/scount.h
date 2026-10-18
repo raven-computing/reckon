@@ -18,6 +18,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "reckon/reckon.h"
@@ -47,9 +48,15 @@ typedef enum ExitStatus {
  */
 typedef struct AppArgs {
     char* inputPath;             // The input `<PATH>` to process
-    char* errorMessage;          // Error message in case of invalid input
+    const char* errorMessage;    // Error message in case of invalid input
     int indexUnknown;            // Index into `argv` when unknown arg found, or zero
     bool readFromStdin;          // True when 'inputPath' is '-' or '-.ext'
+    uint32_t includeFormatMask;  // Bit mask for `--include-format`
+    uint32_t excludeFormatMask;  // Bit mask for `--exclude-format`
+    bool hasIncludeFormatMask;   // True if any include format was specified
+    bool hasExcludeFormatMask;   // True if any exclude format was specified
+    bool hasInvalidIncludeFormatSpecifier;
+    bool hasInvalidExcludeFormatSpecifier;
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
     bool totalsOnly;             // Option: `--total`

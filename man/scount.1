@@ -60,6 +60,21 @@ This option will result in all files being processed by a single thread, reducin
 system's CPU utilisation but also drastically slowing down the overall processing.
 .br
 .TP
+.B \-\-include\-format \fISPEC1[,SPEC2,...]\fR
+Include only the specified text formats and/or programming languages.
+This option can be specified multiple times and format specifiers are treated case-insensitive.
+If both
+.B \-\-include\-format
+and
+.B \-\-exclude\-format
+are set, include filtering is applied first and then exclude filtering.
+Invalid format specifiers are ignored and a warning is shown.
+.TP
+.B \-\-exclude\-format \fISPEC1[,SPEC2,...]\fR
+Exclude the specified text formats and/or programming languages.
+This option can be specified multiple times and format specifiers are treated case-insensitive.
+Invalid format specifiers are ignored and a warning is shown.
+.TP
 .B \-l, \-\-lines
 Compute and display only line-specific metrics.
 .br
@@ -141,6 +156,20 @@ Count lines of code from standard input using an explicit language extension:
 .RS
 .nf
 scount -.java < Sample.java
+.fi
+.RE
+.TP
+Count only Java, C and plain text files in a directory tree:
+.RS
+.nf
+scount --include-format "java,C,txt" /path/to/project
+.fi
+.RE
+.TP
+Exclude Markdown and JSON files from processing:
+.RS
+.nf
+scount --exclude-format "md,json" /path/to/project
 .fi
 .RE
 .TP
