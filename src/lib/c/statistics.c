@@ -374,9 +374,10 @@ static void processFileRange(
     ThreadWorkIndex* index,
     ThreadControl* control
 ) {
-    while (!shouldAbortRange(control)) {
-        const size_t nextIndex = getNextThreadWorkIndexAtomic(index);
-        if (nextIndex >= stats->count.size) {
+    const size_t resultSize = stats->count.size;
+    size_t nextIndex = 0;
+    while ((nextIndex = getNextThreadWorkIndexAtomic(index)) < resultSize) {
+        if (shouldAbortRange(control)) {
             break;
         }
 
