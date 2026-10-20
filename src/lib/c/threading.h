@@ -96,14 +96,14 @@ void deinitThreadControl(ThreadControl* control);
  * their work. The `control` argument may be `NULL` in a
  * single-threaded context.
  */
-bool shouldAbortRange(ThreadControl* control);
+bool shouldThreadAbort(ThreadControl* control);
 
 /**
  * Requests that all threads bound to the given thread control abort
  * their work. The `control` argument may be `NULL` in a single-threaded
  * context.
  */
-void requestAbortRange(ThreadControl* control);
+void requestThreadAbort(ThreadControl* control);
 
 /**
  * Indicates the number of threads that can be used by the system

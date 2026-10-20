@@ -31,11 +31,11 @@ void testThreadControlLifecycleWorksOnMainThread(void) {
 
     TEST_ASSERT_TRUE(initOk);
     TEST_ASSERT_NOT_NULL(control.mutex);
-    bool shouldAbort = shouldAbortRange(&control);
+    bool shouldAbort = shouldThreadAbort(&control);
     TEST_ASSERT_FALSE(shouldAbort);
 
-    requestAbortRange(&control);
-    shouldAbort = shouldAbortRange(&control);
+    requestThreadAbort(&control);
+    shouldAbort = shouldThreadAbort(&control);
     TEST_ASSERT_TRUE(shouldAbort);
 
     deinitThreadControl(&control);
@@ -43,9 +43,9 @@ void testThreadControlLifecycleWorksOnMainThread(void) {
 }
 
 void testThreadControlAbortFunctionsAcceptNullControl(void) {
-    bool shouldAbort = shouldAbortRange(NULL);
+    bool shouldAbort = shouldThreadAbort(NULL);
     TEST_ASSERT_FALSE(shouldAbort);
-    requestAbortRange(NULL);
+    requestThreadAbort(NULL);
 }
 
 void testThreadMutexLifecycleWorksOnMainThread(void) {

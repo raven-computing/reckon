@@ -31,7 +31,7 @@ void deinitThreadControl(ThreadControl* control) {
     control->mutex = NULL;
 }
 
-bool shouldAbortRange(ThreadControl* control) {
+bool shouldThreadAbort(ThreadControl* control) {
     bool abortRequested = false;
     if (control) {
         abortRequested = atomic_load_explicit(
@@ -42,7 +42,7 @@ bool shouldAbortRange(ThreadControl* control) {
     return abortRequested;
 }
 
-void requestAbortRange(ThreadControl* control) {
+void requestThreadAbort(ThreadControl* control) {
     if (control) {
         atomic_store_explicit(
             &control->abortRequested,

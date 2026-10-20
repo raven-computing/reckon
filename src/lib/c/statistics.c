@@ -377,7 +377,7 @@ static void processFiles(
     const size_t resultSize = stats->count.size;
     size_t nextIndex = 0;
     while ((nextIndex = getNextThreadWorkIndexAtomic(index)) < resultSize) {
-        if (shouldAbortRange(control)) {
+        if (shouldThreadAbort(control)) {
             break;
         }
 
@@ -406,7 +406,7 @@ static void processFiles(
 
         const bool ok = count(options, file, result, detected);
         if (!ok && (options.stopOnError || hasCriticalError(result->state))) {
-            requestAbortRange(control);
+            requestThreadAbort(control);
             break;
         }
     }
@@ -474,7 +474,7 @@ static RcnResultState parallelizeCount(
 
     if (!createdAllThreads) {
         RCN_LOG_DBG("Failure to create all worker threads. Signaling abort");
-        requestAbortRange(&control);
+        requestThreadAbort(&control);
     }
 
     RCN_LOG_DBG("Waiting for threads to finish");
