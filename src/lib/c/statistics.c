@@ -412,7 +412,7 @@ static void processFiles(
     }
 }
 
-static void runCountThread(ThreadWork* arg) {
+static void runWorkerThread(ThreadWork* arg) {
     RCN_LOG_DBG("Worker thread is processing files");
     processFiles(
         arg->stats,
@@ -465,7 +465,7 @@ static RcnResultState parallelizeFileProcessing(
         work->control = &control;
 
         RCN_LOG_DBG("Creating worker thread");
-        if (!createThread(&threads[i], runCountThread, work)) {
+        if (!createThread(&threads[i], runWorkerThread, work)) {
             createdAllThreads = false;
             break;
         }
