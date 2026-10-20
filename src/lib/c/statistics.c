@@ -423,7 +423,7 @@ static void runCountThread(ThreadWork* arg) {
     RCN_LOG_DBG("Worker thread has finished processing files");
 }
 
-static RcnResultState parallelizeCount(
+static RcnResultState parallelizeFileProcessing(
     RcnCountStatistics* stats,
     RcnStatOptions options,
     size_t workerCount
@@ -613,7 +613,7 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
     const size_t workerCount = getWorkerCount(stats->count.size, options);
     if (workerCount > 1) {
         RCN_LOG_DBG("Parallelizing file processing");
-        const RcnResultState parallelizationState = parallelizeCount(
+        const RcnResultState parallelizationState = parallelizeFileProcessing(
             stats,
             options,
             workerCount
