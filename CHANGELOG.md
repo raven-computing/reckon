@@ -1,3 +1,10 @@
+#### 1.10.1
+* Improved performance by replacing chunking with atomic work distribution.
+* Renamed shouldAbortRange() to shouldThreadAbort() in internal threading.h header.
+* Renamed requestAbortRange() to requestThreadAbort() in internal threading.h header.
+* Updated tree-sitter dependency from version v0.26.3 to v0.27.1.
+* See [full changelog](https://github.com/raven-computing/reckon/compare/v1.10.0...v1.10.1)
+
 #### 1.10.0
 * Added bool RcnSourceFile.ignore member. [[Issue#85]](https://github.com/raven-computing/reckon/issues/85)
 * Added RcnSourceFormatDetection type and rcnDetectSourceFormat() API function. [[Issue#88]](https://github.com/raven-computing/reckon/issues/88)
