@@ -368,7 +368,7 @@ static inline bool count(
     return ok;
 }
 
-static void processFileRange(
+static void processFiles(
     RcnCountStatistics* stats,
     RcnStatOptions options,
     ThreadWorkIndex* index,
@@ -414,7 +414,7 @@ static void processFileRange(
 
 static void runCountThread(ThreadWork* arg) {
     RCN_LOG_DBG("Worker thread is processing files");
-    processFileRange(
+    processFiles(
         arg->stats,
         arg->options,
         arg->index,
@@ -625,7 +625,7 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
         RCN_LOG_DBG("Using single-threaded file processing");
         ThreadWorkIndex index;
         initThreadWorkIndex(&index, 0);
-        processFileRange(
+        processFiles(
             stats,
             options,
             &index,
