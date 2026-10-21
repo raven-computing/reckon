@@ -23,6 +23,12 @@ Options:
 
   [-l|--lint]          Perform static code analysis with a linter.
 
+  [--profile-performance] <PROG> [args...]
+                       Run the program denoted by name <PROG> to profile its performance.
+                       Arguments specified by [args...] are passed to the invoked
+                       program as is. The program must have been built to support
+                       performance profiling.
+
   [--stop-on-failure]  Stop the test execution immediately after the
                        first failure is encountered.
 
@@ -39,9 +45,13 @@ ARG_COVERAGE=false;
 ARG_FUNCTIONALITY=false;
 ARG_INTEGRATION=false;
 ARG_LINT=false;
+ARG_PROFILE_PERF=false;
 ARG_STOP_ON_FAILURE=false;
 ARG_UNIT=false;
 ARG_SHOW_HELP=false;
+
+PROG_NAME="";
+PROG_ARGS=();
 
 # Parse all arguments given to this script
 for arg in "$@"; do
@@ -71,6 +81,22 @@ for arg in "$@"; do
     -l|--lint)
     ARG_LINT=true;
     shift
+    ;;
+    --profile-performance)
+    ARG_PROFILE_PERF=true;
+    shift;
+    if (( $# == 0 )); then
+      echo "ERROR: Missing option argument <PROG>";
+      exit 1;
+    fi
+    if (( $# > 1 )); then
+      PROG_NAME="$1";
+      shift;
+      PROG_ARGS=("$@");
+    else
+      PROG_NAME="$1";
+    fi
+    break
     ;;
     --stop-on-failure)
     ARG_STOP_ON_FAILURE=true;
@@ -182,6 +208,9 @@ if [ -z "$(ls -A build)" ]; then
     build_args+=("--debug");
     build_args+=("--coverage");
   fi
+  if [[ $ARG_PROFILE_PERF == true ]]; then
+    build_args+=("--profile-performance");
+  fi
   echo "Building project before test run execution";
   if ! bash build.sh "${build_args[@]}"; then
     exit $?;
@@ -222,6 +251,7 @@ if [[ "$VERSION" == *"-dev" ]]; then
   VERSION+=" (Development Version)";
 fi
 
+PROJECT_SRC_ROOT="$PWD";
 cd "build" || exit 1;
 
 if [[ $ARG_COVERAGE == true ]]; then
@@ -258,6 +288,87 @@ fi
 if [ -z "$BUILD_CONFIGURATION" ]; then
   echo "Error: No build configuration found.";
   exit 1;
+fi
+
+if [[ $ARG_PROFILE_PERF == true ]]; then
+  if [[ "$BUILD_CONFIGURATION" != "RelWithDebInfo" ]]; then
+    echo "ERROR: Target was built with build configuration '${BUILD_CONFIGURATION}'";
+    echo "which is not suitable for performance profiling.";
+    echo "Please build the targets with the --profile-performance option and try again.";
+    exit 1;
+  fi
+  if ! command -v "perf" &> /dev/null; then
+    echo "ERROR: Could not find command 'perf'";
+    exit 1;
+  fi
+  if ! command -v "perl" &> /dev/null; then
+    echo "ERROR: Could not find command 'perl'";
+    if [[ $has_apt == true ]]; then
+      echo "Perhaps you can install it with 'sudo apt install perl'";
+    fi
+    exit 1;
+  fi
+
+  subdir="perf_prof";
+  perf_data_file="${subdir}/perf.data";
+  perf_folded_file="${subdir}/perf-folded.txt";
+  perf_flamegraph_file="${subdir}/flamegraph.svg";
+
+  if [ -d "$subdir" ]; then
+    # Cleaning previously collected profiling data
+    rm -r "$subdir";
+  fi
+  mkdir -p "$subdir";
+
+  prog_path="./bin/${PROG_NAME}";
+  if ! [ -x "$prog_path" ]; then
+    echo "ERROR: Specified program '${PROG_NAME}' not found";
+    exit 1;
+  fi
+
+  # Drop root privileges to $USER while passing cap_perfmon and cap_sys_ptrace
+  sudo setpriv \
+      --reuid="$(id --user --name)" \
+      --regid="$(id --group)" \
+      --init-groups \
+      --inh-caps=+perfmon,+sys_ptrace \
+      --ambient-caps=+perfmon,+sys_ptrace \
+      perf record --output="${perf_data_file}" \
+      --event=cycles:u -g \
+      "$prog_path" "${PROG_ARGS[@]}";
+
+  if (( $? != 0 )); then
+    echo "ERROR: An error has occurred while running program ${PROG_NAME}";
+    exit 1;
+  fi
+
+  fg_path="./_deps/perf-flamegraph";
+  if ! [ -x "${fg_path}/flamegraph.pl" ]; then
+    echo "ERROR: Required dependency not found: ${fg_path}/flamegraph.pl";
+    exit 1;
+  fi
+
+  perf script --input="${perf_data_file}" \
+      | "${fg_path}/stackcollapse-perf.pl" > "$perf_folded_file";
+
+  "${fg_path}/flamegraph.pl" \
+      --title "Flame Graph of ${PROG_NAME}" \
+      < "$perf_folded_file" \
+      > "${perf_flamegraph_file}";
+
+  if (( $? != 0 )); then
+    echo "ERROR: An error has occurred while generating flamegraph";
+    exit 1;
+  fi
+  fg_label="build/${perf_flamegraph_file}";
+  if tty --silent; then
+    fg_url="file://${PROJECT_SRC_ROOT}/${fg_label}";
+    fg_link="\e]8;;${fg_url}\e\\\\${fg_label}\e]8;;\e\\\\";
+  else
+    fg_link="$fg_label";
+  fi
+  echo -e "Performance profiling flame graph is available at ${fg_link}";
+  exit 0;
 fi
 
 CTEST_LABEL_OPT="";

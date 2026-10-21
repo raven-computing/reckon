@@ -28,6 +28,11 @@ option(
     Implies RECKON_USE_SANITIZERS=ON. When enabled, a thread sanitizer \
     will be used instead of the default set of sanitizers."
     OFF
+    )
+option(
+    RECKON_USE_PERF_PROFILING
+    "Enable/disable performance profiling support"
+    OFF
 )
 option(RECKON_ENABLE_LTO "Enable/disable link-time optimization (LTO)" ON)
 option(
@@ -62,6 +67,7 @@ include(cmake/BuildUtil.cmake)
 include(cmake/TestUtil.cmake)
 include(cmake/TestCoverageUtil.cmake)
 include(cmake/SanitizerUtil.cmake)
+include(cmake/PerfProfilingUtil.cmake)
 
 find_package(Threads REQUIRED)
 
@@ -83,6 +89,10 @@ endif()
 
 if(RECKON_BUILD_TEST_COVERAGE)
     add_code_coverage_collection_targets()
+endif()
+
+if(RECKON_USE_PERF_PROFILING)
+    configure_performance_profiling_dependency()
 endif()
 
 if(NOT RECKON_BUILD_ONLY_LIBS)

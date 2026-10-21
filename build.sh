@@ -41,6 +41,9 @@ Options:
 
   [--package]     Build a native installable package. The scount target must already be built.
 
+  [--profile-performance]
+                  Add support for performance profiling.
+
   [--sanitizers]  Use sanitizers when building and running.
 
   [--shared]      Build shared libraries instead of static libraries.
@@ -65,6 +68,7 @@ ARG_CLEAN=false;
 ARG_CONFIG=false;
 ARG_COVERAGE=false;
 ARG_PACKAGE=false;
+ARG_PROFILE_PERF=false;
 ARG_SANITIZERS=false;
 ARG_SHARED=false;
 ARG_DEBUG=false;
@@ -99,6 +103,10 @@ for arg in "$@"; do
     ;;
     --package)
     ARG_PACKAGE=true;
+    shift
+    ;;
+    --profile-performance)
+    ARG_PROFILE_PERF=true;
     shift
     ;;
     --sanitizers)
@@ -259,6 +267,10 @@ if [[ $ARG_DEBUG == true ]]; then
   BUILD_CONFIGURATION="Debug";
 fi
 
+if [[ $ARG_PROFILE_PERF == true ]]; then
+  BUILD_CONFIGURATION="RelWithDebInfo";
+fi
+
 BUILD_TESTS="ON";
 IGNORE_WARNINGS="OFF";
 BUILD_ONLY_LIBS=OFF;
@@ -267,6 +279,7 @@ BUILD_ANALYZE="OFF";
 BUILD_WITH_SANITIZERS="OFF";
 BUILD_WITH_THREAD_SANITIZER="OFF";
 BUILD_WITH_COVERAGE="OFF";
+BUILD_WITH_PERF_PROFILING="OFF";
 BUILD_WITH_LTO="ON";
 
 if [[ $ARG_IGNORE_WARNINGS == true ]]; then
@@ -289,6 +302,9 @@ if [[ $ARG_SANITIZERS == true ]]; then
 fi
 if [[ $ARG_THREAD_SANITIZER == true ]]; then
   BUILD_WITH_THREAD_SANITIZER="ON";
+fi
+if [[ $ARG_PROFILE_PERF == true ]]; then
+  BUILD_WITH_PERF_PROFILING="ON";
 fi
 if [[ $ARG_DISABLE_LTO == true ]]; then
   BUILD_WITH_LTO="OFF";
@@ -326,6 +342,7 @@ if [[ $ARG_SKIP_CONFIG == false ]]; then
         -DRECKON_USE_SANITIZERS="$BUILD_WITH_SANITIZERS" \
         -DRECKON_USE_THREAD_SANITIZER="$BUILD_WITH_THREAD_SANITIZER" \
         -DRECKON_BUILD_TEST_COVERAGE="$BUILD_WITH_COVERAGE" \
+        -DRECKON_USE_PERF_PROFILING="$BUILD_WITH_PERF_PROFILING" \
         -DRECKON_ENABLE_LTO="$BUILD_WITH_LTO" ..;
 
   config_status=$?;

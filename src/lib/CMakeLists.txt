@@ -119,6 +119,10 @@ if(RECKON_USE_SANITIZERS)
     add_sanitizers(${RECKON_TARGET_LIB_OBJ} ${RECKON_USE_THREAD_SANITIZER})
 endif()
 
+if(RECKON_USE_PERF_PROFILING)
+    add_performance_profiling(${RECKON_TARGET_LIB_OBJ})
+endif()
+
 #==================================[ TARGET ]==================================
 # Exported Reckon Library
 
@@ -162,6 +166,10 @@ generate_export_header(
     EXPORT_FILE_NAME
     "${RECKON_EXPORT_HEADER}"
 )
+
+if(RECKON_USE_PERF_PROFILING)
+    add_performance_profiling(${RECKON_TARGET_LIB})
+endif()
 
 #===================================[ TESTS ]==================================
 # Library Reckon tests

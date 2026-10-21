@@ -64,6 +64,10 @@ if(RECKON_USE_SANITIZERS)
     )
 endif()
 
+if(RECKON_USE_PERF_PROFILING)
+    add_performance_profiling(${RECKON_TARGET_APPLICATION_CORE})
+endif()
+
 #==================================[ TARGET ]==================================
 # Application scount main executable
 
@@ -104,6 +108,10 @@ if(RECKON_SOURCE_ANALYSIS)
     enable_source_compile_checks(
         ${RECKON_TARGET_APPLICATION}
     )
+endif()
+
+if(RECKON_USE_PERF_PROFILING)
+    add_performance_profiling(${RECKON_TARGET_APPLICATION})
 endif()
 
 #===================================[ TESTS ]==================================
