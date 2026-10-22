@@ -42,7 +42,9 @@ Options:
   [--package]     Build a native installable package. The scount target must already be built.
 
   [--profile-performance]
-                  Add support for performance profiling.
+                  Add support for performance profiling. This will compile with optimizations
+                  enabled but keep some debug information to allow profiling tools to
+                  work effectively.
 
   [--sanitizers]  Use sanitizers when building and running.
 

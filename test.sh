@@ -27,7 +27,10 @@ Options:
                        Run the program denoted by name <PROG> to profile its performance.
                        Arguments specified by [args...] are passed to the invoked
                        program as is. The program must have been built to support
-                       performance profiling.
+                       performance profiling. This option cannot be used together with
+                       any other option. Uses the perf record command to collect performance
+                       data, so this option can only be used on Linux systems. Requires
+                       superuser privileges, if prompted for a password, enter your sudo-password.
 
   [--stop-on-failure]  Stop the test execution immediately after the
                        first failure is encountered.
