@@ -16,6 +16,7 @@
 
 #include "unity.h"
 
+#include "reckon/reckon.h"
 #include "scount.h"
 
 void setUp(void) { }
@@ -327,6 +328,46 @@ void testExcludeFormatOptionWithInvalidSpecifierIsIgnored(void) {
     TEST_ASSERT_NULL(args.errorMessage);
 }
 
+void testAllSupportedIncludeExcludeFormatSpecifiers(void) {
+    // Hint: If this test fails, it likely means that a new text format was
+    // introduced and you forgot to add the corresponding handling for it in
+    // the parseFormatSpecifier() function.
+    for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
+        const char* label = rcnGetTextFormatLabel(frmt);
+        char* argv[] = {
+            "scount", "--include-format", (char*) label, "unusedInput"
+        };
+        int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+        AppArgs args = parseArgs(argc, argv);
+        bool isValid = isInputValid(args);
+
+        TEST_ASSERT_TRUE(isValid);
+        TEST_ASSERT_FALSE(args.hasInvalidIncludeFormatSpecifier);
+        TEST_ASSERT_TRUE(args.hasIncludeFormatMask);
+        uint32_t expectedMask = (uint32_t) RECKON_MK_FRMT_OPT(frmt);
+        TEST_ASSERT_EQUAL(expectedMask, args.includeFormatMask);
+        TEST_ASSERT_FALSE(args.hasInvalidExcludeFormatSpecifier);
+        TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
+        TEST_ASSERT_EQUAL(0, args.excludeFormatMask);
+        TEST_ASSERT_NULL(args.errorMessage);
+
+        argv[1] = "--exclude-format";
+        argc = (int)(sizeof(argv) / sizeof(argv[0]));
+        args = parseArgs(argc, argv);
+        isValid = isInputValid(args);
+
+        TEST_ASSERT_TRUE(isValid);
+        TEST_ASSERT_FALSE(args.hasInvalidIncludeFormatSpecifier);
+        TEST_ASSERT_FALSE(args.hasIncludeFormatMask);
+        expectedMask = (uint32_t) RECKON_MK_FRMT_OPT(frmt);
+        TEST_ASSERT_EQUAL(0, args.includeFormatMask);
+        TEST_ASSERT_FALSE(args.hasInvalidExcludeFormatSpecifier);
+        TEST_ASSERT_TRUE(args.hasExcludeFormatMask);
+        TEST_ASSERT_EQUAL(expectedMask, args.excludeFormatMask);
+        TEST_ASSERT_NULL(args.errorMessage);
+    }
+}
+
 void testStdinPathDashSetsInputPathAndValid(void) {
     char* argv[] = { "scount", "-" };
     int argc = (int)(sizeof(argv) / sizeof(argv[0]));
@@ -374,6 +415,7 @@ int main(void) {
     RUN_TEST(testFormatOptionsCanBeSpecifiedMultipleTimes);
     RUN_TEST(testIncludeFormatOptionMissingArgumentSetsError);
     RUN_TEST(testExcludeFormatOptionWithInvalidSpecifierIsIgnored);
+    RUN_TEST(testAllSupportedIncludeExcludeFormatSpecifiers);
     RUN_TEST(testStdinPathDashSetsInputPathAndValid);
     RUN_TEST(testStdinPathDashDotFileExtensionSetsInputPathAndValid);
     return UNITY_END();

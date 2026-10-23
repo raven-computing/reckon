@@ -63,6 +63,7 @@ static bool parseFormatSpecifier(
         || equalsSpecifier(spec, length, "text")
         || equalsSpecifier(spec, length, "plaintext")
         || equalsSpecifier(spec, length, "plain-text")
+        || equalsSpecifier(spec, length, "plain text")
         || equalsSpecifier(spec, length, "unformatted")) {
         *formatBit = getFormatBit(RCN_TEXT_UNFORMATTED);
     } else if (equalsSpecifier(spec, length, "md")
@@ -119,6 +120,7 @@ static bool parseFormatSpecifier(
         *formatBit = getFormatBit(RCN_LANG_R);
     } else if (equalsSpecifier(spec, length, "batch")
         || equalsSpecifier(spec, length, "dos-batch")
+        || equalsSpecifier(spec, length, "dos batch")
         || equalsSpecifier(spec, length, "dosbatch")
         || equalsSpecifier(spec, length, "bat")
         || equalsSpecifier(spec, length, "cmd")) {
