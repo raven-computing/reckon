@@ -98,11 +98,22 @@ function test_scount_with_include_format_option_missing_argument() {
   assert_stderr_equals "Missing argument for option '--include-format'.";
 }
 
+function test_scount_with_include_format_option_invalid_specifier() {
+  run_app --include-format "java,invalid,another_invalid" \
+          "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --include-format contains an invalid format specifier: 'invalid'";
+  assert_stdout_contains "Invalid entries of --include-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
 function test_scount_with_exclude_format_option_invalid_specifier() {
   run_app --exclude-format "not-a-format" "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
   assert_exit_status $EXIT_SUCCESS;
-  assert_stdout_contains "Option --exclude-format contains an invalid format specifier.";
-  assert_stdout_contains "Invalid entries were ignored.";
+  assert_stdout_contains "Option --exclude-format contains an invalid format specifier: 'not-a-format'";
+  assert_stdout_contains "Invalid entries of --exclude-format option were ignored.";
   assert_stdout_contains "File: Sample.java";
   assert_stderr_is_empty;
 }

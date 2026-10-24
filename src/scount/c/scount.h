@@ -55,8 +55,8 @@ typedef struct AppArgs {
     uint32_t excludeFormatMask;  // Bit mask for `--exclude-format`
     bool hasIncludeFormatMask;   // True if any include format was specified
     bool hasExcludeFormatMask;   // True if any exclude format was specified
-    bool hasInvalidIncludeFormatSpecifier;
-    bool hasInvalidExcludeFormatSpecifier;
+    char* invalidIncludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
+    char* invalidExcludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
     bool totalsOnly;             // Option: `--total`

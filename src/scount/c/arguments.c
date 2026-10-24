@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -137,14 +138,25 @@ static bool parseFormatSpecifier(
 }
 // NOLINTEND(readability-function-cognitive-complexity)
 
+static char* copyInvalidFormatSpecifier(const char* token, size_t length) {
+    char* invalidTokenString = malloc(length + 1);
+    if (!invalidTokenString) {
+        return NULL;
+    }
+    memcpy(invalidTokenString, token, length);
+    invalidTokenString[length] = '\0';
+    return invalidTokenString;
+}
+
 static void parseFormatList(
     const char* value,
     uint32_t* formatMask,
     bool* hasMask,
-    bool* hasInvalidSpecifier
+    char** invalidSpecifier
 ) {
     if (!value || value[0] == '\0') {
-        *hasInvalidSpecifier = true;
+        const char* empty = "";
+        *invalidSpecifier = copyInvalidFormatSpecifier(empty, strlen(empty));
         return;
     }
 
@@ -166,7 +178,12 @@ static void parseFormatList(
         const size_t tokenLength = (size_t) (tokenEnd - tokenStart);
         uint32_t formatBit = 0;
         if (!parseFormatSpecifier(tokenStart, tokenLength, &formatBit)) {
-            *hasInvalidSpecifier = true;
+            if (*invalidSpecifier == NULL) {
+                *invalidSpecifier = copyInvalidFormatSpecifier(
+                    tokenStart,
+                    tokenLength
+                );
+            }
         } else {
             *formatMask |= formatBit;
             *hasMask = true;
@@ -209,7 +226,7 @@ AppArgs parseArgs(int argc, char** argv) {
                 optionArg,
                 &args.includeFormatMask,
                 &args.hasIncludeFormatMask,
-                &args.hasInvalidIncludeFormatSpecifier
+                &args.invalidIncludeFormatSpecifier
             );
         } else if (strcmp(argv[i], "--exclude-format") == 0) {
             if (i + 1 >= argc) {
@@ -223,7 +240,7 @@ AppArgs parseArgs(int argc, char** argv) {
                 optionArg,
                 &args.excludeFormatMask,
                 &args.hasExcludeFormatMask,
-                &args.hasInvalidExcludeFormatSpecifier
+                &args.invalidExcludeFormatSpecifier
             );
         } else if (strcmp(argv[i], "--stop-on-error") == 0) {
             args.stopOnError = true;
@@ -351,17 +368,25 @@ void showHelpText(void) {
 }
 
 bool isInputValid(AppArgs args) {
-    if (args.hasInvalidIncludeFormatSpecifier) {
+    if (args.invalidIncludeFormatSpecifier) {
+        char* msg = args.invalidIncludeFormatSpecifier;
         logW(
-            "Option --include-format contains an invalid format specifier. "
-            "Invalid entries were ignored."
+            "Option --include-format contains an invalid format specifier: '%s'",
+            msg
         );
+        logW("Invalid entries of --include-format option were ignored.");
+        free(msg);
+        args.invalidIncludeFormatSpecifier = NULL;
     }
-    if (args.hasInvalidExcludeFormatSpecifier) {
+    if (args.invalidExcludeFormatSpecifier) {
+        char* msg = args.invalidExcludeFormatSpecifier;
         logW(
-            "Option --exclude-format contains an invalid format specifier. "
-            "Invalid entries were ignored."
+            "Option --exclude-format contains an invalid format specifier: '%s'",
+            msg
         );
+        logW("Invalid entries of --exclude-format option were ignored.");
+        free(msg);
+        args.invalidExcludeFormatSpecifier = NULL;
     }
     if (args.totalsOnly && args.showFiles) {
         logW("Option --show-files cannot be combined with --total option");

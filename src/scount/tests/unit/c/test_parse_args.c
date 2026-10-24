@@ -344,12 +344,13 @@ void testExcludeFormatOptionWithInvalidSpecifierIsIgnored(void) {
     };
     int argc = (int)(sizeof(argv) / sizeof(argv[0]));
     AppArgs args = parseArgs(argc, argv);
-    bool isValid = isInputValid(args);
-
-    TEST_ASSERT_TRUE(isValid);
-    TEST_ASSERT_TRUE(args.hasInvalidExcludeFormatSpecifier);
+    
+    TEST_ASSERT_NOT_NULL(args.invalidExcludeFormatSpecifier);
+    TEST_ASSERT_EQUAL_STRING("this-is-not-a-format", args.invalidExcludeFormatSpecifier);
     TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
     TEST_ASSERT_NULL(args.errorMessage);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_TRUE(isValid);
 }
 
 void testAllSupportedIncludeExcludeFormatSpecifiers(void) {
@@ -363,32 +364,31 @@ void testAllSupportedIncludeExcludeFormatSpecifiers(void) {
         };
         int argc = (int)(sizeof(argv) / sizeof(argv[0]));
         AppArgs args = parseArgs(argc, argv);
-        bool isValid = isInputValid(args);
 
-        TEST_ASSERT_TRUE(isValid);
-        TEST_ASSERT_FALSE(args.hasInvalidIncludeFormatSpecifier);
+        TEST_ASSERT_NULL(args.invalidIncludeFormatSpecifier);
         TEST_ASSERT_TRUE(args.hasIncludeFormatMask);
         uint32_t expectedMask = (uint32_t) RECKON_MK_FRMT_OPT(frmt);
         TEST_ASSERT_EQUAL(expectedMask, args.includeFormatMask);
-        TEST_ASSERT_FALSE(args.hasInvalidExcludeFormatSpecifier);
+        TEST_ASSERT_NULL(args.invalidExcludeFormatSpecifier);
         TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
         TEST_ASSERT_EQUAL(0, args.excludeFormatMask);
         TEST_ASSERT_NULL(args.errorMessage);
+        bool isValid = isInputValid(args);
+        TEST_ASSERT_TRUE(isValid);
 
         argv[1] = "--exclude-format";
         argc = (int)(sizeof(argv) / sizeof(argv[0]));
         args = parseArgs(argc, argv);
-        isValid = isInputValid(args);
-
-        TEST_ASSERT_TRUE(isValid);
-        TEST_ASSERT_FALSE(args.hasInvalidIncludeFormatSpecifier);
+        TEST_ASSERT_NULL(args.invalidIncludeFormatSpecifier);
         TEST_ASSERT_FALSE(args.hasIncludeFormatMask);
         expectedMask = (uint32_t) RECKON_MK_FRMT_OPT(frmt);
         TEST_ASSERT_EQUAL(0, args.includeFormatMask);
-        TEST_ASSERT_FALSE(args.hasInvalidExcludeFormatSpecifier);
+        TEST_ASSERT_NULL(args.invalidExcludeFormatSpecifier);
         TEST_ASSERT_TRUE(args.hasExcludeFormatMask);
         TEST_ASSERT_EQUAL(expectedMask, args.excludeFormatMask);
         TEST_ASSERT_NULL(args.errorMessage);
+        isValid = isInputValid(args);
+        TEST_ASSERT_TRUE(isValid);
     }
 }
 
