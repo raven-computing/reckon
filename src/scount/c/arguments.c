@@ -199,7 +199,9 @@ AppArgs parseArgs(int argc, char** argv) {
             args.disableParallelization = true;
         } else if (strcmp(argv[i], "--include-format") == 0) {
             if (i + 1 >= argc) {
-                args.errorMessage = "Missing argument for option '--include-format'.";
+                args.errorMessage = (
+                    "Missing argument for option '--include-format'."
+                );
                 break;
             }
             const char* optionArg = argv[++i];
@@ -211,7 +213,9 @@ AppArgs parseArgs(int argc, char** argv) {
             );
         } else if (strcmp(argv[i], "--exclude-format") == 0) {
             if (i + 1 >= argc) {
-                args.errorMessage = "Missing argument for option '--exclude-format'.";
+                args.errorMessage = (
+                    "Missing argument for option '--exclude-format'."
+                );
                 break;
             }
             const char* optionArg = argv[++i];
