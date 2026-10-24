@@ -266,3 +266,52 @@ function test_scount_with_disable_parallelization_option() {
   assert_stdout_equals_file "expected/mixed.txt";
   assert_stderr_is_empty;
 }
+
+function test_scount_with_include_format_option_filters_formats() {
+  run_app --include-format "java,C,txt" --show-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_include_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_repeated_include_format_option_filters_formats() {
+  run_app --include-format "Java" \
+          --include-format "txt" \
+          --include-format "c" \
+          --show-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_include_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_exclude_format_option_filters_formats() {
+  run_app --exclude-format "C,java,txt" --show-all-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_repeated_exclude_format_option_filters_formats() {
+  run_app --exclude-format "JAVA" \
+          --exclude-format "TXT" \
+          --exclude-format "C" \
+          --show-all-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_include_and_exclude_format_options_applies_include_first() {
+  run_app --include-format "java,C,TXT" \
+          --exclude-format "C" \
+          --show-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_both_include_and_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}

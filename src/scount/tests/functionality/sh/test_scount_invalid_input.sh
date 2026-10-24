@@ -90,3 +90,40 @@ function test_scount_error_when_given_stdin_with_invalid_specified_extension() {
   assert_stdout_is_empty;
   assert_stderr_equals "The file extension is not supported: 'invalid'";
 }
+
+function test_scount_with_include_format_option_missing_argument() {
+  run_app --include-format;
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_equals "Missing argument for option '--include-format'.";
+}
+
+function test_scount_with_include_format_option_invalid_specifier() {
+  run_app --include-format "java,invalid,another_invalid" \
+          "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --include-format contains an invalid format specifier: 'invalid'";
+  assert_stdout_contains "Invalid entries of --include-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_exclude_format_option_invalid_specifier() {
+  run_app --exclude-format "not-a-format" "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --exclude-format contains an invalid format specifier: 'not-a-format'";
+  assert_stdout_contains "Invalid entries of --exclude-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_no_final_selected_formats_prints_error() {
+  run_app --include-format java \
+          --exclude-format java \
+          "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_equals "No text formats selected after applying include/exclude format filters.";
+}
