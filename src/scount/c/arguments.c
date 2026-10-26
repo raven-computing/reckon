@@ -139,7 +139,8 @@ static bool parseFormatSpecifier(
 // NOLINTEND(readability-function-cognitive-complexity)
 
 static char* copyInvalidFormatSpecifier(const char* token, size_t length) {
-    char* invalidTokenString = malloc(length + 1);
+    // Ignoring false positive linter warning
+    char* invalidTokenString = malloc(length + 1); // NOLINT
     if (!invalidTokenString) {
         return NULL;
     }
