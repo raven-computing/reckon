@@ -335,6 +335,19 @@ void testIncludeFormatOptionMissingArgumentSetsError(void) {
     );
 }
 
+void testExcludeFormatOptionMissingArgumentSetsError(void) {
+    char* argv[] = { "scount", "--exclude-format" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    bool isValid = isInputValid(args);
+
+    TEST_ASSERT_FALSE(isValid);
+    TEST_ASSERT_EQUAL_STRING(
+        "Missing argument for option '--exclude-format'.",
+        args.errorMessage
+    );
+}
+
 void testExcludeFormatOptionWithInvalidSpecifierIsIgnored(void) {
     char* argv[] = {
         "scount",
@@ -351,6 +364,26 @@ void testExcludeFormatOptionWithInvalidSpecifierIsIgnored(void) {
     TEST_ASSERT_NULL(args.errorMessage);
     bool isValid = isInputValid(args);
     TEST_ASSERT_TRUE(isValid);
+}
+
+void testIncludeFormatOptionWithEmptyArgument(void) {
+    char* argv[] = { "scount", "--include-format", "" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    TEST_ASSERT_FALSE(args.hasIncludeFormatMask);
+    TEST_ASSERT_EQUAL_STRING("", args.invalidIncludeFormatSpecifier);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_FALSE(isValid);
+}
+
+void testExcludeFormatOptionWithEmptyArgument(void) {
+    char* argv[] = { "scount", "--exclude-format", "" };
+    int argc = (int)(sizeof(argv) / sizeof(argv[0]));
+    AppArgs args = parseArgs(argc, argv);
+    TEST_ASSERT_FALSE(args.hasExcludeFormatMask);
+    TEST_ASSERT_EQUAL_STRING("", args.invalidExcludeFormatSpecifier);
+    bool isValid = isInputValid(args);
+    TEST_ASSERT_FALSE(isValid);
 }
 
 void testAllSupportedIncludeExcludeFormatSpecifiers(void) {
@@ -439,7 +472,10 @@ int main(void) {
     RUN_TEST(testIncludeFormatOptionHandlesSpacesInFormatArgument);
     RUN_TEST(testFormatOptionsCanBeSpecifiedMultipleTimes);
     RUN_TEST(testIncludeFormatOptionMissingArgumentSetsError);
+    RUN_TEST(testExcludeFormatOptionMissingArgumentSetsError);
     RUN_TEST(testExcludeFormatOptionWithInvalidSpecifierIsIgnored);
+    RUN_TEST(testIncludeFormatOptionWithEmptyArgument);
+    RUN_TEST(testExcludeFormatOptionWithEmptyArgument);
     RUN_TEST(testAllSupportedIncludeExcludeFormatSpecifiers);
     RUN_TEST(testStdinPathDashSetsInputPathAndValid);
     RUN_TEST(testStdinPathDashDotFileExtensionSetsInputPathAndValid);

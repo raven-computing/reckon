@@ -142,7 +142,7 @@ static char* copyInvalidFormatSpecifier(const char* token, size_t length) {
     // Ignoring false positive linter warning
     char* invalidTokenString = malloc(length + 1); // NOLINT
     if (!invalidTokenString) {
-        return NULL;
+        return NULL; // LCOV_EXCL_LINE
     }
     memcpy(invalidTokenString, token, length);
     invalidTokenString[length] = '\0';
