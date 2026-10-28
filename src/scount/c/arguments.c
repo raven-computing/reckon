@@ -334,13 +334,11 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--exclude-format <SPEC1[,SPEC2,...]>]");
     logI("                      Exclude the specified text formats/languages.");
-    logI("                      Format specifiers are case-insensitive and this option");
-    logI("                      can be repeated.");
+    logI("                      Format specifiers are case-insensitive. This option can be repeated.");
     logI(" ");
     logI("  [--include-format <SPEC1[,SPEC2,...]>]");
     logI("                      Include only the specified text formats/languages.");
-    logI("                      Format specifiers are case-insensitive and this option");
-    logI("                      can be repeated.");
+    logI("                      Format specifiers are case-insensitive. This option can be repeated.");
     logI(" ");
     logI("  [-l|--lines]        Compute and display only line-specific metrics.");
     logI("                      This includes logical and physical lines of code, and hard physical lines.");
