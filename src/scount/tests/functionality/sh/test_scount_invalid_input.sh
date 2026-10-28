@@ -90,3 +90,10 @@ function test_scount_error_when_given_stdin_with_invalid_specified_extension() {
   assert_stdout_is_empty;
   assert_stderr_equals "The file extension is not supported: 'invalid'";
 }
+
+function test_scount_error_when_read_from_stdin_and_given_stdin_stream_is_closed() {
+  run_app - < "${TEST_PROJECT_DIR}/src/lib/tests/res/c/sample.c" <&-;
+  assert_exit_status $EXIT_PROG_IO_ERROR;
+  assert_stdout_is_empty;
+  assert_stderr_equals "Failed to read source input from stdin.";
+}
