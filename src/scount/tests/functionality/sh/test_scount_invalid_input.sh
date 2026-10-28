@@ -127,3 +127,11 @@ function test_scount_with_no_final_selected_formats_prints_error() {
   assert_stdout_is_empty;
   assert_stderr_equals "No text formats selected after applying include/exclude format filters.";
 }
+
+function test_scount_reports_nothing_processed_when_all_available_formats_are_excluded() {
+  run_app --exclude-format Java "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_NOTHING_PROCESSED;
+  assert_stdout_is_empty;
+  assert_stderr_contains "Scanned directory";
+  assert_stderr_contains "It contains no files with an eligible format";
+}
