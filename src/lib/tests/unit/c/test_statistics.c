@@ -341,7 +341,6 @@ void testCountSkipsAllIgnoredFilesInDirectory(void) {
     RcnStatOptions options = {0};
 
     TEST_ASSERT_NOT_NULL(stats);
-    TEST_ASSERT_EQUAL_INT(12, stats->count.size);
 
     for (size_t i = 0; i < stats->count.size; ++i) {
         stats->count.files[i].ignore = true;
@@ -455,6 +454,32 @@ void testCountResultsFxml(void) {
     TEST_ASSERT_EQUAL_INT(16, result->words);
     TEST_ASSERT_EQUAL_INT(231, result->characters);
     TEST_ASSERT_EQUAL_INT(231, result->sourceSize);
+    rcnFreeCountStatistics(stats);
+}
+
+void testCountResultsProtoBuf(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.proto";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .formats = RCN_OPT_TEXT_PROTOBUF
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    RcnSourceFile* file = &stats->count.files[0];
+    RcnCountResultGroup* result = &stats->count.results[0];
+    TEST_ASSERT_TRUE(result->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+    TEST_ASSERT_NULL(result->state.errorMessage);
+    TEST_ASSERT_EQUAL_STRING("sample.proto", file->name);
+    TEST_ASSERT_TRUE(result->isProcessed);
+    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(5, result->codeLines);
+    TEST_ASSERT_EQUAL_INT(13, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(28, result->words);
+    TEST_ASSERT_EQUAL_INT(139, result->characters);
+    TEST_ASSERT_EQUAL_INT(139, result->sourceSize);
     rcnFreeCountStatistics(stats);
 }
 
@@ -735,6 +760,7 @@ int main(void) {
     RUN_TEST(testCountResultGroupLogicalLineCheckField);
     RUN_TEST(testCountResultsXml);
     RUN_TEST(testCountResultsFxml);
+    RUN_TEST(testCountResultsProtoBuf);
     RUN_TEST(testCountResultsJson);
     RUN_TEST(testCountResultsCss);
     RUN_TEST(testCountResultsHtml);

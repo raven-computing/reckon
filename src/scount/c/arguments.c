@@ -74,6 +74,11 @@ static bool parseFormatSpecifier(
         *formatBit = getFormatBit(RCN_TEXT_XML);
     } else if (equalsSpecifier(spec, length, "fxml")) {
         *formatBit = getFormatBit(RCN_TEXT_FXML);
+    } else if (equalsSpecifier(spec, length, "proto")
+        || equalsSpecifier(spec, length, "protobuf")
+        || equalsSpecifier(spec, length, "protocol-buffers")
+        || equalsSpecifier(spec, length, "protocol buffers")) {
+        *formatBit = getFormatBit(RCN_TEXT_PROTOBUF);
     } else if (equalsSpecifier(spec, length, "json")) {
         *formatBit = getFormatBit(RCN_TEXT_JSON);
     } else if (equalsSpecifier(spec, length, "css")) {
