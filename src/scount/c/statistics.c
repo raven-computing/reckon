@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "reckon/reckon.h"
@@ -157,6 +158,26 @@ ExitStatus outputStatistics(AppArgs args) {
             | RCN_OPT_COUNT_CODE_LINES
             | RCN_OPT_COUNT_PHYSICAL_LINES
         );
+    }
+
+    if (args.hasIncludeFormatMask || args.hasExcludeFormatMask) {
+        uint32_t selectedFormats = args.hasIncludeFormatMask
+            ? args.includeFormatMask
+            : UINT32_MAX;
+
+        if (args.hasExcludeFormatMask) {
+            selectedFormats &= ~args.excludeFormatMask;
+        }
+        logV("Selected text formats mask: 0x%08X", selectedFormats);
+        if (selectedFormats == 0) {
+            logE(
+                "No text formats selected after applying include/exclude "
+                "format filters."
+            );
+            rcnFreeCountStatistics(stats);
+            return APP_EXIT_INVALID_ARGUMENT;
+        }
+        options.formats = selectedFormats;
     }
 
     rcnCount(stats, options);
