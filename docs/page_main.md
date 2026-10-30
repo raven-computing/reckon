@@ -66,6 +66,7 @@ This version of the project supports processing the following file formats:
 - Make
 - Markdown
 - Plain text (`.txt`-style unformatted text)
+- Protocol Buffers
 - Python
 - R
 - Shell

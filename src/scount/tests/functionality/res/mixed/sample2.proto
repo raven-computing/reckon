@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+// This is the second sample
+message Animal {
+  string species = 1;
+  int32 legs = 2;
+  int32 bla = 3;
+}

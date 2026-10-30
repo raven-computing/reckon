@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+/* A Protocol Buffers
+ *
+ * sample.
+ *
+ */
+message Person {
+  string name = 1;
+
+  // A comment line
+  int32 age = 2;
+}

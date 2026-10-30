@@ -64,6 +64,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
     [RCN_TEXT_XML] = {"XML", false, true},
     [RCN_TEXT_FXML] = {"FXML", false, true},
+    [RCN_TEXT_PROTOBUF] = {"Protocol Buffers", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, true},
     [RCN_TEXT_HTML] = {"HTML", false, true},
@@ -182,6 +183,7 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
                 .ptr=LINE_COMMENT_STYLE_DOS_BATCH,
                 .length=strlen(LINE_COMMENT_STYLE_DOS_BATCH)
             };
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -206,6 +208,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -237,6 +240,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
@@ -302,6 +306,9 @@ RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "fxml") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_FXML;
+    } else if (strcmp(extension, "proto") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_PROTOBUF;
     } else if (strcmp(extension, "json") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_JSON;
