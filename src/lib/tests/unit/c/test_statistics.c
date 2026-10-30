@@ -483,6 +483,32 @@ void testCountResultsProtoBuf(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testCountResultsCuda(void) {
+    char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.cu";
+    RcnCountStatistics* stats = rcnCreateCountStatistics(path);
+    RcnStatOptions options = {
+        .formats = RCN_OPT_LANG_CUDA
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_EQUAL_INT(1, stats->count.size);
+    RcnSourceFile* file = &stats->count.files[0];
+    RcnCountResultGroup* result = &stats->count.results[0];
+    TEST_ASSERT_TRUE(result->state.ok);
+    TEST_ASSERT_EQUAL_INT(RCN_ERR_NONE, result->state.errorCode);
+    TEST_ASSERT_NULL(result->state.errorMessage);
+    TEST_ASSERT_EQUAL_STRING("sample.cu", file->name);
+    TEST_ASSERT_TRUE(result->isProcessed);
+    TEST_ASSERT_EQUAL_INT(0, result->logicalLines);
+    TEST_ASSERT_EQUAL_INT(5, result->codeLines);
+    TEST_ASSERT_EQUAL_INT(11, result->physicalLines);
+    TEST_ASSERT_EQUAL_INT(33, result->words);
+    TEST_ASSERT_EQUAL_INT(208, result->characters);
+    TEST_ASSERT_EQUAL_INT(208, result->sourceSize);
+    rcnFreeCountStatistics(stats);
+}
+
 void testCountResultsJson(void) {
     char* path = RECKON_TEST_PATH_RES_BASE "/misc/sample.json";
     RcnCountStatistics* stats = rcnCreateCountStatistics(path);
@@ -761,6 +787,7 @@ int main(void) {
     RUN_TEST(testCountResultsXml);
     RUN_TEST(testCountResultsFxml);
     RUN_TEST(testCountResultsProtoBuf);
+    RUN_TEST(testCountResultsCuda);
     RUN_TEST(testCountResultsJson);
     RUN_TEST(testCountResultsCss);
     RUN_TEST(testCountResultsHtml);

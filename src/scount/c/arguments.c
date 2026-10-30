@@ -116,6 +116,9 @@ static bool parseFormatSpecifier(
         || equalsSpecifier(spec, length, "cc")
         || equalsSpecifier(spec, length, "cxx")) {
         *formatBit = getFormatBit(RCN_LANG_CPP);
+    } else if (equalsSpecifier(spec, length, "cuda")
+        || equalsSpecifier(spec, length, "cu")) {
+        *formatBit = getFormatBit(RCN_LANG_CUDA);
     } else if (equalsSpecifier(spec, length, "javascript")
         || equalsSpecifier(spec, length, "js")) {
         *formatBit = getFormatBit(RCN_LANG_JAVASCRIPT);

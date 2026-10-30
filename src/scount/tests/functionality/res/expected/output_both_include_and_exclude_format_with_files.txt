@@ -1,5 +1,5 @@
 Directory: mixed
-Scanned 4 out of 45 found files
+Scanned 4 out of 46 found files
 
   o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | Sample1.java             |     3     |     5     |    12     |    34     |    233    |    233    |

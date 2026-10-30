@@ -56,6 +56,7 @@ This version of the project supports processing the following file formats:
 - Batch
 - C
 - C++
+- CUDA
 - CMake
 - CSS
 - FXML
