@@ -110,7 +110,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 22
+#define RECKON_NUM_SUPPORTED_FORMATS 23
 
 /**
  * Macro to create a format option bitmask.
@@ -234,6 +234,12 @@ typedef enum RcnTextFormat {
      * Source files for the C++ programming language.
      */
     RCN_LANG_CPP,
+
+    /**
+     * Source files for the CUDA programming language,
+     * as found in files with a '.cu' extension.
+     */
+    RCN_LANG_CUDA,
 
     /**
      * Source files for the JavaScript programming language.
@@ -964,6 +970,12 @@ typedef enum RcnFormatOption {
      * the C++ programming language.
      */
     RCN_OPT_LANG_CPP = RECKON_MK_FRMT_OPT(RCN_LANG_CPP),
+
+    /**
+     * Option to select statistics for source code files written in
+     * the CUDA programming language.
+     */
+    RCN_OPT_LANG_CUDA = RECKON_MK_FRMT_OPT(RCN_LANG_CUDA),
 
     /**
      * Option to select statistics for source code files written in

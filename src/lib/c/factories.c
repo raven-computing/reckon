@@ -77,6 +77,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_LANG_JAVA] = {"Java", true, true},
     [RCN_LANG_PYTHON] = {"Python", true, true},
     [RCN_LANG_CPP] = {"C++", true, true},
+    [RCN_LANG_CUDA] = {"CUDA", false, true},
     [RCN_LANG_JAVASCRIPT] = {"JavaScript", true, true},
     [RCN_LANG_TYPESCRIPT] = {"TypeScript", true, true},
     [RCN_LANG_R] = {"R", true, true},
@@ -187,6 +188,7 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
         default:
@@ -212,6 +214,7 @@ Span getBlockCommentStartString(RcnTextFormat language) {
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
@@ -244,6 +247,7 @@ Span getBlockCommentEndString(RcnTextFormat language) {
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
@@ -365,6 +369,10 @@ RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
         || strcmp(extension, "ixx") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_LANG_CPP;
+    } else if (strcmp(extension, "cu") == 0
+        || strcmp(extension, "cuh") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_LANG_CUDA;
     }
 
     return detection;
