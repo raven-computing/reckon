@@ -44,6 +44,17 @@ static const uint32_t DEFAULT_OPT_ENABLE_ALL = 0xffffffff;
 
 static_assert(RECKON_NUM_SUPPORTED_FORMATS < 64, "Too many formats");
 
+/**
+ * Temporary entry used when sorting the files and results arrays in tandem.
+ * Holds a shallow copy of one file, its corresponding result, and the
+ * pre-computed metric value used as the sort key.
+ */
+typedef struct {
+    RcnCount metricValue;
+    RcnSourceFile file;
+    RcnCountResultGroup result;
+} SortEntry;
+
 static size_t getWorkerCount(size_t fileCount, RcnStatOptions options) {
     if (!options.useMultiThreading || fileCount < 2) {
         return 1;
@@ -116,6 +127,61 @@ static void updateStatsState(
     if (stopOnError || hasCriticalError(resultState)) {
         state->ok = false;
     }
+}
+
+static int compareSortEntryDesc(const void* arg1, const void* arg2) {
+    const SortEntry* item1 = (const SortEntry*) arg1;
+    const SortEntry* item2 = (const SortEntry*) arg2;
+    if (item1->metricValue > item2->metricValue) {
+        return -1;
+    }
+    if (item1->metricValue < item2->metricValue) {
+        return  1;
+    }
+    return 0;
+}
+
+static void sortResultSet(RcnCountResultSet* resultSet, RcnSortOption metric) {
+    const size_t nFiles = resultSet->size;
+    SortEntry* entries = malloc(nFiles * sizeof(SortEntry));
+    if (!entries) {
+        return; // LCOV_EXCL_LINE
+    }
+    for (size_t i = 0; i < nFiles; ++i) {
+        RcnCount value = 0;
+        const RcnCountResultGroup* group = &resultSet->results[i];
+        switch (metric) {
+            case RCN_OPT_SORT_LOGICAL_LINES:
+                value = group->logicalLines;
+                break;
+            case RCN_OPT_SORT_CODE_LINES:
+                value = group->codeLines;
+                break;
+            case RCN_OPT_SORT_PHYSICAL_LINES:
+                value = group->physicalLines;
+                break;
+            case RCN_OPT_SORT_WORDS:
+                value = group->words;
+                break;
+            case RCN_OPT_SORT_CHARACTERS:
+                value = group->characters;
+                break;
+            case RCN_OPT_SORT_SOURCE_SIZE:
+                value = group->sourceSize;
+                break;
+            default:
+                break;
+        }
+        entries[i].metricValue = value;
+        entries[i].file = resultSet->files[i];
+        entries[i].result = resultSet->results[i];
+    }
+    qsort(entries, nFiles, sizeof(SortEntry), compareSortEntryDesc);
+    for (size_t i = 0; i < nFiles; ++i) {
+        resultSet->files[i] = entries[i].file;
+        resultSet->results[i] = entries[i].result;
+    }
+    free(entries);
 }
 
 static void aggregateStatistics(
@@ -633,6 +699,9 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
         );
     }
     aggregateStatistics(stats, options);
+    if (stats->count.size > 1 && options.sortResultsBy != RCN_OPT_SORT_NONE) {
+        sortResultSet(&stats->count, options.sortResultsBy);
+    }
     if (stats->count.size == 1) {
         stats->state = stats->count.results[0].state;
     }

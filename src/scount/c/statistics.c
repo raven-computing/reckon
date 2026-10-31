@@ -150,7 +150,8 @@ ExitStatus outputStatistics(AppArgs args) {
     RcnStatOptions options = {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
-        .useMultiThreading = !args.disableParallelization
+        .useMultiThreading = !args.disableParallelization,
+        .sortResultsBy = args.sortMetric
     };
     if (args.linesOnly) {
         options.operations = (
@@ -212,7 +213,9 @@ ExitStatus outputStatistics(AppArgs args) {
             && (args.showFiles || args.showAllFiles)
         ),
         .showAllFileRows = args.showAllFiles,
-        .fileIsStdin = args.readFromStdin
+        .fileIsStdin = args.readFromStdin,
+        .sortRows = args.sort,
+        .sortMetric = args.sortMetric
     };
 
     if (stats->count.size == 1) {

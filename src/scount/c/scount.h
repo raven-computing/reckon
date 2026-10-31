@@ -57,6 +57,8 @@ typedef struct AppArgs {
     bool hasExcludeFormatMask;   // True if any exclude format was specified
     char* invalidIncludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
     char* invalidExcludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
+    bool sort;                   // Option: `--sort [metric]`
+    RcnSortOption sortMetric;    // The metric to sort by when `sort` is true
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
     bool totalsOnly;             // Option: `--total`
@@ -123,6 +125,8 @@ typedef struct PrintBuffer {
     bool showAllFileRows;
     bool showWarnings;
     bool fileIsStdin;
+    bool sortRows;
+    RcnSortOption sortMetric;
 } PrintBuffer;
 
 /**
