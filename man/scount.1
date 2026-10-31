@@ -95,6 +95,17 @@ Show a table of all individual files in the result when the given input path ref
 .br
 All files are listed regardless of how many there are.
 .TP
+.B \-\-sort [\fImetric\fR]
+Sort the table rows by the specified metric in descending order,
+so that the files and languages with the highest count appear first.
+.I The optional argument to this option is the metric to sort by
+and must be one of:
+.BR LLC ", " LOC ", " PHL ", " WRD ", " CHR ", " SZE
+Metric labels are treated case\-insensitive.
+If no option argument
+.I metric
+is specified, the sort metric is determined automatically.
+.TP
 .B \-\-stop\-on\-error
 Stop the processing on the first encountered error,
 even for non\-critical errors. Without this option (the default),

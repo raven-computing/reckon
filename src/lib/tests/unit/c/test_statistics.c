@@ -770,6 +770,106 @@ void testCountResultsR(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testSortResultsByPhysicalLinesDescending(void) {
+    RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
+    RcnSourceFile* files = calloc(3, sizeof(RcnSourceFile));
+    initSourceFile(&files[0], "file1.txt");
+    files[0].content = (RcnSourceText){ .text = "a\n", .size = 2 };
+    files[0].isContentRead = true;
+    initSourceFile(&files[1], "file2.txt");
+    files[1].content = (RcnSourceText){ .text = "a\nb\nc\n", .size = 6 };
+    files[1].isContentRead = true;
+    initSourceFile(&files[2], "file3.txt");
+    files[2].content = (RcnSourceText){ .text = "a\nb\n", .size = 4 };
+    files[2].isContentRead = true;
+    stats->count.size = 3;
+    stats->count.files = files;
+    stats->count.results = calloc(3, sizeof(RcnCountResultGroup));
+    RcnStatOptions options = {
+        .keepFileContent = true,
+        .sortResultsBy = RCN_OPT_SORT_PHYSICAL_LINES
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_STRING("file2.txt", stats->count.files[0].name);
+    TEST_ASSERT_EQUAL_INT(3, stats->count.results[0].physicalLines);
+    TEST_ASSERT_EQUAL_STRING("file3.txt", stats->count.files[1].name);
+    TEST_ASSERT_EQUAL_INT(2, stats->count.results[1].physicalLines);
+    TEST_ASSERT_EQUAL_STRING("file1.txt", stats->count.files[2].name);
+    TEST_ASSERT_EQUAL_INT(1, stats->count.results[2].physicalLines);
+    for (int i = 0; i < 3; ++i) {
+        files[i].content = (RcnSourceText){0};
+    }
+    rcnFreeCountStatistics(stats);
+}
+
+void testSortResultsByLogicalLinesDescending(void) {
+    RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
+    RcnSourceFile* files = calloc(2, sizeof(RcnSourceFile));
+    initSourceFile(&files[0], "file1.c");
+    files[0].content = (RcnSourceText){
+        .text = "int a = 1; int b = 2;",
+        .size = 21
+    };
+    files[0].isContentRead = true;
+    initSourceFile(&files[1], "file2.c");
+    files[1].content = (RcnSourceText){
+        .text = "int a = 1; int b = 2; int c = 3; int d = 4;",
+        .size = 44
+    };
+    files[1].isContentRead = true;
+    stats->count.size = 2;
+    stats->count.files = files;
+    stats->count.results = calloc(2, sizeof(RcnCountResultGroup));
+    RcnStatOptions options = {
+        .keepFileContent = true,
+        .sortResultsBy = RCN_OPT_SORT_LOGICAL_LINES
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_STRING("file2.c", stats->count.files[0].name);
+    RcnCount resultAtFirstPos = stats->count.results[0].logicalLines;
+    RcnCount resultAtSecondPos = stats->count.results[1].logicalLines;
+    TEST_ASSERT_TRUE(resultAtFirstPos > resultAtSecondPos);
+    TEST_ASSERT_EQUAL_STRING("file1.c", stats->count.files[1].name);
+    for (int i = 0; i < 2; ++i) {
+        files[i].content = (RcnSourceText){0};
+    }
+    rcnFreeCountStatistics(stats);
+}
+
+void testSortNoneDoesNotReorderFiles(void) {
+    RcnCountStatistics* stats = calloc(1, sizeof(RcnCountStatistics));
+    RcnSourceFile* files = calloc(2, sizeof(RcnSourceFile));
+    initSourceFile(&files[0], "first.txt");
+    files[0].content = (RcnSourceText){ .text = "x\n", .size = 2 };
+    files[0].isContentRead = true;
+    initSourceFile(&files[1], "second.txt");
+    files[1].content = (RcnSourceText){ .text = "a\nb\nc\n", .size = 6 };
+    files[1].isContentRead = true;
+    stats->count.size = 2;
+    stats->count.files = files;
+    stats->count.results = calloc(2, sizeof(RcnCountResultGroup));
+    RcnStatOptions options = {
+        .keepFileContent = true,
+        .sortResultsBy = RCN_OPT_SORT_NONE
+    };
+
+    rcnCount(stats, options);
+
+    TEST_ASSERT_TRUE(stats->state.ok);
+    TEST_ASSERT_EQUAL_STRING("first.txt", stats->count.files[0].name);
+    TEST_ASSERT_EQUAL_STRING("second.txt",  stats->count.files[1].name);
+    for (int i = 0; i < 2; ++i) {
+        files[i].content = (RcnSourceText){0};
+    }
+    rcnFreeCountStatistics(stats);
+}
+
 // NOLINTEND(readability-magic-numbers)
 
 int main(void) {
@@ -798,5 +898,8 @@ int main(void) {
     RUN_TEST(testCountResultsAssembly);
     RUN_TEST(testCountResultsBatch);
     RUN_TEST(testCountResultsR);
+    RUN_TEST(testSortResultsByPhysicalLinesDescending);
+    RUN_TEST(testSortResultsByLogicalLinesDescending);
+    RUN_TEST(testSortNoneDoesNotReorderFiles);
     return UNITY_END();
 }

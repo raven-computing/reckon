@@ -1008,6 +1008,59 @@ typedef enum RcnFormatOption {
 } RcnFormatOption;
 
 /**
+ * Enumeration of metrics by which the `RcnCountResultSet` can be sorted.
+ *
+ * Used together with the `sortResultsBy` field in `RcnStatOptions` to request
+ * that the `RcnCountResultSet.files` and `RcnCountResultSet.results` arrays in
+ * the result set be sorted in descending order after counting, so that the
+ * file with the highest count for the specified metric appears first.
+ * A zero-initialized value (default) leaves the arrays in their unsorted
+ * order. If not explicitly sorted, the order is unspecified.
+ *
+ * @since 1.11.0
+ */
+typedef enum RcnSortOption {
+
+    /**
+     * No sorting. The arrays retain their original order.
+     *
+     * This is the default behaviour.
+     */
+    RCN_OPT_SORT_NONE = 0,
+
+    /**
+     * Sort by logical lines of code (LLC) in descending order.
+     */
+    RCN_OPT_SORT_LOGICAL_LINES,
+
+    /**
+     * Sort by lines of code (LOC) in descending order.
+     */
+    RCN_OPT_SORT_CODE_LINES,
+
+    /**
+     * Sort by hard physical lines (PHL) in descending order.
+     */
+    RCN_OPT_SORT_PHYSICAL_LINES,
+
+    /**
+     * Sort by word count (WRD) in descending order.
+     */
+    RCN_OPT_SORT_WORDS,
+
+    /**
+     * Sort by character count (CHR) in descending order.
+     */
+    RCN_OPT_SORT_CHARACTERS,
+
+    /**
+     * Sort by source size in bytes (SZE) in descending order.
+     */
+    RCN_OPT_SORT_SOURCE_SIZE,
+
+} RcnSortOption;
+
+/**
  * Options to customize the behaviour of counting operations.
  * 
  * Allows users to specify various options that control how counting
@@ -1084,6 +1137,21 @@ typedef struct RcnStatOptions {
      * @since 1.9.0
      */
     bool useMultiThreading;
+
+    /**
+     * The metric by which to sort the `files` and `results` arrays in the
+     * `RcnCountResultSet` after counting completes.
+     *
+     * When set to any value other than `RCN_SORT_NONE`, the `files` and
+     * `results` arrays of the `count` member in `RcnCountStatistics` are
+     * rearranged in descending order of the chosen metric so that the file
+     * with the highest count appears first.
+     * A value of `RCN_SORT_NONE` (zero, the default) leaves the arrays in
+     * their original order after counting.
+     *
+     * @since 1.11.0
+     */
+    RcnSortOption sortResultsBy;
 
 } RcnStatOptions;
 
