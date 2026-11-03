@@ -1139,15 +1139,15 @@ typedef struct RcnStatOptions {
     bool useMultiThreading;
 
     /**
-     * The metric by which to sort the `files` and `results` arrays in the
-     * `RcnCountResultSet` after counting completes.
+     * The metric by which to sort the `RcnCountResultSet.files` and
+     * `RcnCountResultSet.results` arrays after counting completes.
      *
-     * When set to any value other than `RCN_SORT_NONE`, the `files` and
-     * `results` arrays of the `count` member in `RcnCountStatistics` are
-     * rearranged in descending order of the chosen metric so that the file
-     * with the highest count appears first.
-     * A value of `RCN_SORT_NONE` (zero, the default) leaves the arrays in
-     * their original order after counting.
+     * When set to any value other than `RCN_OPT_SORT_NONE`,
+     * the `RcnCountResultSet.files` and `RcnCountResultSet.results` arrays of
+     * the `RcnCountStatistics.count` member are rearranged in descending order
+     * of the chosen metric so that the file with the highest count appears
+     * first. A value of `RCN_OPT_SORT_NONE` (zero, the default) leaves the
+     * arrays in an unspecified order after counting.
      *
      * @since 1.11.0
      */
