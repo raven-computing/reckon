@@ -223,7 +223,7 @@ static size_t utf16FindAscii(Span text, Span target, bool isLittleEndian) {
         for (size_t j = 0; j < target.length; ++j) {
             unsigned char character = utf16AsciiAt(
                 text.ptr,
-                i + j * 2,
+                i + (j * 2),
                 isLittleEndian
             );
             if (character != (unsigned char) target.ptr[j]) {
