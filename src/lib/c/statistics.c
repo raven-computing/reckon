@@ -141,15 +141,21 @@ static int compareSortEntryDesc(const void* arg1, const void* arg2) {
     return 0;
 }
 
-static void sortResultSet(RcnCountResultSet* resultSet, RcnSortOption metric) {
-    const size_t nFiles = resultSet->size;
+static void sortResultSet(RcnCountStatistics* stats, RcnSortOption metric) {
+    RcnCountResultSet resultSet = stats->count;
+    const size_t nFiles = resultSet.size;
     SortEntry* entries = malloc(nFiles * sizeof(SortEntry));
     if (!entries) {
-        return; // LCOV_EXCL_LINE
+        // LCOV_EXCL_START
+        stats->state.ok = false;
+        stats->state.errorCode = RCN_ERR_ALLOC_FAILURE;
+        stats->state.errorMessage = "Failed to allocate memory";
+        return;
+        // LCOV_EXCL_STOP
     }
     for (size_t i = 0; i < nFiles; ++i) {
         RcnCount value = 0;
-        const RcnCountResultGroup* group = &resultSet->results[i];
+        const RcnCountResultGroup* group = &resultSet.results[i];
         switch (metric) {
             case RCN_OPT_SORT_LOGICAL_LINES:
                 value = group->logicalLines;
@@ -173,13 +179,13 @@ static void sortResultSet(RcnCountResultSet* resultSet, RcnSortOption metric) {
                 break;
         }
         entries[i].metricValue = value;
-        entries[i].file = resultSet->files[i];
-        entries[i].result = resultSet->results[i];
+        entries[i].file = resultSet.files[i];
+        entries[i].result = resultSet.results[i];
     }
     qsort(entries, nFiles, sizeof(SortEntry), compareSortEntryDesc);
     for (size_t i = 0; i < nFiles; ++i) {
-        resultSet->files[i] = entries[i].file;
-        resultSet->results[i] = entries[i].result;
+        resultSet.files[i] = entries[i].file;
+        resultSet.results[i] = entries[i].result;
     }
     free(entries);
 }
@@ -700,7 +706,7 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
     }
     aggregateStatistics(stats, options);
     if (stats->count.size > 1 && options.sortResults != RCN_OPT_SORT_NONE) {
-        sortResultSet(&stats->count, options.sortResults);
+        sortResultSet(stats, options.sortResults);
     }
     if (stats->count.size == 1) {
         stats->state = stats->count.results[0].state;
