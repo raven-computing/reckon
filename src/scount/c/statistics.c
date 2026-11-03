@@ -151,7 +151,7 @@ ExitStatus outputStatistics(AppArgs args) {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
         .useMultiThreading = !args.disableParallelization,
-        .sortResultsBy = args.sortMetric
+        .sortResults = args.sortMetric
     };
     if (args.linesOnly) {
         options.operations = (

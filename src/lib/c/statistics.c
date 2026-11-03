@@ -699,8 +699,8 @@ void rcnCount(RcnCountStatistics* stats, RcnStatOptions options) {
         );
     }
     aggregateStatistics(stats, options);
-    if (stats->count.size > 1 && options.sortResultsBy != RCN_OPT_SORT_NONE) {
-        sortResultSet(&stats->count, options.sortResultsBy);
+    if (stats->count.size > 1 && options.sortResults != RCN_OPT_SORT_NONE) {
+        sortResultSet(&stats->count, options.sortResults);
     }
     if (stats->count.size == 1) {
         stats->state = stats->count.results[0].state;
