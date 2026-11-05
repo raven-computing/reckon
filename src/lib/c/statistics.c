@@ -154,31 +154,8 @@ static void sortResultSet(RcnCountStatistics* stats, RcnSortOption metric) {
         // LCOV_EXCL_STOP
     }
     for (size_t i = 0; i < nFiles; ++i) {
-        RcnCount value = 0;
         const RcnCountResultGroup* group = &resultSet.results[i];
-        switch (metric) {
-            case RCN_OPT_SORT_LOGICAL_LINES:
-                value = group->logicalLines;
-                break;
-            case RCN_OPT_SORT_CODE_LINES:
-                value = group->codeLines;
-                break;
-            case RCN_OPT_SORT_PHYSICAL_LINES:
-                value = group->physicalLines;
-                break;
-            case RCN_OPT_SORT_WORDS:
-                value = group->words;
-                break;
-            case RCN_OPT_SORT_CHARACTERS:
-                value = group->characters;
-                break;
-            case RCN_OPT_SORT_SOURCE_SIZE:
-                value = group->sourceSize;
-                break;
-            default:
-                break;
-        }
-        entries[i].metricValue = value;
+        entries[i].metricValue = getSortMetricValue(group, metric);
         entries[i].file = resultSet.files[i];
         entries[i].result = resultSet.results[i];
     }

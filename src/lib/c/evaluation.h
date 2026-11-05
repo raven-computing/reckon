@@ -142,6 +142,15 @@ RcnResultState evaluateSourceTree(
 void traverseTree(TSNode root, NodeVisitor visitor, NodeEvalTrace* trace);
 
 /**
+ * Returns the numeric count value from the specified result group that
+ * should be used when the given sort option is applied.
+ */
+RcnCount getSortMetricValue(
+    const RcnCountResultGroup* result,
+    RcnSortOption metric
+);
+
+/**
  * Allocates and creates a parser for source code in the specified
  * programming language. May return `NULL` if the specified language is not
  * supported or on error. Ownership of the returned parser is transferred to

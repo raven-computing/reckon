@@ -111,6 +111,29 @@ bool rcnIsLocCountingSupported(RcnTextFormat format) {
     return features ? features->hasCodeLines : false;
 }
 
+RcnCount getSortMetricValue(
+    const RcnCountResultGroup* result,
+    RcnSortOption metric
+) {
+    switch (metric) {
+        case RCN_OPT_SORT_LOGICAL_LINES:
+            return result->logicalLines;
+        case RCN_OPT_SORT_CODE_LINES:
+            return result->codeLines;
+        case RCN_OPT_SORT_PHYSICAL_LINES:
+            return result->physicalLines;
+        case RCN_OPT_SORT_WORDS:
+            return result->words;
+        case RCN_OPT_SORT_CHARACTERS:
+            return result->characters;
+        case RCN_OPT_SORT_SOURCE_SIZE:
+            return result->sourceSize;
+        case RCN_OPT_SORT_NONE:
+        default:
+            return 0;
+    }
+}
+
 TSParser* createParser(RcnTextFormat language) {
     switch (language) {
         case RCN_LANG_C:
