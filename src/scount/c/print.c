@@ -634,10 +634,10 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     }
 }
 
-static RcnCount valueOfCountToBeSorted(
+static RcnCount getSortMetricValuePerFormat(
     const RcnCountStatistics* stats,
-    RcnTextFormat textFormat,
-    RcnSortOption metric
+    RcnSortOption metric,
+    RcnTextFormat textFormat
 ) {
     switch (metric) {
         case RCN_OPT_SORT_NONE:
@@ -680,13 +680,13 @@ static void sortActiveFormats(
     // Stable insertion sort in descending order
     for (size_t i = 1; i < count; ++i) {
         const RcnTextFormat key = formats[i];
-        const RcnCount value = valueOfCountToBeSorted(stats, key, metric);
+        const RcnCount value = getSortMetricValuePerFormat(stats, metric, key);
         size_t index = i;
         while (index > 0) {
-            const RcnCount previousValue = valueOfCountToBeSorted(
+            const RcnCount previousValue = getSortMetricValuePerFormat(
                 stats,
-                formats[index - 1],
-                metric
+                metric,
+                formats[index - 1]
             );
             if (previousValue <= value) {
                 formats[index] = formats[index - 1];
