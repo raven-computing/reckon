@@ -17,6 +17,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 #include "tree_sitter/api.h"
 
@@ -116,6 +117,8 @@ RcnCount getSortMetricValue(
     RcnSortOption metric
 ) {
     switch (metric) {
+        case RCN_OPT_SORT_NONE:
+            return 0;
         case RCN_OPT_SORT_LOGICAL_LINES:
             return result->logicalLines;
         case RCN_OPT_SORT_CODE_LINES:
@@ -128,10 +131,9 @@ RcnCount getSortMetricValue(
             return result->characters;
         case RCN_OPT_SORT_SOURCE_SIZE:
             return result->sourceSize;
-        case RCN_OPT_SORT_NONE:
-        default:
-            return 0;
     }
+    assert(!"Unhandled RcnSortOption");
+    return 0;
 }
 
 TSParser* createParser(RcnTextFormat language) {
