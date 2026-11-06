@@ -640,6 +640,8 @@ static RcnCount valueOfCountToBeSorted(
     RcnSortOption metric
 ) {
     switch (metric) {
+        case RCN_OPT_SORT_NONE:
+            return 0;
         case RCN_OPT_SORT_LOGICAL_LINES:
             return stats->logicalLines[textFormat];
         case RCN_OPT_SORT_CODE_LINES:
@@ -652,9 +654,9 @@ static RcnCount valueOfCountToBeSorted(
             return stats->characters[textFormat];
         case RCN_OPT_SORT_SOURCE_SIZE:
             return stats->sourceSize[textFormat];
-        default:
-            return stats->logicalLines[textFormat];
     }
+    assert(!"Unhandled RcnSortOption");
+    return 0;
 }
 
 static RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer) {
@@ -714,6 +716,7 @@ static void prSummaryRows(
         if (metric == RCN_OPT_SORT_NONE) {
             metric = resolveAutoSortMetric(buffer);
         }
+        assert(metric != RCN_OPT_SORT_NONE);
         sortActiveFormats(activeFormats, activeCount, stats, metric);
     }
 
