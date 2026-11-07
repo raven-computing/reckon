@@ -147,10 +147,16 @@ ExitStatus outputStatistics(AppArgs args) {
         reportInputVerbose(path, stats);
     }
 
+    const bool fileTableEnabled = (
+        !args.totalsOnly
+        && (args.showFiles || args.showAllFiles)
+    );
+
     RcnStatOptions options = {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
-        .useMultiThreading = !args.disableParallelization
+        .useMultiThreading = !args.disableParallelization,
+        .sortBy = fileTableEnabled ? args.sortMetric : RCN_OPT_SORT_NONE,
     };
     if (args.linesOnly) {
         options.operations = (
@@ -207,12 +213,11 @@ ExitStatus outputStatistics(AppArgs args) {
         .showCharacters = !args.linesOnly,
         .showSourceSize = !args.linesOnly,
         .showTotalsOnly = args.totalsOnly,
-        .showFileTable = (
-            !args.totalsOnly
-            && (args.showFiles || args.showAllFiles)
-        ),
+        .showFileTable = fileTableEnabled,
         .showAllFileRows = args.showAllFiles,
-        .fileIsStdin = args.readFromStdin
+        .fileIsStdin = args.readFromStdin,
+        .sortRows = args.sort,
+        .sortMetric = args.sortMetric
     };
 
     if (stats->count.size == 1) {

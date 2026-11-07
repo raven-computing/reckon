@@ -146,6 +146,29 @@ static bool parseFormatSpecifier(
 }
 // NOLINTEND(readability-function-cognitive-complexity)
 
+static bool parseSortMetricOption(const char* optArg, RcnSortOption* metric) {
+    if (!optArg || !metric) {
+        return false;
+    }
+    const size_t length = strlen(optArg);
+    if (equalsSpecifier(optArg, length, "llc")) {
+        *metric = RCN_OPT_SORT_LOGICAL_LINES;
+    } else if (equalsSpecifier(optArg, length, "loc")) {
+        *metric = RCN_OPT_SORT_CODE_LINES;
+    } else if (equalsSpecifier(optArg, length, "phl")) {
+        *metric = RCN_OPT_SORT_PHYSICAL_LINES;
+    } else if (equalsSpecifier(optArg, length, "wrd")) {
+        *metric = RCN_OPT_SORT_WORDS;
+    } else if (equalsSpecifier(optArg, length, "chr")) {
+        *metric = RCN_OPT_SORT_CHARACTERS;
+    } else if (equalsSpecifier(optArg, length, "sze")) {
+        *metric = RCN_OPT_SORT_SOURCE_SIZE;
+    } else {
+        return false;
+    }
+    return true;
+}
+
 static char* copyInvalidFormatSpecifier(const char* token, size_t length) {
     // Ignoring false positive linter warning
     char* invalidTokenString = malloc(length + 1); // NOLINT
@@ -223,6 +246,16 @@ AppArgs parseArgs(int argc, char** argv) {
             args.showAllFiles = true;
         } else if (strcmp(argv[i], "--disable-parallelization") == 0) {
             args.disableParallelization = true;
+        } else if (strcmp(argv[i], "--sort") == 0) {
+            args.sort = true;
+            // Consume the next arg only if it's a recognised metric name
+            if (i + 1 < argc && argv[i + 1][0] != '-') {
+                RcnSortOption metric = RCN_OPT_SORT_NONE;
+                if (parseSortMetricOption(argv[i + 1], &metric)) {
+                    args.sortMetric = metric;
+                    ++i;
+                }
+            }
         } else if (strcmp(argv[i], "--include-format") == 0) {
             if (i + 1 >= argc) {
                 args.errorMessage = (
@@ -359,6 +392,11 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--show-all-files]  Show a table of all individual files in the result.");
     logI("                      All files are listed without any limitation.");
+    logI(" ");
+    logI("  [--sort [metric]]   Sort table rows by the specified metric in descending order.");
+    logI("                      The option argument [metric] is one of:");
+    logI("                      LLC, LOC, PHL, WRD, CHR, SZE (case-insensitive).");
+    logI("                      If [metric] is omitted, the sort metric is determined automatically.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
     logI(" ");
