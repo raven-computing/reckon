@@ -787,7 +787,7 @@ void testSortResultsByPhysicalLinesDescending(void) {
     stats->count.results = calloc(3, sizeof(RcnCountResultGroup));
     RcnStatOptions options = {
         .keepFileContent = true,
-        .sortResults = RCN_OPT_SORT_PHYSICAL_LINES
+        .sortBy = RCN_OPT_SORT_PHYSICAL_LINES
     };
 
     rcnCount(stats, options);
@@ -825,7 +825,7 @@ void testSortResultsByLogicalLinesDescending(void) {
     stats->count.results = calloc(2, sizeof(RcnCountResultGroup));
     RcnStatOptions options = {
         .keepFileContent = true,
-        .sortResults = RCN_OPT_SORT_LOGICAL_LINES
+        .sortBy = RCN_OPT_SORT_LOGICAL_LINES
     };
 
     rcnCount(stats, options);
@@ -856,7 +856,7 @@ void testSortNoneDoesNotReorderFiles(void) {
     stats->count.results = calloc(2, sizeof(RcnCountResultGroup));
     RcnStatOptions options = {
         .keepFileContent = true,
-        .sortResults = RCN_OPT_SORT_NONE
+        .sortBy = RCN_OPT_SORT_NONE
     };
 
     rcnCount(stats, options);

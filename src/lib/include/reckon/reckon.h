@@ -1010,7 +1010,7 @@ typedef enum RcnFormatOption {
 /**
  * Enumeration of metrics by which the `RcnCountResultSet` can be sorted.
  *
- * Used together with the `RcnStatOptions.sortResults` field to request
+ * Used together with the `RcnStatOptions.sortBy` field to request
  * that the `RcnCountResultSet.files` and `RcnCountResultSet.results` arrays in
  * the result set be sorted in descending order after counting, so that the
  * file with the highest count for the specified metric appears first.
@@ -1151,7 +1151,7 @@ typedef struct RcnStatOptions {
      *
      * @since 1.11.0
      */
-    RcnSortOption sortResults;
+    RcnSortOption sortBy;
 
 } RcnStatOptions;
 

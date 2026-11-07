@@ -156,7 +156,7 @@ ExitStatus outputStatistics(AppArgs args) {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
         .useMultiThreading = !args.disableParallelization,
-        .sortResults = fileTableEnabled ? args.sortMetric : RCN_OPT_SORT_NONE,
+        .sortBy = fileTableEnabled ? args.sortMetric : RCN_OPT_SORT_NONE,
     };
     if (args.linesOnly) {
         options.operations = (
