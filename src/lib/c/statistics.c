@@ -149,7 +149,7 @@ static void sortResultSet(RcnCountStatistics* stats, RcnSortOption metric) {
         // LCOV_EXCL_START
         stats->state.ok = false;
         stats->state.errorCode = RCN_ERR_ALLOC_FAILURE;
-        stats->state.errorMessage = "Failed to allocate memory";
+        stats->state.errorMessage = "Failed to allocate memory for sort items";
         return;
         // LCOV_EXCL_STOP
     }
