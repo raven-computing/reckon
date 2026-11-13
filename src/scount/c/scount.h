@@ -172,6 +172,15 @@ void showHelpText(void);
 bool isInputValid(AppArgs args);
 
 /**
+ * Determines the sort order to be applied automatically when none
+ * is explicitly specified.
+ * 
+ * @param buffer The print buffer holding the display options.
+ * @return The determined sort order to be applied.
+ */
+RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer);
+
+/**
  * Processes the input path and shows statistics on stdout.
  * 
  * This is the main operation function of scount handling most user inputs.

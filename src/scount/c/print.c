@@ -659,16 +659,6 @@ static RcnCount getSortMetricValuePerFormat(
     return 0;
 }
 
-static RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer) {
-    if (buffer->showLogicalLines) {
-        return RCN_OPT_SORT_LOGICAL_LINES;
-    }
-    if (buffer->showCodeLines) {
-        return RCN_OPT_SORT_CODE_LINES;
-    }
-    return RCN_OPT_SORT_PHYSICAL_LINES;
-}
-
 static void sortActiveFormats(
     RcnTextFormat* formats,
     size_t count,
@@ -833,6 +823,19 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     }
     prChr(buffer, TABLE_BORDER_VERTICAL_EMPHASIS);
     prChr(buffer, '\n');
+}
+
+RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer) {
+    if (!buffer->sortRows) {
+        return RCN_OPT_SORT_NONE;
+    }
+    if (buffer->showLogicalLines) {
+        return RCN_OPT_SORT_LOGICAL_LINES;
+    }
+    if (buffer->showCodeLines) {
+        return RCN_OPT_SORT_CODE_LINES;
+    }
+    return RCN_OPT_SORT_PHYSICAL_LINES;
 }
 
 void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
