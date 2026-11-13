@@ -152,11 +152,31 @@ ExitStatus outputStatistics(AppArgs args) {
         && (args.showFiles || args.showAllFiles)
     );
 
+    PrintBuffer buffer = {
+        .showLogicalLines = true,
+        .showCodeLines = true,
+        .showPhysicalLines = true,
+        .showWords = !args.linesOnly,
+        .showCharacters = !args.linesOnly,
+        .showSourceSize = !args.linesOnly,
+        .showTotalsOnly = args.totalsOnly,
+        .showFileTable = fileTableEnabled,
+        .showAllFileRows = args.showAllFiles,
+        .fileIsStdin = args.readFromStdin,
+        .sortRows = args.sort,
+        .sortMetric = args.sortMetric
+    };
+
+    RcnSortOption sortMetric = args.sortMetric;
+    if (sortMetric == RCN_OPT_SORT_NONE) {
+        sortMetric = resolveAutoSortMetric(&buffer);
+    }
+
     RcnStatOptions options = {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
         .useMultiThreading = !args.disableParallelization,
-        .sortBy = fileTableEnabled ? args.sortMetric : RCN_OPT_SORT_NONE,
+        .sortBy = fileTableEnabled ? sortMetric : RCN_OPT_SORT_NONE,
     };
     if (args.linesOnly) {
         options.operations = (
@@ -204,21 +224,6 @@ ExitStatus outputStatistics(AppArgs args) {
             : APP_EXIT_NOTHING_PROCESSED
         );
     }
-
-    PrintBuffer buffer = {
-        .showLogicalLines = true,
-        .showCodeLines = true,
-        .showPhysicalLines = true,
-        .showWords = !args.linesOnly,
-        .showCharacters = !args.linesOnly,
-        .showSourceSize = !args.linesOnly,
-        .showTotalsOnly = args.totalsOnly,
-        .showFileTable = fileTableEnabled,
-        .showAllFileRows = args.showAllFiles,
-        .fileIsStdin = args.readFromStdin,
-        .sortRows = args.sort,
-        .sortMetric = args.sortMetric
-    };
 
     if (stats->count.size == 1) {
         printResultSingle(stats, &buffer);

@@ -343,3 +343,17 @@ function test_scount_with_sort_option_auto_determines_metric() {
   assert_stdout_equals_file "expected/mixed_sort_llc.txt";
   assert_stderr_is_empty;
 }
+
+function test_scount_with_sort_auto_metric_and_show_files_applies_sort_order_everywhere() {
+  run_app --sort --show-all-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_llc_with_all_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_by_size_and_show_all_files() {
+  run_app --show-all-files --sort SZE "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_sze_with_all_files.txt";
+  assert_stderr_is_empty;
+}
