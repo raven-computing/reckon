@@ -173,6 +173,24 @@ static bool parseSortMetricOption(const char* optArg, RcnSortOption* metric) {
     return true;
 }
 
+static bool specifiedSortMetricIsNotDisplayed(AppArgs args) {
+    if (!args.sort) {
+        return false;
+    }
+    RcnSortOption metric = args.sortMetric;
+    if (args.linesOnly) {
+        switch (metric) {
+            case RCN_OPT_SORT_WORDS:
+            case RCN_OPT_SORT_CHARACTERS:
+            case RCN_OPT_SORT_SOURCE_SIZE:
+                return true;
+            default:
+                break;
+        }
+    }
+    return false;
+}
+
 static char* copyInvalidFormatSpecifier(const char* token, size_t length) {
     // Ignoring false positive linter warning
     char* invalidTokenString = malloc(length + 1); // NOLINT
@@ -446,6 +464,14 @@ bool isInputValid(AppArgs args) {
     }
     if (args.totalsOnly && args.showAllFiles) {
         logW("Option --show-all-files cannot be combined with --total option");
+    }
+    if (specifiedSortMetricIsNotDisplayed(args)) {
+        logW(
+            "Specified sort option has no effect because that metric is not displayed"
+        );
+    }
+    if (args.sort && args.totalsOnly) {
+        logW("Specified sort option has no effect when displaying only totals");
     }
     return (
         args.errorMessage == NULL
