@@ -47,10 +47,14 @@ static_assert(RECKON_NUM_SUPPORTED_FORMATS < 64, "Too many formats");
 /**
  * Temporary entry used when sorting the files and results arrays in tandem.
  * Holds a shallow copy of one file, its corresponding result, and the
- * pre-computed metric value used as the sort key.
+ * pre-computed metric value used as the sort key. Also tracks the original
+ * index of the original position in the array. This is used to break ties
+ * when sorting entries with equal metric values to ensure a stable sort order
+ * since qsort() is not guaranteed to be stable.
  */
 typedef struct {
     RcnCount metricValue;
+    size_t index;
     RcnSourceFile file;
     RcnCountResultGroup result;
 } SortEntry;
@@ -138,6 +142,13 @@ static int compareSortEntryDesc(const void* arg1, const void* arg2) {
     if (item1->metricValue < item2->metricValue) {
         return  1;
     }
+    // Check original index to preserve original order
+    if (item1->index < item2->index) {
+        return -1;
+    }
+    if (item1->index > item2->index) {
+        return 1;
+    }
     return 0;
 }
 
@@ -156,6 +167,7 @@ static void sortResultSet(RcnCountStatistics* stats, RcnSortOption metric) {
     for (size_t i = 0; i < nFiles; ++i) {
         const RcnCountResultGroup* group = &resultSet.results[i];
         entries[i].metricValue = getSortMetricValue(group, metric);
+        entries[i].index = i;
         entries[i].file = resultSet.files[i];
         entries[i].result = resultSet.results[i];
     }
