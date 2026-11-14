@@ -135,3 +135,10 @@ function test_scount_reports_nothing_processed_when_all_available_formats_are_ex
   assert_stderr_contains "Scanned directory";
   assert_stderr_contains "It contains no files with an eligible format";
 }
+
+function test_scount_with_sort_option_and_no_path_prints_error() {
+  run_app --sort LLC;
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_equals "No input path specified.";
+}

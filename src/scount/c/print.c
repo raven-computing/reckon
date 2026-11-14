@@ -634,19 +634,88 @@ static void prFileRows(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     }
 }
 
+static RcnCount getSortMetricValuePerFormat(
+    const RcnCountStatistics* stats,
+    RcnSortOption metric,
+    RcnTextFormat textFormat
+) {
+    switch (metric) {
+        case RCN_OPT_SORT_NONE:
+            return 0;
+        case RCN_OPT_SORT_LOGICAL_LINES:
+            return stats->logicalLines[textFormat];
+        case RCN_OPT_SORT_CODE_LINES:
+            return stats->codeLines[textFormat];
+        case RCN_OPT_SORT_PHYSICAL_LINES:
+            return stats->physicalLines[textFormat];
+        case RCN_OPT_SORT_WORDS:
+            return stats->words[textFormat];
+        case RCN_OPT_SORT_CHARACTERS:
+            return stats->characters[textFormat];
+        case RCN_OPT_SORT_SOURCE_SIZE:
+            return stats->sourceSize[textFormat];
+    }
+    assert(!"Unhandled RcnSortOption");
+    return 0;
+}
+
+static void sortActiveFormats(
+    RcnTextFormat* formats,
+    size_t count,
+    const RcnCountStatistics* stats,
+    RcnSortOption metric
+) {
+    assert(formats != NULL);
+    assert(stats != NULL);
+    // Stable insertion sort in descending order
+    for (size_t i = 1; i < count; ++i) {
+        const RcnTextFormat key = formats[i];
+        const RcnCount value = getSortMetricValuePerFormat(stats, metric, key);
+        size_t index = i;
+        while (index > 0) {
+            const RcnCount previousValue = getSortMetricValuePerFormat(
+                stats,
+                metric,
+                formats[index - 1]
+            );
+            if (previousValue <= value) {
+                formats[index] = formats[index - 1];
+                --index;
+            } else {
+                break;
+            }
+        }
+        formats[index] = key;
+    }
+}
+
 static void prSummaryRows(
     PrintBuffer* buffer,
     const RcnCountStatistics* stats
 ) {
+    RcnTextFormat activeFormats[RECKON_NUM_SUPPORTED_FORMATS];
+    size_t activeCount = 0;
     for (RcnTextFormat frmt = 0; frmt < RECKON_NUM_SUPPORTED_FORMATS; ++frmt) {
+        if (stats->sourceSize[frmt] != 0) {
+            activeFormats[activeCount++] = frmt;
+        }
+    }
+
+    if (buffer->sortRows && activeCount > 1) {
+        RcnSortOption metric = buffer->sortMetric;
+        if (metric == RCN_OPT_SORT_NONE) {
+            metric = resolveAutoSortMetric(buffer);
+        }
+        assert(metric != RCN_OPT_SORT_NONE);
+        sortActiveFormats(activeFormats, activeCount, stats, metric);
+    }
+
+    for (size_t i = 0; i < activeCount; ++i) {
+        const RcnTextFormat frmt = activeFormats[i];
         const char* label = rcnGetTextFormatLabel(frmt);
         bool hasLogicalLines = rcnIsLlcCountingSupported(frmt);
         bool hasCodeLines = rcnIsLocCountingSupported(frmt);
         assert(label != NULL);
-
-        if (stats->sourceSize[frmt] == 0) {
-            continue;
-        }
 
         prStr(buffer, TABLE_PADDING_LEFT);
         prChr(buffer, TABLE_BORDER_VERTICAL_NORMAL);
@@ -754,6 +823,19 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     }
     prChr(buffer, TABLE_BORDER_VERTICAL_EMPHASIS);
     prChr(buffer, '\n');
+}
+
+RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer) {
+    if (!buffer->sortRows) {
+        return RCN_OPT_SORT_NONE;
+    }
+    if (buffer->showLogicalLines) {
+        return RCN_OPT_SORT_LOGICAL_LINES;
+    }
+    if (buffer->showCodeLines) {
+        return RCN_OPT_SORT_CODE_LINES;
+    }
+    return RCN_OPT_SORT_PHYSICAL_LINES;
 }
 
 void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
