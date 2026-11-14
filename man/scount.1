@@ -98,10 +98,11 @@ All files are listed regardless of how many there are.
 .B \-\-sort [\fImetric\fR]
 Sort the table rows by the specified metric in descending order,
 so that the files and languages with the highest count appear first.
-.I The optional argument to this option is the metric to sort by
+The optional argument to this option is the metric to sort by
 and must be one of:
-.BR LLC ", " LOC ", " PHL ", " WRD ", " CHR ", " SZE
+.BR LLC ", " LOC ", " PHL ", " WRD ", " CHR ", " SZE ", " OFF
 Metric labels are treated case\-insensitive.
+If OFF is specified, sorting will be disabled.
 If no option argument
 .I metric
 is specified, the sort metric is determined automatically.

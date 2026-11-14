@@ -163,6 +163,10 @@ static bool parseSortMetricOption(const char* optArg, RcnSortOption* metric) {
         *metric = RCN_OPT_SORT_CHARACTERS;
     } else if (equalsSpecifier(optArg, length, "sze")) {
         *metric = RCN_OPT_SORT_SOURCE_SIZE;
+    } else if (equalsSpecifier(optArg, length, "off")
+        || equalsSpecifier(optArg, length, "none")
+        || equalsSpecifier(optArg, length, "no")) {
+        *metric = RCN_OPT_SORT_NONE;
     } else {
         return false;
     }
@@ -253,6 +257,9 @@ AppArgs parseArgs(int argc, char** argv) {
                 RcnSortOption metric = RCN_OPT_SORT_NONE;
                 if (parseSortMetricOption(argv[i + 1], &metric)) {
                     args.sortMetric = metric;
+                    if (metric == RCN_OPT_SORT_NONE) {
+                        args.sort = false;
+                    }
                     ++i;
                 }
             }
@@ -395,7 +402,8 @@ void showHelpText(void) {
     logI(" ");
     logI("  [--sort [metric]]   Sort table rows by the specified metric in descending order.");
     logI("                      The option argument [metric] is one of:");
-    logI("                      LLC, LOC, PHL, WRD, CHR, SZE (case-insensitive).");
+    logI("                      LLC, LOC, PHL, WRD, CHR, SZE, OFF (case-insensitive).");
+    logI("                      If OFF is specified, sorting will be disabled");
     logI("                      If [metric] is omitted, the sort metric is determined automatically.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
