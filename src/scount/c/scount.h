@@ -18,6 +18,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "reckon/reckon.h"
@@ -47,9 +48,17 @@ typedef enum ExitStatus {
  */
 typedef struct AppArgs {
     char* inputPath;             // The input `<PATH>` to process
-    char* errorMessage;          // Error message in case of invalid input
+    const char* errorMessage;    // Error message in case of invalid input
     int indexUnknown;            // Index into `argv` when unknown arg found, or zero
     bool readFromStdin;          // True when 'inputPath' is '-' or '-.ext'
+    uint32_t includeFormatMask;  // Bit mask for `--include-format`
+    uint32_t excludeFormatMask;  // Bit mask for `--exclude-format`
+    bool hasIncludeFormatMask;   // True if any include format was specified
+    bool hasExcludeFormatMask;   // True if any exclude format was specified
+    char* invalidIncludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
+    char* invalidExcludeFormatSpecifier; // Impl: Needs to be freed if non-NULL
+    bool sort;                   // Option: `--sort [metric]`
+    RcnSortOption sortMetric;    // The metric to sort by when `sort` is true
     bool annotateCounts;         // Option: `--annotate-counts`
     bool linesOnly;              // Option: `-l|--lines`
     bool totalsOnly;             // Option: `--total`
@@ -116,6 +125,8 @@ typedef struct PrintBuffer {
     bool showAllFileRows;
     bool showWarnings;
     bool fileIsStdin;
+    bool sortRows;
+    RcnSortOption sortMetric;
 } PrintBuffer;
 
 /**
@@ -159,6 +170,15 @@ void showHelpText(void);
  * no error and the input can be further used, `false` otherwise.
  */
 bool isInputValid(AppArgs args);
+
+/**
+ * Determines the sort order to be applied automatically when none
+ * is explicitly specified.
+ * 
+ * @param buffer The print buffer holding the display options.
+ * @return The determined sort order to be applied.
+ */
+RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer);
 
 /**
  * Processes the input path and shows statistics on stdout.

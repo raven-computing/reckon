@@ -266,3 +266,101 @@ function test_scount_with_disable_parallelization_option() {
   assert_stdout_equals_file "expected/mixed.txt";
   assert_stderr_is_empty;
 }
+
+function test_scount_with_include_format_option_filters_formats() {
+  run_app --include-format "java,C,txt" --show-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_include_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_repeated_include_format_option_filters_formats() {
+  run_app --include-format "Java" \
+          --include-format "txt" \
+          --include-format "c" \
+          --show-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_include_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_exclude_format_option_filters_formats() {
+  run_app --exclude-format "C,java,txt" --show-all-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_repeated_exclude_format_option_filters_formats() {
+  run_app --exclude-format "JAVA" \
+          --exclude-format "TXT" \
+          --exclude-format "C" \
+          --show-all-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_include_and_exclude_format_options_applies_include_first() {
+  run_app --include-format "java,C,TXT" \
+          --exclude-format "C" \
+          --show-files \
+          "${TEST_RES_DIR}/mixed";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_both_include_and_exclude_format_with_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_option_sorts_by_llc_descending() {
+  run_app --sort LLC "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_llc.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_option_is_case_insensitive() {
+  run_app --sort llC "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_llc.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_option_sorts_by_phl_descending() {
+  run_app --sort PHL "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_phl.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_option_auto_determines_metric() {
+  run_app --sort "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_llc.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_auto_metric_and_show_files_applies_sort_order_everywhere() {
+  run_app --sort --show-all-files "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_llc_with_all_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_sort_by_size_and_show_all_files() {
+  run_app --show-all-files --sort SZE "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixed_sort_sze_with_all_files.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_does_not_sort_when_sort_option_is_specified_as_off() {
+  run_app --show-all-files --sort Off "${TEST_RES_DIR}/mixed";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/mixedWithAllFiles.txt";
+  assert_stderr_is_empty;
+}

@@ -110,7 +110,7 @@ extern "C" {
  * The total number of supported text formats, including
  * supported programming languages.
  */
-#define RECKON_NUM_SUPPORTED_FORMATS 21
+#define RECKON_NUM_SUPPORTED_FORMATS 23
 
 /**
  * Macro to create a format option bitmask.
@@ -164,6 +164,12 @@ typedef enum RcnTextFormat {
      * Text formatted in FXML, as found in files with a '.fxml' extension.
      */
     RCN_TEXT_FXML,
+
+    /**
+     * Text formatted in Protocol Buffers, as found in files with a '.proto'
+     * extension.
+     */
+    RCN_TEXT_PROTOBUF,
 
     /**
      * Text formatted in JSON, as found in files with a '.json' extension.
@@ -228,6 +234,12 @@ typedef enum RcnTextFormat {
      * Source files for the C++ programming language.
      */
     RCN_LANG_CPP,
+
+    /**
+     * Source files for the CUDA programming language,
+     * as found in files with a '.cu' extension.
+     */
+    RCN_LANG_CUDA,
 
     /**
      * Source files for the JavaScript programming language.
@@ -891,6 +903,11 @@ typedef enum RcnFormatOption {
     RCN_OPT_TEXT_FXML = RECKON_MK_FRMT_OPT(RCN_TEXT_FXML),
 
     /**
+     * Option to select statistics for Protocol Buffer files.
+     */
+    RCN_OPT_TEXT_PROTOBUF = RECKON_MK_FRMT_OPT(RCN_TEXT_PROTOBUF),
+
+    /**
      * Option to select statistics for JSON text files.
      */
     RCN_OPT_TEXT_JSON = RECKON_MK_FRMT_OPT(RCN_TEXT_JSON),
@@ -956,6 +973,12 @@ typedef enum RcnFormatOption {
 
     /**
      * Option to select statistics for source code files written in
+     * the CUDA programming language.
+     */
+    RCN_OPT_LANG_CUDA = RECKON_MK_FRMT_OPT(RCN_LANG_CUDA),
+
+    /**
+     * Option to select statistics for source code files written in
      * the JavaScript programming language.
      */
     RCN_OPT_LANG_JAVASCRIPT = RECKON_MK_FRMT_OPT(RCN_LANG_JAVASCRIPT),
@@ -983,6 +1006,59 @@ typedef enum RcnFormatOption {
     RCN_OPT_LANG_BASH = RECKON_MK_FRMT_OPT(RCN_LANG_BASH),
 
 } RcnFormatOption;
+
+/**
+ * Enumeration of metrics by which the `RcnCountResultSet` can be sorted.
+ *
+ * Used together with the `RcnStatOptions.sortBy` field to request
+ * that the `RcnCountResultSet.files` and `RcnCountResultSet.results` arrays in
+ * the result set be sorted in descending order after counting, so that the
+ * file with the highest count for the specified metric appears first.
+ * A zero-initialized value (default) leaves the arrays in their unsorted
+ * order. If not explicitly sorted, the order is unspecified.
+ *
+ * @since 1.11.0
+ */
+typedef enum RcnSortOption {
+
+    /**
+     * No sorting. The arrays retain their original order.
+     *
+     * This is the default behaviour.
+     */
+    RCN_OPT_SORT_NONE = 0,
+
+    /**
+     * Sort by logical lines of code (LLC) in descending order.
+     */
+    RCN_OPT_SORT_LOGICAL_LINES,
+
+    /**
+     * Sort by lines of code (LOC) in descending order.
+     */
+    RCN_OPT_SORT_CODE_LINES,
+
+    /**
+     * Sort by hard physical lines (PHL) in descending order.
+     */
+    RCN_OPT_SORT_PHYSICAL_LINES,
+
+    /**
+     * Sort by word count (WRD) in descending order.
+     */
+    RCN_OPT_SORT_WORDS,
+
+    /**
+     * Sort by character count (CHR) in descending order.
+     */
+    RCN_OPT_SORT_CHARACTERS,
+
+    /**
+     * Sort by source size in bytes (SZE) in descending order.
+     */
+    RCN_OPT_SORT_SOURCE_SIZE,
+
+} RcnSortOption;
 
 /**
  * Options to customize the behaviour of counting operations.
@@ -1061,6 +1137,21 @@ typedef struct RcnStatOptions {
      * @since 1.9.0
      */
     bool useMultiThreading;
+
+    /**
+     * The metric by which to sort the `RcnCountResultSet.files` and
+     * `RcnCountResultSet.results` arrays after counting completes.
+     *
+     * When set to any value other than `RCN_OPT_SORT_NONE`,
+     * the `RcnCountResultSet.files` and `RcnCountResultSet.results` arrays of
+     * the `RcnCountStatistics.count` member are rearranged in descending order
+     * of the chosen metric so that the file with the highest count appears
+     * first. A value of `RCN_OPT_SORT_NONE` (zero, the default) leaves the
+     * arrays in an unspecified order after counting.
+     *
+     * @since 1.11.0
+     */
+    RcnSortOption sortBy;
 
 } RcnStatOptions;
 

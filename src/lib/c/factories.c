@@ -17,6 +17,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 #include "tree_sitter/api.h"
 
@@ -64,6 +65,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_TEXT_MARKDOWN] = {"Markdown", false, false},
     [RCN_TEXT_XML] = {"XML", false, true},
     [RCN_TEXT_FXML] = {"FXML", false, true},
+    [RCN_TEXT_PROTOBUF] = {"Protocol Buffers", false, true},
     [RCN_TEXT_JSON] = {"JSON", false, false},
     [RCN_TEXT_CSS] = {"CSS", false, true},
     [RCN_TEXT_HTML] = {"HTML", false, true},
@@ -76,6 +78,7 @@ static const FormatFeatures FORMAT_FEATURES[RECKON_NUM_SUPPORTED_FORMATS] = {
     [RCN_LANG_JAVA] = {"Java", true, true},
     [RCN_LANG_PYTHON] = {"Python", true, true},
     [RCN_LANG_CPP] = {"C++", true, true},
+    [RCN_LANG_CUDA] = {"CUDA", false, true},
     [RCN_LANG_JAVASCRIPT] = {"JavaScript", true, true},
     [RCN_LANG_TYPESCRIPT] = {"TypeScript", true, true},
     [RCN_LANG_R] = {"R", true, true},
@@ -107,6 +110,30 @@ bool rcnIsLlcCountingSupported(RcnTextFormat format) {
 bool rcnIsLocCountingSupported(RcnTextFormat format) {
     const FormatFeatures* features = getFeaturesOf(format);
     return features ? features->hasCodeLines : false;
+}
+
+RcnCount getSortMetricValue(
+    const RcnCountResultGroup* result,
+    RcnSortOption metric
+) {
+    switch (metric) {
+        case RCN_OPT_SORT_NONE:
+            return 0;
+        case RCN_OPT_SORT_LOGICAL_LINES:
+            return result->logicalLines;
+        case RCN_OPT_SORT_CODE_LINES:
+            return result->codeLines;
+        case RCN_OPT_SORT_PHYSICAL_LINES:
+            return result->physicalLines;
+        case RCN_OPT_SORT_WORDS:
+            return result->words;
+        case RCN_OPT_SORT_CHARACTERS:
+            return result->characters;
+        case RCN_OPT_SORT_SOURCE_SIZE:
+            return result->sourceSize;
+    }
+    assert(!"Unhandled RcnSortOption");
+    return 0;
 }
 
 TSParser* createParser(RcnTextFormat language) {
@@ -182,9 +209,11 @@ Span getInlineSourceCommentString(RcnTextFormat language) {
                 .ptr=LINE_COMMENT_STYLE_DOS_BATCH,
                 .length=strlen(LINE_COMMENT_STYLE_DOS_BATCH)
             };
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
         default:
@@ -206,9 +235,11 @@ Span getBlockCommentStartString(RcnTextFormat language) {
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
@@ -237,9 +268,11 @@ Span getBlockCommentEndString(RcnTextFormat language) {
             };
         case RCN_TEXT_CSS:
         case RCN_TEXT_SQL:
+        case RCN_TEXT_PROTOBUF:
         case RCN_LANG_C:
         case RCN_LANG_JAVA:
         case RCN_LANG_CPP:
+        case RCN_LANG_CUDA:
         case RCN_LANG_JAVASCRIPT:
         case RCN_LANG_TYPESCRIPT:
             return (Span){
@@ -302,6 +335,9 @@ RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
     } else if (strcmp(extension, "fxml") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_FXML;
+    } else if (strcmp(extension, "proto") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_TEXT_PROTOBUF;
     } else if (strcmp(extension, "json") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_TEXT_JSON;
@@ -358,6 +394,10 @@ RcnSourceFormatDetection rcnDetectSourceFormat(const RcnSourceFile* file) {
         || strcmp(extension, "ixx") == 0) {
         detection.isSupportedFormat = true;
         detection.format = RCN_LANG_CPP;
+    } else if (strcmp(extension, "cu") == 0
+        || strcmp(extension, "cuh") == 0) {
+        detection.isSupportedFormat = true;
+        detection.format = RCN_LANG_CUDA;
     }
 
     return detection;

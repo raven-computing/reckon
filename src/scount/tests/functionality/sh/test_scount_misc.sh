@@ -62,3 +62,17 @@ function test_scount_can_read_larger_source_content_from_stdin() {
   assert_stdout_contains "Logical Lines of Code (LLC):        104";
   assert_stderr_is_empty;
 }
+
+function test_scount_prints_warning_when_specifying_sort_option_metric_that_is_not_displayed() {
+  run_app --lines --sort CHR "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "sort option has no effect because that metric is not displayed";
+  assert_stderr_is_empty;
+}
+
+function test_scount_prints_warning_when_specifying_sort_option_and_total_option() {
+  run_app --sort --total "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "sort option has no effect when displaying only totals";
+  assert_stderr_is_empty;
+}

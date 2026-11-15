@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "reckon/reckon.h"
@@ -146,10 +147,36 @@ ExitStatus outputStatistics(AppArgs args) {
         reportInputVerbose(path, stats);
     }
 
+    const bool fileTableEnabled = (
+        !args.totalsOnly
+        && (args.showFiles || args.showAllFiles)
+    );
+
+    PrintBuffer buffer = {
+        .showLogicalLines = true,
+        .showCodeLines = true,
+        .showPhysicalLines = true,
+        .showWords = !args.linesOnly,
+        .showCharacters = !args.linesOnly,
+        .showSourceSize = !args.linesOnly,
+        .showTotalsOnly = args.totalsOnly,
+        .showFileTable = fileTableEnabled,
+        .showAllFileRows = args.showAllFiles,
+        .fileIsStdin = args.readFromStdin,
+        .sortRows = args.sort,
+        .sortMetric = args.sortMetric
+    };
+
+    RcnSortOption sortMetric = args.sortMetric;
+    if (args.sort && sortMetric == RCN_OPT_SORT_NONE) {
+        sortMetric = resolveAutoSortMetric(&buffer);
+    }
+
     RcnStatOptions options = {
         .stopOnError = args.stopOnError,
         .strict = args.strict,
-        .useMultiThreading = !args.disableParallelization
+        .useMultiThreading = !args.disableParallelization,
+        .sortBy = fileTableEnabled ? sortMetric : RCN_OPT_SORT_NONE,
     };
     if (args.linesOnly) {
         options.operations = (
@@ -157,6 +184,26 @@ ExitStatus outputStatistics(AppArgs args) {
             | RCN_OPT_COUNT_CODE_LINES
             | RCN_OPT_COUNT_PHYSICAL_LINES
         );
+    }
+
+    if (args.hasIncludeFormatMask || args.hasExcludeFormatMask) {
+        uint32_t selectedFormats = args.hasIncludeFormatMask
+            ? args.includeFormatMask
+            : UINT32_MAX;
+
+        if (args.hasExcludeFormatMask) {
+            selectedFormats &= ~args.excludeFormatMask;
+        }
+        logV("Selected text formats mask: 0x%08X", selectedFormats);
+        if (selectedFormats == 0) {
+            logE(
+                "No text formats selected after applying include/exclude "
+                "format filters."
+            );
+            rcnFreeCountStatistics(stats);
+            return APP_EXIT_INVALID_ARGUMENT;
+        }
+        options.formats = selectedFormats;
     }
 
     rcnCount(stats, options);
@@ -177,22 +224,6 @@ ExitStatus outputStatistics(AppArgs args) {
             : APP_EXIT_NOTHING_PROCESSED
         );
     }
-
-    PrintBuffer buffer = {
-        .showLogicalLines = true,
-        .showCodeLines = true,
-        .showPhysicalLines = true,
-        .showWords = !args.linesOnly,
-        .showCharacters = !args.linesOnly,
-        .showSourceSize = !args.linesOnly,
-        .showTotalsOnly = args.totalsOnly,
-        .showFileTable = (
-            !args.totalsOnly
-            && (args.showFiles || args.showAllFiles)
-        ),
-        .showAllFileRows = args.showAllFiles,
-        .fileIsStdin = args.readFromStdin
-    };
 
     if (stats->count.size == 1) {
         printResultSingle(stats, &buffer);
