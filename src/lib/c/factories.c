@@ -17,6 +17,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 #include "tree_sitter/api.h"
 
@@ -109,6 +110,30 @@ bool rcnIsLlcCountingSupported(RcnTextFormat format) {
 bool rcnIsLocCountingSupported(RcnTextFormat format) {
     const FormatFeatures* features = getFeaturesOf(format);
     return features ? features->hasCodeLines : false;
+}
+
+RcnCount getSortMetricValue(
+    const RcnCountResultGroup* result,
+    RcnSortOption metric
+) {
+    switch (metric) {
+        case RCN_OPT_SORT_NONE:
+            return 0;
+        case RCN_OPT_SORT_LOGICAL_LINES:
+            return result->logicalLines;
+        case RCN_OPT_SORT_CODE_LINES:
+            return result->codeLines;
+        case RCN_OPT_SORT_PHYSICAL_LINES:
+            return result->physicalLines;
+        case RCN_OPT_SORT_WORDS:
+            return result->words;
+        case RCN_OPT_SORT_CHARACTERS:
+            return result->characters;
+        case RCN_OPT_SORT_SOURCE_SIZE:
+            return result->sourceSize;
+    }
+    assert(!"Unhandled RcnSortOption");
+    return 0;
 }
 
 TSParser* createParser(RcnTextFormat language) {
