@@ -320,7 +320,32 @@ static void prLocLineCount(
     }
 }
 
-static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
+static void prHeaderPadding(
+    PrintBuffer* buffer,
+    int width,
+    bool isSortedMetric
+) {
+    assert(buffer != NULL);
+    assert(width >= 0);
+    if (isSortedMetric) {
+        for (int i = 0; i < width; ++i) {
+            char character = TABLE_BORDER_HORIZONTAL_NORMAL[0];
+            if (i == (width / 2)) {
+                character = 'v';
+            }
+            prChr(buffer, character);
+        }
+    } else {
+        prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, width);
+    }
+}
+
+static void prHeaderCell(
+    PrintBuffer* buffer,
+    const char* label,
+    int width,
+    bool isSortedMetric
+) {
     assert(label != NULL);
     const int length = (int) strlen(label);
     int padding = width - (length + 2);
@@ -332,11 +357,11 @@ static void prHeaderCell(PrintBuffer* buffer, const char* label, int width) {
         separatorCharacter = TABLE_BORDER_HORIZONTAL_NORMAL[0];
     }
 
-    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, left);
+    prHeaderPadding(buffer, left, isSortedMetric);
     prChr(buffer, separatorCharacter);
     prStr(buffer, label);
     prChr(buffer, separatorCharacter);
-    prRpt(buffer, TABLE_BORDER_HORIZONTAL_NORMAL, right);
+    prHeaderPadding(buffer, right, isSortedMetric);
 }
 
 static void prLeftEllipse(PrintBuffer* buffer, const char* text, int width) {
@@ -433,32 +458,71 @@ static void prFileWarnings(
 }
 
 static void prTableTop(PrintBuffer* buffer, const char* title) {
+    RcnSortOption sortedMetric = RCN_OPT_SORT_NONE;
+    if (buffer->sortRows) {
+        sortedMetric = (
+            buffer->sortMetric == RCN_OPT_SORT_NONE
+            ? resolveAutoSortMetric(buffer)
+            : buffer->sortMetric
+        );
+    }
+
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
-    prHeaderCell(buffer, title, WIDTH_COL0);
+    prHeaderCell(buffer, title, WIDTH_COL0, false);
     if (buffer->showLogicalLines) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "LLC", WIDTH_COL1);
+        prHeaderCell(
+            buffer,
+            "LLC",
+            WIDTH_COL1,
+            sortedMetric == RCN_OPT_SORT_LOGICAL_LINES
+        );
     }
     if (buffer->showCodeLines) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "LOC", WIDTH_COL_LOC);
+        prHeaderCell(
+            buffer,
+            "LOC",
+            WIDTH_COL_LOC,
+            sortedMetric == RCN_OPT_SORT_CODE_LINES
+        );
     }
     if (buffer->showPhysicalLines) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "PHL", WIDTH_COL2);
+        prHeaderCell(
+            buffer,
+            "PHL",
+            WIDTH_COL2,
+            sortedMetric == RCN_OPT_SORT_PHYSICAL_LINES
+        );
     }
     if (buffer->showWords) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "WRD", WIDTH_COL3);
+        prHeaderCell(
+            buffer,
+            "WRD",
+            WIDTH_COL3,
+            sortedMetric == RCN_OPT_SORT_WORDS
+        );
     }
     if (buffer->showCharacters) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "CHR", WIDTH_COL4);
+        prHeaderCell(
+            buffer,
+            "CHR",
+            WIDTH_COL4,
+            sortedMetric == RCN_OPT_SORT_CHARACTERS
+        );
     }
     if (buffer->showSourceSize) {
         prChr(buffer, TABLE_BORDER_CORNER);
-        prHeaderCell(buffer, "SZE", WIDTH_COL5);
+        prHeaderCell(
+            buffer,
+            "SZE",
+            WIDTH_COL5,
+            sortedMetric == RCN_OPT_SORT_SOURCE_SIZE
+        );
     }
     prChr(buffer, TABLE_BORDER_CORNER);
     prChr(buffer, '\n');

@@ -1,7 +1,7 @@
 Directory: mixed
 Scanned all 46 found files
 
-  o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
+  o-------- Language --------o-v- LLC -v-o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | Python                   |    13     |    13     |    25     |    60     |    493    |    493    |
   | TypeScript               |    11     |    21     |    27     |    51     |    436    |    436    |
   | JavaScript               |    10     |    14     |    19     |    37     |    331    |    331    |

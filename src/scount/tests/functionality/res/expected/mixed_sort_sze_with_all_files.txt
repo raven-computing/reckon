@@ -1,7 +1,7 @@
 Directory: mixed
 Scanned all 46 found files
 
-  o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
+  o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o-v- SZE -v-o
   | sample2.json             |    n/a    |    n/a    |    23     |    35     |    311    |    311    |
   | Sample2.java             |     4     |     6     |    13     |    38     |    286    |    286    |
   | sample2.py               |     7     |     7     |    13     |    32     |    264    |    264    |
@@ -52,7 +52,7 @@ Scanned all 46 found files
 
 Summary:
 
-  o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
+  o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o-v- SZE -v-o
   | JSON                     |    n/a    |    n/a    |    42     |    64     |    561    |    561    |
   | Java                     |     7     |    11     |    25     |    72     |    519    |    519    |
   | Python                   |    13     |    13     |    25     |    60     |    493    |    493    |
