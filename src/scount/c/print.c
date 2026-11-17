@@ -878,20 +878,20 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, '\n');
 }
 
-RcnSortOption resolveAutoSortMetric(PrintBuffer* buffer) {
+RcnSortOption resolveAutoSortMetric(DisplayOptions* display) {
     RcnSortOption option = RCN_OPT_SORT_NONE;
-    if (!buffer->display.sortRows) {
-        buffer->display.sortMetric = option;
+    if (!display->sortRows) {
+        display->sortMetric = option;
         return RCN_OPT_SORT_NONE;
     }
-    if (buffer->display.showLogicalLines) {
+    if (display->showLogicalLines) {
         option = RCN_OPT_SORT_LOGICAL_LINES;
-    } else if (buffer->display.showCodeLines) {
+    } else if (display->showCodeLines) {
         option = RCN_OPT_SORT_CODE_LINES;
     } else {
         option = RCN_OPT_SORT_PHYSICAL_LINES;
     }
-    buffer->display.sortMetric = option;
+    display->sortMetric = option;
     return option;
 }
 

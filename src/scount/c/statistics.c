@@ -171,7 +171,7 @@ ExitStatus outputStatistics(AppArgs args) {
 
     RcnSortOption sortMetric = args.sortMetric;
     if (args.sort && sortMetric == RCN_OPT_SORT_NONE) {
-        sortMetric = resolveAutoSortMetric(&buffer);
+        sortMetric = resolveAutoSortMetric(&buffer.display);
     }
 
     RcnStatOptions options = {

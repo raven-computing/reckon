@@ -185,12 +185,11 @@ bool isInputValid(AppArgs args);
  * Determines the sort order to be applied automatically when none
  * is explicitly specified.
  * 
- * @param buffer The print buffer holding the display options.
- *               Its `sortMetric` field will be set to the determined
- *               sort order option.
+ * @param display The display options. Its `sortMetric` field will be
+ *                set to the determined sort order option.
  * @return The determined sort order to be applied.
  */
-RcnSortOption resolveAutoSortMetric(PrintBuffer* buffer);
+RcnSortOption resolveAutoSortMetric(DisplayOptions* display);
 
 /**
  * Processes the input path and shows statistics on stdout.
