@@ -105,15 +105,12 @@ extern FILE* LOG_STREAM_ERR;
 extern bool LOG_IO_ERROR_DETECTED;
 
 /**
- * Text buffer of a null-terminated formatted string used for printing.
- * 
- * Use option members during initialization to control which statistics
+ * Render configuration and formatting toggles used when generating output.
+ *
+ * Use these members during initialization to control which statistics
  * are included in the output.
  */
-typedef struct PrintBuffer {
-    char* text;
-    size_t size;
-    size_t capacity;
+typedef struct DisplayOptions {
     bool showLogicalLines;
     bool showCodeLines;
     bool showPhysicalLines;
@@ -127,6 +124,19 @@ typedef struct PrintBuffer {
     bool fileIsStdin;
     bool sortRows;
     RcnSortOption sortMetric;
+} DisplayOptions;
+
+/**
+ * Text buffer of a null-terminated formatted string used for printing.
+ *
+ * Use the fields in the `DisplayOptions` member during initialization to
+ * control which statistics are included in the output.
+ */
+typedef struct PrintBuffer {
+    char* text;
+    size_t size;
+    size_t capacity;
+    DisplayOptions display;
 } PrintBuffer;
 
 /**

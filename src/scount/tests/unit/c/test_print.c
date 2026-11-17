@@ -30,39 +30,45 @@ void tearDown(void) { }
 
 static PrintBuffer mkBufferAllMetrics(void) {
     return (PrintBuffer) {
-        .showLogicalLines = true,
-        .showCodeLines = false,
-        .showPhysicalLines = true,
-        .showWords = true,
-        .showCharacters = true,
-        .showSourceSize = true,
-        .showTotalsOnly = false,
-        .showFileTable = true
+        .display = (DisplayOptions) {
+            .showLogicalLines = true,
+            .showCodeLines = false,
+            .showPhysicalLines = true,
+            .showWords = true,
+            .showCharacters = true,
+            .showSourceSize = true,
+            .showTotalsOnly = false,
+            .showFileTable = true
+        }
     };
 }
 
 static PrintBuffer mkBufferLinesOnly(void) {
     return (PrintBuffer) {
-        .showLogicalLines = true,
-        .showCodeLines = false,
-        .showPhysicalLines = true,
-        .showWords = false,
-        .showCharacters = false,
-        .showSourceSize = false,
-        .showTotalsOnly = false
+        .display = (DisplayOptions) {
+            .showLogicalLines = true,
+            .showCodeLines = false,
+            .showPhysicalLines = true,
+            .showWords = false,
+            .showCharacters = false,
+            .showSourceSize = false,
+            .showTotalsOnly = false
+        }
     };
 }
 
 static PrintBuffer mkBufferTotalsOnly(void) {
     return (PrintBuffer) {
-        .showLogicalLines = true,
-        .showCodeLines = true,
-        .showPhysicalLines = true,
-        .showWords = true,
-        .showCharacters = true,
-        .showSourceSize = true,
-        .showTotalsOnly = true,
-        .showFileTable = true
+        .display = (DisplayOptions) {
+            .showLogicalLines = true,
+            .showCodeLines = true,
+            .showPhysicalLines = true,
+            .showWords = true,
+            .showCharacters = true,
+            .showSourceSize = true,
+            .showTotalsOnly = true,
+            .showFileTable = true
+        }
     };
 }
 
@@ -336,7 +342,7 @@ void testPrintMultiResultWithFileWarnings(void) {
     stats->count.results[3].state.errorCode = RCN_ERR_INPUT_TOO_LARGE;
     stats->count.results[5].state.errorCode = RCN_ERR_SYNTAX_ERROR;
     PrintBuffer buffer = mkBufferAllMetrics();
-    buffer.showWarnings = true;
+    buffer.display.showWarnings = true;
     printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
     TEST_ASSERT_NOT_NULL(buffer.text);
     TEST_ASSERT_TRUE(buffer.size > 0);

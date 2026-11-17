@@ -153,18 +153,20 @@ ExitStatus outputStatistics(AppArgs args) {
     );
 
     PrintBuffer buffer = {
-        .showLogicalLines = true,
-        .showCodeLines = true,
-        .showPhysicalLines = true,
-        .showWords = !args.linesOnly,
-        .showCharacters = !args.linesOnly,
-        .showSourceSize = !args.linesOnly,
-        .showTotalsOnly = args.totalsOnly,
-        .showFileTable = fileTableEnabled,
-        .showAllFileRows = args.showAllFiles,
-        .fileIsStdin = args.readFromStdin,
-        .sortRows = args.sort,
-        .sortMetric = args.sortMetric
+        .display = (DisplayOptions) {
+            .showLogicalLines = true,
+            .showCodeLines = true,
+            .showPhysicalLines = true,
+            .showWords = !args.linesOnly,
+            .showCharacters = !args.linesOnly,
+            .showSourceSize = !args.linesOnly,
+            .showTotalsOnly = args.totalsOnly,
+            .showFileTable = fileTableEnabled,
+            .showAllFileRows = args.showAllFiles,
+            .fileIsStdin = args.readFromStdin,
+            .sortRows = args.sort,
+            .sortMetric = args.sortMetric
+        }
     };
 
     RcnSortOption sortMetric = args.sortMetric;
