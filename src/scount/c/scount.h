@@ -176,9 +176,11 @@ bool isInputValid(AppArgs args);
  * is explicitly specified.
  * 
  * @param buffer The print buffer holding the display options.
+ *               Its `sortMetric` field will be set to the determined
+ *               sort order option.
  * @return The determined sort order to be applied.
  */
-RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer);
+RcnSortOption resolveAutoSortMetric(PrintBuffer* buffer);
 
 /**
  * Processes the input path and shows statistics on stdout.

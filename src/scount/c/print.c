@@ -458,15 +458,7 @@ static void prFileWarnings(
 }
 
 static void prTableTop(PrintBuffer* buffer, const char* title) {
-    RcnSortOption sortedMetric = RCN_OPT_SORT_NONE;
-    if (buffer->sortRows) {
-        sortedMetric = (
-            buffer->sortMetric == RCN_OPT_SORT_NONE
-            ? resolveAutoSortMetric(buffer)
-            : buffer->sortMetric
-        );
-    }
-
+    RcnSortOption sortedMetric = buffer->sortMetric;
     prStr(buffer, TABLE_PADDING_LEFT);
     prChr(buffer, TABLE_BORDER_CORNER);
     prHeaderCell(buffer, title, WIDTH_COL0, false);
@@ -765,11 +757,8 @@ static void prSummaryRows(
         }
     }
 
-    if (buffer->sortRows && activeCount > 1) {
+    if (buffer->sortRows && activeCount > 1) {;
         RcnSortOption metric = buffer->sortMetric;
-        if (metric == RCN_OPT_SORT_NONE) {
-            metric = resolveAutoSortMetric(buffer);
-        }
         assert(metric != RCN_OPT_SORT_NONE);
         sortActiveFormats(activeFormats, activeCount, stats, metric);
     }
@@ -889,17 +878,21 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
     prChr(buffer, '\n');
 }
 
-RcnSortOption resolveAutoSortMetric(const PrintBuffer* buffer) {
+RcnSortOption resolveAutoSortMetric(PrintBuffer* buffer) {
+    RcnSortOption option = RCN_OPT_SORT_NONE;
     if (!buffer->sortRows) {
+        buffer->sortMetric = option;
         return RCN_OPT_SORT_NONE;
     }
     if (buffer->showLogicalLines) {
-        return RCN_OPT_SORT_LOGICAL_LINES;
+        option = RCN_OPT_SORT_LOGICAL_LINES;
+    } else if (buffer->showCodeLines) {
+        option = RCN_OPT_SORT_CODE_LINES;
+    } else {
+        option = RCN_OPT_SORT_PHYSICAL_LINES;
     }
-    if (buffer->showCodeLines) {
-        return RCN_OPT_SORT_CODE_LINES;
-    }
-    return RCN_OPT_SORT_PHYSICAL_LINES;
+    buffer->sortMetric = option;
+    return option;
 }
 
 void printResultSingle(const RcnCountStatistics* stats, PrintBuffer* buffer) {
