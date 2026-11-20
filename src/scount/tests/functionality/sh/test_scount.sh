@@ -361,6 +361,6 @@ function test_scount_with_sort_by_size_and_show_all_files() {
 function test_scount_does_not_sort_when_sort_option_is_specified_as_off() {
   run_app --show-all-files --sort Off "${TEST_RES_DIR}/mixed";
   assert_exit_status $EXIT_SUCCESS;
-  assert_stdout_equals_file "expected/mixedWithAllFiles.txt";
+  assert_stdout_equals_file "expected/mixedWithAllFilesUnsorted.txt";
   assert_stderr_is_empty;
 }

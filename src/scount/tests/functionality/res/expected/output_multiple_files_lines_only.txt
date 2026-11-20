@@ -1,7 +1,7 @@
 Directory: java
 Scanned all 3 found files
 
-  o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o
+  o---------- File ----------o-v- LLC -v-o--- LOC ---o--- PHL ---o
   | Sample.java              |    104    |    142    |    188    |
   | SampleAnnotated.java     |    104    |    142    |    188    |
   | SampleMinFormatting.java |    104    |    81     |    107    |
@@ -9,7 +9,7 @@ Scanned all 3 found files
 
 Summary:
 
-  o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o
+  o-------- Language --------o-v- LLC -v-o--- LOC ---o--- PHL ---o
   | Java                     |    312    |    365    |    483    |
   o==========================o===========o===========o===========o
   | Total:                   |    312    |    365    |    483    |

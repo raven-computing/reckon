@@ -1,7 +1,7 @@
 Directory: txt
 Scanned all 6 found files
 
-  o---------- File ----------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
+  o---------- File ----------o-v- LLC -v-o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | 1sample1.txt             |    n/a    |    n/a    |     1     |     2     |    26     |    26     |
   | 1sample2.txt             |    n/a    |    n/a    |     1     |     2     |    26     |    26     |
   | 1sample3.txt             |    n/a    |    n/a    |     1     |     2     |    26     |    26     |
@@ -12,7 +12,7 @@ Scanned all 6 found files
 
 Summary:
 
-  o-------- Language --------o--- LLC ---o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
+  o-------- Language --------o-v- LLC -v-o--- LOC ---o--- PHL ---o--- WRD ---o--- CHR ---o--- SZE ---o
   | Plain Text               |    n/a    |    n/a    |     6     |    12     |    176    |    176    |
   o==========================o===========o===========o===========o===========o===========o===========o
   | Total:                   |    n/a    |    n/a    |     6     |    12     |    176    |    176    |

@@ -252,7 +252,11 @@ static void parseFormatList(
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 AppArgs parseArgs(int argc, char** argv) {
-    AppArgs args = {0};
+    AppArgs args = {
+        .sort = true,
+        .sortMetric = RCN_OPT_SORT_NONE, // Default: Auto sort metric
+    };
+    bool sortSpecified = false;
     for (int i = 1; i < argc; ++i) {
         const size_t argLen = strlen(argv[i]);
         if (strcmp(argv[i], "--annotate-counts") == 0) {
@@ -269,6 +273,7 @@ AppArgs parseArgs(int argc, char** argv) {
         } else if (strcmp(argv[i], "--disable-parallelization") == 0) {
             args.disableParallelization = true;
         } else if (strcmp(argv[i], "--sort") == 0) {
+            sortSpecified = true;
             args.sort = true;
             // Consume the next arg only if it's a recognised metric name
             if (i + 1 < argc && argv[i + 1][0] != '-') {
@@ -348,6 +353,9 @@ AppArgs parseArgs(int argc, char** argv) {
     if (args.inputPath == NULL && args.errorMessage == NULL) {
         args.errorMessage = "No input path specified.";
     }
+    if (args.totalsOnly && !sortSpecified) {
+        args.sort = false;
+    }
     return args;
 }
 // NOLINTEND(readability-function-cognitive-complexity)
@@ -421,7 +429,8 @@ void showHelpText(void) {
     logI("  [--sort [metric]]   Sort table rows by the specified metric in descending order.");
     logI("                      The option argument [metric] is one of:");
     logI("                      LLC, LOC, PHL, WRD, CHR, SZE, OFF (case-insensitive).");
-    logI("                      If OFF is specified, sorting will be disabled");
+    logI("                      Sorting is enabled by default.");
+    logI("                      If OFF is specified, sorting will be disabled.");
     logI("                      If [metric] is omitted, the sort metric is determined automatically.");
     logI(" ");
     logI("  [--stop-on-error]   Stop processing immediately when an error is encountered.");
