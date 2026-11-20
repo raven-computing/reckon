@@ -330,6 +330,40 @@ void testPrintMultiResultTotalsOnlySuppressesDetailRows(void) {
     rcnFreeCountStatistics(stats);
 }
 
+void testPrintMultiResultTotalsShowsLocWithoutLogicalLines(void) {
+    RcnCountStatistics* stats = mkStats(
+        "SomeFile.java",
+        3, 0, 2, 3, 4, 5
+    );
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        stats->count.results[i].logicalLines = 0;
+        stats->count.results[i].codeLines = 123;
+        stats->count.results[i].hasLogicalLines = false;
+        stats->count.results[i].hasCodeLines = true;
+    }
+    stats->logicalLines[RCN_LANG_JAVA] = 0;
+    stats->codeLines[RCN_LANG_JAVA] = 123;
+    stats->totalLogicalLines = 0;
+    stats->totalCodeLines = 369;
+
+    PrintBuffer buffer = mkBufferTotalsOnly();
+    // Only show LOC so that we can test for 'N/A' below
+    buffer.display.showLogicalLines = false;
+    buffer.display.showPhysicalLines = false;
+    buffer.display.showWords = false;
+    buffer.display.showCharacters = false;
+    buffer.display.showSourceSize = false;
+    printResultsMultiple("/some/path/to/myDirectory", stats, &buffer);
+
+    TEST_ASSERT_NOT_NULL(buffer.text);
+    TEST_ASSERT_TRUE(buffer.size > 0);
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "--- LOC ---"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer.text, "369"));
+    TEST_ASSERT_NULL(strstr(buffer.text, "N/A"));
+    free(buffer.text);
+    rcnFreeCountStatistics(stats);
+}
+
 void testPrintMultiResultWithFileWarnings(void) {
     RcnCountStatistics* stats = mkStats(
         "SomeFile0.java",
@@ -419,6 +453,7 @@ int main(void) {
     RUN_TEST(testPrintSingleResultLinesOnly);
     RUN_TEST(testPrintMultiResultLinesOnly);
     RUN_TEST(testPrintMultiResultTotalsOnlySuppressesDetailRows);
+    RUN_TEST(testPrintMultiResultTotalsShowsLocWithoutLogicalLines);
     RUN_TEST(testPrintMultiResultWithFileWarnings);
     RUN_TEST(testFoundFilesLabelTextWithPartiallyProcessedFileSet);
     RUN_TEST(testFoundFilesLabelTextWithOneFoundFile);
