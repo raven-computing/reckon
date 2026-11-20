@@ -304,6 +304,7 @@ static void prLogicalLineCount(
     if (hasLogicalLines) {
         prCnt(buffer, value, WIDTH_COL1);
     } else {
+        assert(value == 0);
         prNotApplicable(buffer);
     }
 }
@@ -316,6 +317,7 @@ static void prLocLineCount(
     if (hasLocLines) {
         prCnt(buffer, value, WIDTH_COL_LOC);
     } else {
+        assert(value == 0);
         prNotApplicable(buffer);
     }
 }
