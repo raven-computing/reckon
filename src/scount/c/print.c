@@ -46,6 +46,7 @@ static const char TABLE_BORDER_HORIZONTAL_EMPHASIS[] = "=";
 static const char TABLE_BORDER_VERTICAL_NORMAL = '|';
 static const char TABLE_BORDER_VERTICAL_EMPHASIS = '|';
 static const char TABLE_BORDER_CORNER = 'o';
+static const char INDICATOR_SORT_ARROW_DOWN = 'v';
 static const char* TABLE_PADDING_LEFT = "  ";
 static const char* LABEL_NOT_APPLICABLE = "n/a";
 static const char ELLIPSIS_ODD[] = "...";
@@ -333,7 +334,7 @@ static void prHeaderPadding(
         for (int i = 0; i < width; ++i) {
             char character = TABLE_BORDER_HORIZONTAL_NORMAL[0];
             if (i == (width / 2)) {
-                character = 'v';
+                character = INDICATOR_SORT_ARROW_DOWN;
             }
             prChr(buffer, character);
         }
