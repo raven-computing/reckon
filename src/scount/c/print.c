@@ -146,6 +146,15 @@ static bool hasAnyLogicalLines(const RcnCountStatistics* stats) {
     return false;
 }
 
+static bool hasAnyCodeLines(const RcnCountStatistics* stats) {
+    for (size_t i = 0; i < stats->count.size; ++i) {
+        if (stats->count.results[i].hasCodeLines) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Computes the display width of a UTF-8 string, i.e. the number of character
  * cells it occupies when printed in a fixed-width terminal.
@@ -848,7 +857,7 @@ static void prTotalsRow(PrintBuffer* buffer, const RcnCountStatistics* stats) {
         prChr(buffer, ' ');
         prLocLineCount(
             buffer,
-            hasAnyLogicalLines(stats),
+            hasAnyCodeLines(stats),
             stats->totalCodeLines
         );
         prChr(buffer, ' ');
