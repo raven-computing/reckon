@@ -78,9 +78,9 @@ jobs:
           update: false
           msystem: ucrt64
           install: >
-            base-devel
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
 
       - name: 'Create Cache Directory'
         run: mkdir -p .cache/cmake_deps_src
