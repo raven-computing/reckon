@@ -125,6 +125,51 @@ function test_scount_with_exclude_format_option_invalid_specifier() {
   assert_stderr_is_empty;
 }
 
+function test_scount_with_include_format_option_containing_only_invalid_specifiers() {
+  run_app --include-format "invalid,another_invalid" \
+          "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --include-format contains an invalid format specifier: 'invalid'";
+  assert_stdout_contains "Invalid entries of --include-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_empty_include_format_argument() {
+  run_app --include-format "" "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --include-format contains an invalid format specifier: ''";
+  assert_stdout_contains "Invalid entries of --include-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_empty_exclude_format_argument() {
+  run_app --exclude-format "" "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "Option --exclude-format contains an invalid format specifier: ''";
+  assert_stdout_contains "Invalid entries of --exclude-format option were ignored.";
+  assert_stdout_contains "File: Sample.java";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_exclude_format_option_missing_argument() {
+  run_app --exclude-format;
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_equals "Missing argument for option '--exclude-format'.";
+}
+
+function test_scount_with_invalid_sort_metric() {
+  run_app --sort invalid "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+  assert_exit_status $EXIT_INVALID_ARGUMENT;
+  assert_stdout_is_empty;
+  assert_stderr_equals "Multiple input paths specified.";
+}
+
 function test_scount_with_no_final_selected_formats_prints_error() {
   run_app --include-format java \
           --exclude-format java \

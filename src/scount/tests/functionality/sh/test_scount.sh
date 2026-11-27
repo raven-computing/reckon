@@ -66,6 +66,24 @@ function test_scount_reads_source_content_from_stdin_with_specified_extension() 
   assert_stderr_is_empty;
 }
 
+function test_scount_reads_empty_content_from_stdin() {
+  printf '' | run_app -;
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "File: -";
+  assert_stdout_contains "Source Size in Bytes";
+  assert_stdout_contains "0";
+  assert_stderr_is_empty;
+}
+
+function test_scount_reads_binary_content_from_stdin() {
+  printf '\0\0\0' | run_app -.txt;
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_contains "File: -";
+  assert_stdout_contains "Source Size in Bytes";
+  assert_stdout_contains "3";
+  assert_stderr_is_empty;
+}
+
 function test_scount_prints_only_line_metrics_with_long_option() {
   run_app --lines "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
   assert_exit_status $EXIT_SUCCESS;
@@ -77,6 +95,20 @@ function test_scount_prints_only_line_metrics_with_short_option() {
   run_app -l --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java";
   assert_exit_status $EXIT_SUCCESS;
   assert_stdout_equals_file "expected/output_multiple_files_lines_only.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_show_files_option_and_single_file_input() {
+  run_app --show-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_single_file.txt";
+  assert_stderr_is_empty;
+}
+
+function test_scount_with_show_all_files_option_and_single_file_input() {
+  run_app --show-all-files "${TEST_PROJECT_DIR}/src/lib/tests/res/java/Sample.java";
+  assert_exit_status $EXIT_SUCCESS;
+  assert_stdout_equals_file "expected/output_single_file.txt";
   assert_stderr_is_empty;
 }
 
